@@ -25,3 +25,23 @@ int comparator(const void *a, const void *b)  //we take in two voids as pointers
     return ((struct movie *)a)->year < ((struct movie *)b)-> year;  //otherwise return that the year is less so it compares
   }
 }
+
+//this function will display movies of specific year entered by the user
+void show_movies_byyear(struct movie m[], int n, int year)    //this function takes in the movie struct, and int representing array length and year we are looking for
+{
+  int flag = 0;                   //we create a flag which will be our counter and set it to 0
+  for (int i = 0; i < n; i++)     //using a for loop we now parse through the array and look for an array that matches our user input
+  {
+    if (m[i].year == year)        //if array index i (looping through) the year matches the year the user input
+    {
+      printf("%\n", m[i].title);  //we are going to print out the title
+      flag = 1;                   //now we set our flag to 1 (how many we found)
+    }
+  }
+  //if we cannot find using our search then we need to tell the user that
+  if (flag == 0)                  //if we parsed the entire list and our flag was 0 means we found nothing
+  {
+    printf("\nNo data about movies released in year %d\n\n".year);      //print out that we found nothing in relation to it
+    print("\n");          //new line for formatting
+  }
+}

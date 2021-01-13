@@ -47,7 +47,7 @@ void show_movies_byyear(struct movie m[], int n, int year)                      
 }
 
 //now we build out a function that can compare the langauges and find the one we are seeking
-void show_movies_bylang(struct movie m[], int n, char[])                        //we take in this function the struct for movie, an int and char array
+void show_movies_bylang(struct movie m[], int n, char l[])                        //we take in this function the struct for movie, an int and char array
 {
   int flag = 0;                                                                 //create a flag int and set it to 0 for our counter
   for (int i = 0; i < n; i++)                                                   //now we parse the entire length of the user input
@@ -63,6 +63,6 @@ void show_movies_bylang(struct movie m[], int n, char[])                        
   if (flag == 0)                                                                //if our conditional was never flipped
   {
     printf("No data about movies released in language %s\n\n", l);              //print the string
-    printf("\n");                                                           
+    printf("\n");
   }
 }

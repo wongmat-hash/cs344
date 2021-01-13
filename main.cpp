@@ -81,5 +81,54 @@ void show_highest_rated(struct movie m[], int n)
     }
     curr_year = m[i].year;                                                      //now we set the current year to the year we just looked at and we continue on the loop
   }
-  print("\n");                                                                  //print a new line                               
+  print("\n");                                                                  //print a new line
+}
+
+//main function to run the user input validation as well as pass everything to the functions we made above
+int main(int argc, char** argv)                                                 //how command line arguments are passed to to main in C
+{
+                                                                                //we want to take our input from a CSV file so we need to check for file name
+  if (argc == 1)                                                                //user will specify the file name from terminal hence the argc
+  {
+    print("Movie file not specified!\n");                                       //properly display the output if the file is not found
+  }
+  else
+  {
+    struct movie[1000];                                                         //create a struct movie array arbitrary amount to store
+
+    char *filename = argv[1];                                                   //take the commandline filename
+
+    FILE* file = fopen(filename, "r");                                          //open the file with our program now that its specified and found
+
+    if (file == NULL)                                                           //error validation for file opening
+    {
+      printf("There is some error opening file %s", filename);                  //error validation message
+      return 0;                                                                 //return 0 to end the program
+    }
+    char line[4096];
+
+    int count = 0;
+
+    while(fgets(line, sizeof(line), file))                                      //basically as we continue to parse the file line by line until end of filename
+    {
+      if(count >= 1)                                                            //this is our counter since it starts at 0 its going to run whats below
+      {
+        char* tp = strdup(line);                                                //the pointer tp = the line
+        char* tok = strtok(tp, "\n");                                           //the pointer tok 
+        int k = 1;
+        while(tok != NULL)
+        {
+          if (k==1) strcpy(m[count-1].title, tok);
+          if (k==2) m[count-1].rating = atof(tok);
+          if (k==3) m[count-1].year = atoi(tok);
+          if (k==4) strcpy(m[count-1].lang, tok);
+          tok = strtok(NULL, ",\n");
+          k++;
+        }
+        free(tp);
+      }
+      count++;
+    }
+  }
+
 }

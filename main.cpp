@@ -59,7 +59,7 @@ void show_movies_bylang(struct movie m[], int n, char l[])                      
     }
   }
 
-                                                                                //if we cannot find a language matching what the user input
+                                                                                 //if we cannot find a language matching what the user input
   if (flag == 0)                                                                //if our conditional was never flipped
   {
     printf("No data about movies released in language %s\n\n", l);              //print the string
@@ -129,6 +129,50 @@ int main(int argc, char** argv)                                                 
       }
       count++;
     }
-  }
+                                                                                //show the user in terminal that the file has been processed correctly
+    printf("Processed file %s and parsed data for %d movies\n", filename, count);
 
+    int op;                                                                     //storage int for user input
+    int year;                                                                   //storage year for user input
+    char lang[1000];                                                            //storage lang for user input
+
+    while(1)                                                                    //use a loop to continue asking user for inputs
+    {                                                                           //our menu system
+      printf("1. Show movies released in the specified year\n");
+      printf("2. Show highest rated movie for each year\n");
+      printf("3. Show the title and year of release of all movies in a specific language\n");
+      printf("4. Exit from the program\n");
+      printf("Enter a choice from 1 to 4:\n");
+
+      scanf("%d", %op);                                                         //scan for user input and store into op
+
+      switch(op)                                                                //use a switch to display the secondary menu (submenu after first)
+      {
+        case 1:
+        {
+          printf("Enter the year for which you want to see movies: ");          //asks user for what year they which to look up
+          scanf("%d, &year");                                                   //scans for user input on year
+          show_movies_byyear(m, count, year);                                   //passes it to the function we created above
+          break;
+        }
+        case 2:
+        {
+          show_highest_rated(m, count);                                         //passes and shows the user the highest rated sorted movie list
+          break;
+        }
+        case 3:
+        {
+          printf("Enter the language for which you want to see movies:");       //asks the user for what language input
+          scanf("%s", lang);                                                    //scans for user input on the language 
+          show_movies_bylang(m, count, lang);                                   //passes it to the function we created above
+          break;
+        }
+        case 4:
+        {
+          exit(0);
+        }
+      }
+    }
+  }
+  return 0;
 }

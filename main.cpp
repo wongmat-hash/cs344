@@ -59,7 +59,7 @@ void show_movies_bylang(struct movie m[], int n, char l[])                      
     }
   }
 
-  //if we cannot find a language matching what the user input
+                                                                                //if we cannot find a language matching what the user input
   if (flag == 0)                                                                //if our conditional was never flipped
   {
     printf("No data about movies released in language %s\n\n", l);              //print the string
@@ -114,7 +114,7 @@ int main(int argc, char** argv)                                                 
       if(count >= 1)                                                            //this is our counter since it starts at 0 its going to run whats below
       {
         char* tp = strdup(line);                                                //the pointer tp = the line
-        char* tok = strtok(tp, "\n");                                           //the pointer tok 
+        char* tok = strtok(tp, "\n");                                           //the pointer tok
         int k = 1;
         while(tok != NULL)
         {

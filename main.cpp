@@ -66,3 +66,20 @@ void show_movies_bylang(struct movie m[], int n, char l[])                      
     printf("\n");
   }
 }
+
+//now we need a function to find the highest rated movie for a given year
+void show_highest_rated(struct movie m[], int n)
+{
+                                                                                //first display by year and if the years match then secondary sort by ratings
+  qsort(m, n+1, sizeof(m[0]), comparator);                                      //pass to our comparator function above
+  int curr_year = -1;                                                           //create an int that is the curr year and set it to negative 1
+  for (int i = 0; i < n-1; i++)                                                 //use a for loop to interate through our movie
+  {
+    if (m[i].year != curr_year)                                                 //if the movie index year is not equal to the current year (-1)
+    {
+      printf("%d %2f %s\n", m[i].year, m[i].rating, m[i].title);                //then print out the year rating and title
+    }
+    curr_year = m[i].year;                                                      //now we set the current year to the year we just looked at and we continue on the loop
+  }
+  print("\n");                                                                  //print a new line                               
+}

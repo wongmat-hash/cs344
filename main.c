@@ -16,13 +16,13 @@ struct movie
 //first build out a comparison function to check for the year
 int comparator(const void *a, const void *b)                                    //we take in two voids as pointers
 {
-  if (((struct movie *)a)-> year == ((struct movie*)b)->year)                   //if statement to cheeck if the movie *a pointer this year is equal to b
+  if (((struct movie*)a)-> year == ((struct movie*)b)->year)                   //if statement to cheeck if the movie *a pointer this year is equal to b
     {
-      return ((struct movie)*a)->rating < ((struct movie)*b)->rating;           //if it is we return that the ratings
+      return ((struct movie*)a)->rating < ((struct movie*)b)->rating;           //if it is we return that the ratings
     }
   else
   {
-    return ((struct movie *)a)->year < ((struct movie *)b)-> year;              //otherwise return that the year is less so it compares
+    return ((struct movie*)a)->year < ((struct movie*)b)-> year;              //otherwise return that the year is less so it compares
   }
 }
 
@@ -34,15 +34,15 @@ void show_movies_byyear(struct movie m[], int n, int year)                      
   {
     if (m[i].year == year)                                                      //if array index i (looping through) the year matches the year the user input
     {
-      printf("%\n", m[i].title);                                                //we are going to print out the title
+      printf("%s\n", m[i].title);                                                //we are going to print out the title
       flag = 1;                                                                 //now we set our flag to 1 (how many we found)
     }
   }
   //if we cannot find using our search then we need to tell the user that
   if (flag == 0)                                                                //if we parsed the entire list and our flag was 0 means we found nothing
   {
-    printf("\nNo data about movies released in year %d\n\n".year);              //print out that we found nothing in relation to it
-    print("\n");                                                                //new line for formatting
+    printf("\nNo data about movies released in year %d\n\n", year);              //print out that we found nothing in relation to it
+    printf("\n");                                                               //new line for formatting
   }
 }
 
@@ -81,7 +81,7 @@ void show_highest_rated(struct movie m[], int n)
     }
     curr_year = m[i].year;                                                      //now we set the current year to the year we just looked at and we continue on the loop
   }
-  print("\n");                                                                  //print a new line
+  printf("\n");                                                                 //print a new line
 }
 
 //main function to run the user input validation as well as pass everything to the functions we made above
@@ -90,11 +90,11 @@ int main(int argc, char** argv)                                                 
                                                                                 //we want to take our input from a CSV file so we need to check for file name
   if (argc == 1)                                                                //user will specify the file name from terminal hence the argc
   {
-    print("Movie file not specified!\n");                                       //properly display the output if the file is not found
+    printf("Movie file not specified!\n");                                      //properly display the output if the file is not found
   }
   else
   {
-    struct movie[1000];                                                         //create a struct movie array arbitrary amount to store
+    struct movie m[1000];                                                         //create a struct movie array arbitrary amount to store
 
     char *filename = argv[1];                                                   //take the commandline filename
 
@@ -144,14 +144,14 @@ int main(int argc, char** argv)                                                 
       printf("4. Exit from the program\n");
       printf("Enter a choice from 1 to 4:\n");
 
-      scanf("%d", %op);                                                         //scan for user input and store into op
+      scanf("%d", &op);                                                         //scan for user input and store into op
 
       switch(op)                                                                //use a switch to display the secondary menu (submenu after first)
       {
         case 1:
         {
           printf("Enter the year for which you want to see movies: ");          //asks user for what year they which to look up
-          scanf("%d, &year");                                                   //scans for user input on year
+          scanf("%d", &year);                                                   //scans for user input on year
           show_movies_byyear(m, count, year);                                   //passes it to the function we created above
           break;
         }
@@ -163,7 +163,7 @@ int main(int argc, char** argv)                                                 
         case 3:
         {
           printf("Enter the language for which you want to see movies:");       //asks the user for what language input
-          scanf("%s", lang);                                                    //scans for user input on the language 
+          scanf("%s", lang);                                                    //scans for user input on the language
           show_movies_bylang(m, count, lang);                                   //passes it to the function we created above
           break;
         }

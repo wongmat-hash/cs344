@@ -1,0 +1,38 @@
+Here is a sample file whose format corresponds to the format of the CSV file your program will be tested with.
+
+The first line in the input file will always be the header line containing the column headers (i.e., it will not have data for a movie).
+All the other lines will have the data for a movie in valid format and no columns will be missing.
+The file will not have any empty lines.
+The file will contain data for at least one movie.
+Don't assume a maximum number of movies in the file.
+Commas appear as delimiters between columns, but will not appear in the values of any columns.
+The name of the input file will be less than 50 characters and will not contain any spaces.
+Don't assume that the input file name will have a particular extension.
+This file has the following columns:
+
+Title
+This is a string with the movie title. 
+E.g., Iron Man 2
+You cannot assume a maximum length of the movie title.
+Year
+This is a 4 digit integer value for the year the movie was released
+It's value will be between 1900 and 2021 (inclusive of these years).
+E.g., 2010
+Languages
+The language or languages in which the movie was released.
+One or more string values that are always enclosed within []
+Multiple values are separated by semi-colons.
+E.g,
+[English;Portuguese;Spanish]
+[English;French]
+[English]
+You can assume that the maximum number of languages any movie can be released in is 5.
+You can assume that the maximum length of a language string is 20 characters.
+You cannot assume any particular case for the letters in the language.
+E.g., don't assume that the first letter is upper case, or that all letters are lowercase.
+Rating Value
+A number between 1 and 10 (inclusive of both 1 and 10)
+It can be an integer or a double with one digit after the decimal point
+E.g.,
+5
+8.7

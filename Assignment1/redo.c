@@ -14,10 +14,10 @@ struct movie
   char lang[1000];                                                              //language stored as an array
   float rating;                                                                 //rating stored as a float
   struct movie *next;                                                           //next movie pointer
-};
+} *head = NULL;
 
-struct movie *head = NULL;
-struct movie *current = NULL;
+//struct movie *head = NULL;
+//struct movie *current = NULL;
 
 //first we need to parse our csv and store all the data in new movie structs that point to next
 struct movie *addMovie(struct movie *head, char *t, int *y, char *l, float *r)  //we pass in all our pointers for each item in our struct
@@ -30,4 +30,31 @@ struct movie *addMovie(struct movie *head, char *t, int *y, char *l, float *r)  
 
   newMovie->next = head;                                                        //point the next to old first node if its only it works also
   head = newMovie;                                                              //the head should point to newMovie
+}
+
+//compare function to sort our linked list how we want it to display
+
+//function for searching for movies in a specific year
+
+//function to show movies released with certain language
+
+//function to show highest rated movies of year
+
+//main
+int main(int argc, char** argv)
+{
+  //we need a filename from the user if not it doesnt work print error message
+  if (argc==1)
+  {
+    printf("Movie file not specified!\n");
+  }
+  //else we create the linked list of structs
+  else
+  {
+    //extract the filename and store it
+    char *fileName = argv[1];
+
+    //pass the filename to our open file function which will create a linked list of structs
+    createList(*fileName);
+  }
 }

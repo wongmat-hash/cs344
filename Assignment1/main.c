@@ -22,7 +22,7 @@ int comparator(const void *a, const void *b)                                    
     }
   else
   {
-    return ((struct movie*)a)->year < ((struct movie*)b)-> year;              //otherwise return that the year is less so it compares
+    return ((struct movie*)a)->year < ((struct movie*)b)-> year;                //otherwise return that the year is less so it compares
   }
 }
 
@@ -41,13 +41,13 @@ void show_movies_byyear(struct movie m[], int n, int year)                      
   //if we cannot find using our search then we need to tell the user that
   if (flag == 0)                                                                //if we parsed the entire list and our flag was 0 means we found nothing
   {
-    printf("\nNo data about movies released in year %d\n\n", year);              //print out that we found nothing in relation to it
+    printf("\nNo data about movies released in year %d\n\n", year);             //print out that we found nothing in relation to it
     printf("\n");                                                               //new line for formatting
   }
 }
 
 //now we build out a function that can compare the langauges and find the one we are seeking
-void show_movies_bylang(struct movie m[], int n, char l[])                        //we take in this function the struct for movie, an int and char array
+void show_movies_bylang(struct movie m[], int n, char l[])                      //we take in this function the struct for movie, an int and char array
 {
   int flag = 0;                                                                 //create a flag int and set it to 0 for our counter
   for (int i = 0; i < n; i++)                                                   //now we parse the entire length of the user input
@@ -59,7 +59,7 @@ void show_movies_bylang(struct movie m[], int n, char l[])                      
     }
   }
 
-                                                                                 //if we cannot find a language matching what the user input
+                                                                                //if we cannot find a language matching what the user input
   if (flag == 0)                                                                //if our conditional was never flipped
   {
     printf("No data about movies released in language %s\n\n", l);              //print the string

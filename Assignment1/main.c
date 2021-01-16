@@ -8,10 +8,14 @@ struct movie
 {
   char title[1000];         //we can store the title as a char
   int year;                 //we can store the year as an int
-  char lang[1000];          //we can store the language as a char
+  char lang[100];          //we can store the language as a char
   float rating;             //we can store the rating as a float
-  struct movie next*        //pointer to next 
+  struct movie *next;        //pointer to next
 };
+
+
+
+
 
 //we need a sort function to compare and sort out our movies released by year
 //first build out a comparison function to check for the year
@@ -144,7 +148,7 @@ int main(int argc, char** argv)                                                 
       printf("Movie title: %s", m[i].title);
       printf("Movie year: %d", m[i].year);
       printf("Movie lang: %s", m[i].lang);
-      printf("Movie rating: %1.1f\n", m[i].rating);
+      printf("Movie rating: %.1f\n", m[i].rating);
       printf("\n");
     }
 

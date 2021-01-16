@@ -34,11 +34,11 @@ void printList(struct movie *m)
 struct movie* copyList(struct movie *head)                                              //takes the head in then will make a copy to sort
 {
   //TEST TO SHOW THAT FUNCTION IS WORKING
-  printf("TEST: Now inside COPYLIST Function\n");
+  //printf("TEST: Now inside COPYLIST Function\n");
   //now create a temp which will be a copy of the entire list
   if(head==NULL)                                                                //checks our function to see if its NULL or not
   {
-    printf("ERROR list passed into COPYLIST is NULL\n");
+    //printf("ERROR list passed into COPYLIST is NULL\n");
     return NULL;                                                                     //not possible so return to main
   }
   else
@@ -54,14 +54,27 @@ struct movie* copyList(struct movie *head)                                      
   }
 }
 //function that will sort by the year by making a copy passing it to copyList
-void byYear(struct movie **head)
+void byYear(struct movie *head, int y)
 {
   //TESTING
-  printf("TEST: NOW I AM IN byYear FUNCTION \n");
-  struct movie *dupMovie = copyList(*head);                                                             //first pass the original list to the copy list and return a temp list that we can use to sort
+  //printf("TEST: NOW I AM IN byYear FUNCTION \n");
+  struct movie *dupMovie = copyList(head);                                                             //first pass the original list to the copy list and return a temp list that we can use to sort
   //TESTING print out our duplicate copied list
   //printf("DUPLICATE LIST\n");
   //printList(dupMovie);
+  //use the year to find matching movies and print those
+  while(dupMovie!=NULL)
+  {
+    while(dupMovie->year == y)                                                      //if our list head year matches user input
+    {
+      printf("%s \n", dupMovie->title);                                             //print the title then new line
+      dupMovie = dupMovie->next;
+    }
+    while(dupMovie->year != y)
+    {
+      dupMovie = dupMovie->next;
+    }
+  }
 }
 
 int main()
@@ -266,7 +279,7 @@ int main()
         //test to show user input saved correctly
         //printf("YEAR: %d", year);                                             //TEST PASS
         printf("\n");
-        byYear(&head, year);                                                    //passes it to the function we created above
+        byYear(head, year);                                                    //passes it to the function we created above
         break;
       }
       case 2:

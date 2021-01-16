@@ -102,6 +102,30 @@ void byYear(struct movie *head, int y)
   printf("\n");                                                                 //line for formatting
 }
 
+//WORKING HERE 01/16 AM
+//function to sort by year then rating
+int sorting(const void *a, const void *b)
+{
+  if (((struct movie *)a)->year == ((struct movie*)b)->year)                    //first we sort by year
+  {
+    return ((struct movie*)a)->rating < ((struct movie*)b)->rating;             //if its equal we check the ratings
+  }
+  else
+  {
+    return ((struct movie*)a)->year < ((struct movie*)b)->year;                 //otherwise recursively come back and check next year to find match all the way through
+  }
+}
+
+//WORKING HERE 01/16 AM
+//function to get the highest rated by year
+void byHighestRated (struct movie *head)
+{
+  struct movie *dupMovie = copyList(head);                                      //make a copy of our linked list and sort it
+  //sort by years then ratings
+  sorting(dupMovie, dupMovie->next)
+
+}
+
 int main()
 {
   //build out file reading which will create its own linked list
@@ -309,7 +333,7 @@ int main()
       }
       case 2:
       {
-        //byHighestRated(head);                                                 //passes and shows the user the highest rated sorted movie list
+        byHighestRated(head);                                                   //passes and shows the user the highest rated sorted movie list
         break;
       }
       case 3:

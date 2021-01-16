@@ -21,9 +21,9 @@ void printList(struct movie *m)
 {
   while(m !=NULL)
   {
-    printf("Title: %s ,", m->title);
-    printf("Year: %d ,", m->year);
-    printf("Language(s): %s ,", m->language);
+    printf("Title: %s, ", m->title);
+    printf("Year: %d, ", m->year);
+    printf("Language(s): %s, ", m->language);
     printf("Rating: %.1f ", m->rating);
     printf("\n");
     m = m->next;
@@ -53,28 +53,46 @@ struct movie* copyList(struct movie *head)                                      
     return tempMovie;                                                           //returns the temp movie list now to whatever function needs it
   }
 }
+
+//function to delete our temp linked lists
+void deleteList(struct movie** head_ref)
+{
+  struct movie* current = *head_ref;
+  struct movie* next;
+
+  while (current != NULL)
+  {
+    next = current->next;
+    free(current);
+    current = next;
+  }
+  *head_ref = NULL;
+}
+
 //function that will sort by the year by making a copy passing it to copyList
 void byYear(struct movie *head, int y)
 {
   //TESTING
   //printf("TEST: NOW I AM IN byYear FUNCTION \n");
-  struct movie *dupMovie = copyList(head);                                                             //first pass the original list to the copy list and return a temp list that we can use to sort
+  struct movie* dupMovie = copyList(head);                                                             //first pass the original list to the copy list and return a temp list that we can use to sort
   //TESTING print out our duplicate copied list
   //printf("DUPLICATE LIST\n");
   //printList(dupMovie);
   //use the year to find matching movies and print those
-  while(dupMovie!=NULL)
+  while(dupMovie!=NULL)                                                         //while we are not at the end of the linked list
   {
-    while(dupMovie->year == y)                                                      //if our list head year matches user input
+    if (dupMovie->year == y)                                                    //if we find a value equal to the year we entered
     {
-      printf("%s \n", dupMovie->title);                                             //print the title then new line
-      dupMovie = dupMovie->next;
+      printf("%s \n", dupMovie->title);                                         //print the title of the movie
+      dupMovie = dupMovie->next;                                                //iterate to the next set
     }
-    while(dupMovie->year != y)
+    else                                                                        //else just skip over non needed
     {
-      dupMovie = dupMovie->next;
+      dupMovie = dupMovie->next;                                                //iterate to next
     }
   }
+  deleteList(&dupMovie);                                                        //delete the temp list
+  printf("\n");                                                                 //line for formatting
 }
 
 int main()

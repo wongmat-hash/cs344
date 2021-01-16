@@ -31,25 +31,38 @@ void printList(struct movie *m)
 }
 
 //function to copy our linked list to create a temp list
-void copyList(struct movie **head)                                              //takes the head in then will make a copy to sort
+struct movie* copyList(struct movie *head)                                              //takes the head in then will make a copy to sort
 {
   //TEST TO SHOW THAT FUNCTION IS WORKING
-  printf("TEST: Now inside byYear Function\n");
+  printf("TEST: Now inside COPYLIST Function\n");
   //now create a temp which will be a copy of the entire list
   if(head==NULL)                                                                //checks our function to see if its NULL or not
   {
-    printf("ERROR list passed into byYear is NULL\n");
-    return NULL;                                                                //not possible so return to main
+    printf("ERROR list passed into COPYLIST is NULL\n");
+    return NULL;                                                                     //not possible so return to main
   }
   else
   {
-    struct Movie *tempMovie = (struct Movie*)malloc(sizeof(struct movie));      //declare our temp list
-    tempMovie->title = head->title;                                             //pass all our data now 
+    struct movie *tempMovie = (struct movie*)malloc(sizeof(struct movie));      //declare our temp list
+    strcpy(tempMovie->title, head->title);                                             //pass all our data now
     tempMovie->year = head->year;
-    tempMovie->language = head->language;
+    strcpy(tempMovie->language, head->language);
     tempMovie->rating = head->rating;
-    tempMovie->next = copyList(head->next);
+    tempMovie->next = copyList(head->next);                                     //recursivly now continue and copy the rest of the list until the end
+
+    return tempMovie;                                                           //returns the temp movie list now to whatever function needs it
   }
+}
+//function that will sort by the year by making a copy passing it to copyList
+void byYear(struct movie **head)
+{
+  //TESTING
+  printf("TEST: NOW I AM IN byYear FUNCTION \n");
+  struct movie *dupMovie = copyList(*head);                                                             //first pass the original list to the copy list and return a temp list that we can use to sort
+  //TESTING print out our duplicate copied list
+  //printf("DUPLICATE LIST\n");
+  //printList(dupMovie);
+}
 
 int main()
 {
@@ -253,7 +266,7 @@ int main()
         //test to show user input saved correctly
         //printf("YEAR: %d", year);                                             //TEST PASS
         printf("\n");
-        byYear(&head);                                                 //passes it to the function we created above
+        byYear(&head, year);                                                    //passes it to the function we created above
         break;
       }
       case 2:

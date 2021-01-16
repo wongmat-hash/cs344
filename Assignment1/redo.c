@@ -72,6 +72,7 @@ void deleteList(struct movie** head_ref)
 //function that will sort by the year by making a copy passing it to copyList
 void byYear(struct movie *head, int y)
 {
+  int flag = 0;                                                                 //this will trigger our warning msg if 0 still
   //TESTING
   //printf("TEST: NOW I AM IN byYear FUNCTION \n");
   struct movie* dupMovie = copyList(head);                                                             //first pass the original list to the copy list and return a temp list that we can use to sort
@@ -84,6 +85,7 @@ void byYear(struct movie *head, int y)
     if (dupMovie->year == y)                                                    //if we find a value equal to the year we entered
     {
       printf("%s \n", dupMovie->title);                                         //print the title of the movie
+      flag = 1;
       dupMovie = dupMovie->next;                                                //iterate to the next set
     }
     else                                                                        //else just skip over non needed
@@ -91,6 +93,11 @@ void byYear(struct movie *head, int y)
       dupMovie = dupMovie->next;                                                //iterate to next
     }
   }
+  if (flag == 0)                                                                //if we parsed the entire list and our flag was 0 means we found nothing
+  {
+    printf("\nNo data about movies released in year %d\n", y);             //print out that we found nothing in relation to it                                                           //new line for formatting
+  }
+
   deleteList(&dupMovie);                                                        //delete the temp list
   printf("\n");                                                                 //line for formatting
 }

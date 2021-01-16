@@ -31,7 +31,7 @@ void printList(struct movie *m)
 }
 
 //function to copy our linked list to create a temp list
-struct movie* copyList(struct movie *head)                                              //takes the head in then will make a copy to sort
+struct movie* copyList(struct movie *head)                                      //takes the head in then will make a copy to sort
 {
   //TEST TO SHOW THAT FUNCTION IS WORKING
   //printf("TEST: Now inside COPYLIST Function\n");
@@ -39,12 +39,12 @@ struct movie* copyList(struct movie *head)                                      
   if(head==NULL)                                                                //checks our function to see if its NULL or not
   {
     //printf("ERROR list passed into COPYLIST is NULL\n");
-    return NULL;                                                                     //not possible so return to main
+    return NULL;                                                                //not possible so return to main
   }
   else
   {
     struct movie *tempMovie = (struct movie*)malloc(sizeof(struct movie));      //declare our temp list
-    strcpy(tempMovie->title, head->title);                                             //pass all our data now
+    strcpy(tempMovie->title, head->title);                                      //pass all our data now
     tempMovie->year = head->year;
     strcpy(tempMovie->language, head->language);
     tempMovie->rating = head->rating;
@@ -75,7 +75,7 @@ void byYear(struct movie *head, int y)
   int flag = 0;                                                                 //this will trigger our warning msg if 0 still
   //TESTING
   //printf("TEST: NOW I AM IN byYear FUNCTION \n");
-  struct movie* dupMovie = copyList(head);                                                             //first pass the original list to the copy list and return a temp list that we can use to sort
+  struct movie* dupMovie = copyList(head);                                      //first pass the original list to the copy list and return a temp list that we can use to sort
   //TESTING print out our duplicate copied list
   //printf("DUPLICATE LIST\n");
   //printList(dupMovie);
@@ -95,7 +95,7 @@ void byYear(struct movie *head, int y)
   }
   if (flag == 0)                                                                //if we parsed the entire list and our flag was 0 means we found nothing
   {
-    printf("\nNo data about movies released in year %d\n", y);             //print out that we found nothing in relation to it                                                           //new line for formatting
+    printf("\nNo data about movies released in year %d\n", y);                  //print out that we found nothing in relation to it
   }
 
   deleteList(&dupMovie);                                                        //delete the temp list
@@ -151,7 +151,7 @@ int main()
   third->rating = 7.9;
   third->next = fourth;
 
-  strcpy(fourth->title, "Iron Man 2");                                           //need strcpy
+  strcpy(fourth->title, "Iron Man 2");                                          //need strcpy
   fourth->year = 2010;
   strcpy(third->language, "[English;French;Russian]");                          //need strcpy
   fourth->rating = 7;
@@ -169,7 +169,7 @@ int main()
   sixth->rating = 7.9;
   sixth->next = seventh;
 
-  strcpy(seventh->title, "The Avengers");                                         //need strcpy
+  strcpy(seventh->title, "The Avengers");                                       //need strcpy
   seventh->year = 2012;
   strcpy(third->language, "[English;Russian;Hindi]");                           //need strcpy
   seventh->rating = 8.1;
@@ -193,57 +193,57 @@ int main()
   tenth->rating = 7.4;
   tenth->next = eleventh;
 
-  strcpy(eleventh->title, "Thor");                                                 //need strcpy
+  strcpy(eleventh->title, "Thor");                                              //need strcpy
   eleventh->year = 2011;
   strcpy(third->language, "[English]");                                         //need strcpy
   eleventh->rating = 7.4;
   eleventh->next = twelveth;
 
-  strcpy(twelveth->title, "Thor: The Dark World");                                 //need strcpy
+  strcpy(twelveth->title, "Thor: The Dark World");                              //need strcpy
   twelveth->year = 2013;
   strcpy(third->language, "[English]");                                         //need strcpy
   twelveth->rating = 7;
   twelveth->next = thirteenth;
 
-  strcpy(thirteenth->title, "Spider-Man: Homecoming");                                 //need strcpy
+  strcpy(thirteenth->title, "Spider-Man: Homecoming");                          //need strcpy
   thirteenth->year = 2017;
-  strcpy(third->language, "[English;Spanish]");                                         //need strcpy
+  strcpy(third->language, "[English;Spanish]");                                 //need strcpy
   thirteenth->rating = 7.5;
   thirteenth->next = fourteenth;
 
-  strcpy(fourteenth->title, "Captain America: The First Avenger");                                 //need strcpy
+  strcpy(fourteenth->title, "Captain America: The First Avenger");              //need strcpy
   fourteenth->year = 2011;
-  strcpy(third->language, "[English;Norwegian;French]");                                         //need strcpy
+  strcpy(third->language, "[English;Norwegian;French]");                        //need strcpy
   fourteenth->rating = 6.9;
   fourteenth->next = fifteenth;
 
-  strcpy(fifteenth->title, "Captain America: Civil War");                                 //need strcpy
+  strcpy(fifteenth->title, "Captain America: Civil War");                       //need strcpy
   fifteenth->year = 2016;
-  strcpy(third->language, "[English;German;Russian;Romanian;Hindi]");                                         //need strcpy
+  strcpy(third->language, "[English;German;Russian;Romanian;Hindi]");           //need strcpy
   fifteenth->rating = 7.8;
   fifteenth->next = sixteenth;
 
-  strcpy(sixteenth->title, "Ant-Man");                                 //need strcpy
+  strcpy(sixteenth->title, "Ant-Man");                                          //need strcpy
   sixteenth->year = 2015;
   strcpy(third->language, "[English]");                                         //need strcpy
   sixteenth->rating = 7.3;
   sixteenth->next = seventeenth;
 
-  strcpy(seventeenth->title, "Captain America: The Winter Soldier");                                 //need strcpy
+  strcpy(seventeenth->title, "Captain America: The Winter Soldier");            //need strcpy
   seventeenth->year = 2014;
-  strcpy(third->language, "[English;French]");                                         //need strcpy
+  strcpy(third->language, "[English;French]");                                  //need strcpy
   seventeenth->rating = 7.8;
   seventeenth->next = eighteenth;
 
-  strcpy(eighteenth->title, "Mary Queen of Scots");                                 //need strcpy
+  strcpy(eighteenth->title, "Mary Queen of Scots");                             //need strcpy
   eighteenth->year = 2018;
   strcpy(third->language, "[English]");                                         //need strcpy
   eighteenth->rating = 6.9;
   eighteenth->next = nineteenth;
 
-  strcpy(nineteenth->title, "Revolting Rhymes Part One");                                 //need strcpy
+  strcpy(nineteenth->title, "Revolting Rhymes Part One");                       //need strcpy
   nineteenth->year = 2016;
-  strcpy(third->language, "[English;Swedish]");                                         //need strcpy
+  strcpy(third->language, "[English;Swedish]");                                 //need strcpy
   nineteenth->rating = 7.7;
   nineteenth->next = twentieth;
 
@@ -253,25 +253,25 @@ int main()
   twentieth->rating = 7.2;
   twentieth->next = twentyone;
 
-  strcpy(twentyone->title, "Free Fire");                                 //need strcpy
+  strcpy(twentyone->title, "Free Fire");                                        //need strcpy
   twentyone->year = 2016;
   strcpy(third->language, "[English]");                                         //need strcpy
   twentyone->rating = 6.4;
   twentyone->next = twentytwo;
 
-  strcpy(twentytwo->title, "Right on Track");                                 //need strcpy
+  strcpy(twentytwo->title, "Right on Track");                                   //need strcpy
   twentytwo->year = 2003;
   strcpy(third->language, "[English]");                                         //need strcpy
   twentytwo->rating = 6.6;
   twentytwo->next = twentythree;
 
-  strcpy(twentythree->title, "Rise of the Guardians");                                 //need strcpy
+  strcpy(twentythree->title, "Rise of the Guardians");                          //need strcpy
   twentythree->year = 2012;
-  strcpy(third->language, "[English;French]");                                         //need strcpy
+  strcpy(third->language, "[English;French]");                                  //need strcpy
   twentythree->rating = 7.3;
   twentythree->next = twentyfour;
 
-  strcpy(twentyfour->title, "Anna Karenina");                                 //need strcpy
+  strcpy(twentyfour->title, "Anna Karenina");                                   //need strcpy
   twentyfour->year = 2012;
   strcpy(third->language, "[English]");                                         //need strcpy
   twentyfour->rating = 8.1;
@@ -304,17 +304,17 @@ int main()
         //test to show user input saved correctly
         //printf("YEAR: %d", year);                                             //TEST PASS
         printf("\n");
-        byYear(head, year);                                                    //passes it to the function we created above
+        byYear(head, year);                                                     //passes it to the function we created above
         break;
       }
       case 2:
       {
-        //show_highest_rated(m, count);                                         //passes and shows the user the highest rated sorted movie list
+        //byHighestRated(head);                                                 //passes and shows the user the highest rated sorted movie list
         break;
       }
       case 3:
       {
-        printf("Enter the language for which you want to see movies: ");         //asks the user for what language input
+        printf("Enter the language for which you want to see movies: ");        //asks the user for what language input
         scanf("%s", userLanguage);                                              //scans for user input on the language
         //show_movies_bylang(m, count, lang);                                   //passes it to the function we created above
         break;

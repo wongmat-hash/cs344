@@ -6,28 +6,54 @@
 #include <stdlib.h>
 #include <string.h>
 
+//struct for movies
 struct movie
 {
-  char *title;                                                                  //title
+  char title[100];                                                              //title
   int year;                                                                     //year
-  char *language;                                                               //language
-  float *rating;                                                                //rating value
-  struct mMovie *next;                                                          //pointer to next movie
+  char language[100];                                                           //language
+  double rating;                                                                //rating value
+  struct movie *next;                                                           //pointer to next movie
 };
 
-//function to create movies
-movie *createMovie(char *t, int y, char *l, float *r)
+//function to print our linked list for TESTING
+void printList(struct movie *m)
 {
-  movie *m = malloc(sizeof(struct movie));                                      //allocate memory for the pointers themselves in the struct
-  m->title = strdup(t);                                                         //set the title that is passed in by duplicating a string of char
-  m->year = y;                                                                  //since this is an int we can simply set it
-  m->language = strdup(l);                                                      //set the language by copying the string using strdup
-  m->rating = r;                                                                //since this is a float we can simply copy it
-  return m;                                                                     //return the newly created movie struct with correct values
+  while(m !=NULL)
+  {
+    printf(" %s: ", m->title);
+    printf(" %d: ", m->year);
+    printf(" %s: ", m->language);
+    printf(" %f: ", m->rating);
+    printf("\n");
+    m = m->next;
+  }
 }
-
 int main()
 {
-  //create a linked list of movies
-  //populate them and then
+
+  struct movie* head = malloc(sizeof(struct movie));
+  struct movie* second = malloc(sizeof(struct movie));
+  struct movie* third = malloc(sizeof(struct movie));
+
+  strcpy(head->title, "The Incredible Hulk");                                   //need strcpy
+  head->year = 2008;
+  strcpy(head->language, "[English, Portuguese, Spanish]");                     //need strcpy
+  head->rating = 6.8;
+  head->next = second;
+
+  strcpy(second->title, "Sherlock Holmes");                                     //need strcpy
+  second->year = 2009;
+  strcpy(second->language, "[English, French]");                                //need strcpy
+  second->rating = 7.6;
+  second->next = third;
+
+  strcpy(third->title, "Iron Man");                                             //need strcpy
+  third->year = 2008;
+  strcpy(third->language, "[English, Persian, Urdu, Arabic, Hungarian]");       //need strcpy
+  third->rating = 7.9;
+  third->next = NULL;
+
+  printList(head);
+return 0;
 }

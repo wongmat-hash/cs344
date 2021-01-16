@@ -7,9 +7,10 @@
 struct movie
 {
   char title[1000];         //we can store the title as a char
-  float rating;             //we can store the rating as a float
   int year;                 //we can store the year as an int
   char lang[1000];          //we can store the language as a char
+  float rating;             //we can store the rating as a float
+  struct movie next*        //pointer to next 
 };
 
 //we need a sort function to compare and sort out our movies released by year
@@ -118,8 +119,10 @@ int main(int argc, char** argv)                                                 
         int k = 1;
         while(tok != NULL)
         {
+          //broken
           if (k==1) strcpy(m[count-1].title, tok);
           if (k==2) m[count-1].year = atoi(tok);
+          //working
           if (k==3) strcpy(m[count-1].lang, tok);
           if (k==4) m[count-1].rating = atof(tok);
           tok = strtok(NULL, ",\n");
@@ -131,6 +134,19 @@ int main(int argc, char** argv)                                                 
     }
                                                                                 //show the user in terminal that the file has been processed correctly
     printf("Processed file %s and parsed data for %d movies\n", filename, count);
+
+    //test for making sure our process happened
+    printf("testing to make sure that we processed everything correctly: \n");
+    printf("\n");
+    for (int i =0; i < 26; i++)
+    {
+      printf("Line: %d ", i);
+      printf("Movie title: %s", m[i].title);
+      printf("Movie year: %d", m[i].year);
+      printf("Movie lang: %s", m[i].lang);
+      printf("Movie rating: %1.1f\n", m[i].rating);
+      printf("\n");
+    }
 
     int op;                                                                     //storage int for user input
     int year;                                                                   //storage year for user input

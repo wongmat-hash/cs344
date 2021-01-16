@@ -43,5 +43,25 @@ struct movie
 //main
 int main(int argc, char** argv)
 {
-  
+  FILE *fp = fopen("test.csv", "r");
+  head = NULL;
+  if (fp == NULL)
+  {
+    printf("\n error opening file");
+    return -1;
+  }
+  while((line=fgets(buf,sizeof(buf),fp))!=NULL)
+  {
+    word = strtok(line,",");
+    head = add(head, word);
+
+    while(word!=NULL)
+    {
+      word=strtok(NULL,",");
+      head=add(head,word);
+    }
+    display(head);
+    printf("\n");
+  }
+  return 0;
 }

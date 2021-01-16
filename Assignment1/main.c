@@ -119,9 +119,9 @@ int main(int argc, char** argv)                                                 
         while(tok != NULL)
         {
           if (k==1) strcpy(m[count-1].title, tok);
-          if (k==2) m[count-1].rating = atof(tok);
-          if (k==3) m[count-1].year = atoi(tok);
-          if (k==4) strcpy(m[count-1].lang, tok);
+          if (k==2) m[count-1].year = atoi(tok);
+          if (k==3) strcpy(m[count-1].lang, tok);
+          if (k==4) m[count-1].rating = atof(tok);
           tok = strtok(NULL, ",\n");
           k++;
         }

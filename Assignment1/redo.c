@@ -30,7 +30,7 @@ void printList(struct movie *m)
   }
 }
 
-//function to copy our linked list to create a temp list
+//function to copy our linked list to create a temp list DONE
 struct movie* copyList(struct movie *head)                                      //takes the head in then will make a copy to sort
 {
   //TEST TO SHOW THAT FUNCTION IS WORKING
@@ -54,7 +54,7 @@ struct movie* copyList(struct movie *head)                                      
   }
 }
 
-//function to delete our temp linked lists
+//function to delete our temp linked lists DONE
 void deleteList(struct movie** head_ref)
 {
   struct movie* current = *head_ref;
@@ -69,7 +69,7 @@ void deleteList(struct movie** head_ref)
   *head_ref = NULL;
 }
 
-//function that will sort by the year by making a copy passing it to copyList
+//function that will sort by the year by making a copy passing it to copyList DONE
 void byYear(struct movie *head, int y)
 {
   int flag = 0;                                                                 //this will trigger our warning msg if 0 still
@@ -306,7 +306,7 @@ int main()
   printf("TEST COMPLETE\n");
   printf("\n");
 
-  //build out menu options for user to display
+  //build out menu options for user to display DONE 
   int userChoice, year;                                                         //user entry variable holder
   char userLanguage[100];                                                       //user entry for language
   while(1)                                                                      //use a loop to continue asking user for inputs

@@ -249,7 +249,6 @@ void byLang(struct movie *head, char language[])
 }
 int main(int argc, char** argv)
 {
-
   //build out file reading which will create its own linked list
   if (argc == 1)
   {
@@ -277,11 +276,11 @@ int main(int argc, char** argv)
       return 0;
     }
 
-    char line[4096];
+    char line[256];
     int count =0;                    //stores the number of lines we looked at
 
     //printf("IM OUTSIDE THE PROGRAM\n");
-    while(fgets(line, sizeof(line), file))
+    while(fgets(line, sizeof(line), file) !=NULL)
     {
       char* tp = strdup(line);                                                 //tp holds the entire source now from strdup
       char* tok = strtok(tp, "\n");                                            //parsing the tp file until we hit new lines as our token
@@ -308,6 +307,7 @@ int main(int argc, char** argv)
       count++;
       //now push to the linked list
       fclose(file);
+
     //print the processing message
     printf("Processed file %s and parsed data for %d movies\n", fileName, count);
 
@@ -361,5 +361,4 @@ int main(int argc, char** argv)
     }
     deleteList(&head);
 return 0;
-}
 }

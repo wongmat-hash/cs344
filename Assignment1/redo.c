@@ -196,30 +196,43 @@ void byYear(struct movie *head, int y)
 //function to swap our movie node data
 void swapper(struct movie *a, struct movie *b)
 {
-  printf("Inside swapper function\n");
-  char tempTitle[100];
-  strcpy(tempTitle, a->title);
-  //int tempYear = atoi(a->year);
-  char tempYear[100];
-  strcpy(tempYear, a->year);
-  char tempLanguage[100];
-  strcpy(tempLanguage, a->language);
-  //float tempRating = atof(a->rating);
-  char tempRating[100];
-  strcpy(tempRating, a->rating);
-  //now set a to b and b to temp
-  strcpy(a->title, b->title);
-  strcpy(a->year, b->year);
-  strcpy(a->language, b->language);
-  strcpy(a->rating, b->rating);
+  //declare a temp node
+  struct movie *tempNode = NULL;
+  struct movie **tempTemp = &tempNode;
+  //copy contents of a to tempNode
+  *tempTemp = malloc(sizeof(struct movie));
+  memcpy(*tempTemp, a, sizeof(struct movie));
 
-  strcpy(b->title, tempTitle);
+  printf("Inside swapper function\n");
+    ///char tempTitle[100];
+    ///strcpy(tempTitle, a->title);
+  //int tempYear = atoi(a->year);
+    ///char tempYear[100];
+    ///strcpy(tempYear, a->year);
+    ///char tempLanguage[100];
+    ///strcpy(tempLanguage, a->language);
+  //float tempRating = atof(a->rating);
+    ///char tempRating[100];
+    ///strcpy(tempRating, a->rating);
+  //now set a to b and b to temp
+
+  //now use memcpy to copy b > a
+  memcpy(a, b, sizeof(struct movie));
+  //now memcpy temp > b
+  memcpy(b, *tempTemp, (sizeof(struct movie)));
+
+    ///strcpy(a->title, b->title);
+    ///strcpy(a->year, b->year);
+    ///strcpy(a->language, b->language);
+    ///strcpy(a->rating, b->rating);
+
+    ///strcpy(b->title, tempTitle);
   //sprintf(b->year, "%d", tempYear);
-  strcpy(b->year, tempYear);
+    ///strcpy(b->year, tempYear);
   //b->year = tempYear;
-  strcpy(b->language, tempLanguage);
+    ///strcpy(b->language, tempLanguage);
   //sprintf(b->rating, "%f", tempRating);
-  strcpy(b->rating, tempRating);
+    ///strcpy(b->rating, tempRating);
   //b->rating = tempRating;
 }
 

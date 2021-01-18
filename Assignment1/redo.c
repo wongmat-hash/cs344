@@ -102,18 +102,62 @@ void byYear(struct movie *head, int y)
   printf("\n");                                                                 //line for formatting
 }
 
+//function to swap our movie node data
+void swapper(struct movie *a, struct movie *b)
+{
+  char tempTitle[100];
+  strcpy(tempTitle, a->title);
+  int tempYear = a->year;
+  char tempLanguage[100];
+  strcpy(tempLanguage, a->language);
+  float tempRating = a->rating;
+
+  //now set a to b and b to temp
+  strcpy(a->title, b->title);
+  a->year = b->year;
+  strcpy(a->language, b->language);
+  a->rating = b->rating;
+
+  strcpy(b->title, tempTitle);
+  b->year = tempYear;
+  strcpy(b->language, tempLanguage);
+  b->rating = tempRating;
+}
+
 //WORKING HERE 01/16 AM
 //function to sort by year then rating
-int sorting(const void *a, const void *b)
+void sorting(struct movie *head)
 {
-  if (((struct movie *)a)->year == ((struct movie*)b)->year)                    //first we sort by year
+  //run a simple bubble sort to sort out by year first
+  int swapped, i;                                                               //storage variable
+  struct movie *ptr1;
+  struct movie *lptr = NULL;
+
+  //check to see if our list is empty
+  if (head == NULL)
   {
-    return ((struct movie*)a)->rating < ((struct movie*)b)->rating;             //if its equal we check the ratings
+    return;
   }
-  else
+  do
   {
-    return ((struct movie*)a)->year < ((struct movie*)b)->year;                 //otherwise recursively come back and check next year to find match all the way through
+    swapped = 0;                                                                //initiate our counter for swap
+    ptr1 = head;                                                                //set our pointer to the head list
+    while (ptr1->next != lptr)                                                  //while our crwaler is not equal to null for next
+    {
+      if (ptr1->year > ptr1->next->year)                                        //if the crawler year is greater than the next value
+      {
+        swapper(ptr1, ptr1->next);                                                 //swap them
+        swapped = 1;                                                            //set our counter
+      }
+      ptr1=ptr1->next;                                                          //set the next value so crwaler keeps going
+    }
+    lptr = ptr1;                                                                //move the next value to the crawler
   }
+  while(swapped);
+  //TESTING PRINTING OUT NEW LIST
+  //printf("PRINTING OUR SORTED LIST BY YEAR\n");
+  //printList(head);
+  //printf("\n");
 }
 
 //WORKING HERE 01/16 AM
@@ -122,8 +166,32 @@ void byHighestRated (struct movie *head)
 {
   struct movie *dupMovie = copyList(head);                                      //make a copy of our linked list and sort it
   //sort by years then ratings
-  sorting(dupMovie, dupMovie->next)
-
+  sorting(dupMovie);
+  //test to make sure its been sorted correctly
+  //printf("PRINTING DEMO:\n");
+  //printList(dupMovie);
+  struct movie  *ptr1;                                                          //storage for iterating
+  struct movie *lptr = NULL;                                                    //storage for interating
+  do
+  {
+    ptr1 = dupMovie;                                                            //set this to the beginning of our list
+    lptr = dupMovie->next;                                                      //set this to the next in line
+    if (ptr1->year != lptr->year)
+    { //if it is the only one in that year its the highets rated for that year so print it
+      printf("Title: %s, ", ptr1->title);
+      printf("Year: %d, ", ptr1->year);
+      printf("Language(s): %s, ", ptr1->language);
+      printf("Rating: %.1f ", ptr1->rating);
+      printf("\n");
+      //iterate
+      ptr1 = ptr1->next;
+      lptr = lptr->next;
+    }
+    else if (ptr1->year == lptr->year)
+    { //otherwise check if the years are equal and then check if the ratings are equal
+      if ()
+    }
+  }while (lptr->next !=NULL);
 }
 
 int main()
@@ -306,7 +374,7 @@ int main()
   printf("TEST COMPLETE\n");
   printf("\n");
 
-  //build out menu options for user to display DONE 
+  //build out menu options for user to display DONE
   int userChoice, year;                                                         //user entry variable holder
   char userLanguage[100];                                                       //user entry for language
   while(1)                                                                      //use a loop to continue asking user for inputs

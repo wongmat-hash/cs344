@@ -181,7 +181,7 @@ void sorting(struct movie *head)
   }while(ptr1->next !=NULL);
 }
 
-//WORKING HERE 01/16 AM
+//WORKING HERE 01/16 AM DONE 1/17/21
 //function to get the highest rated by year
 void byHighestRated (struct movie *head)
 {
@@ -191,188 +191,100 @@ void byHighestRated (struct movie *head)
   //test to make sure its been sorted correctly
   //printf("PRINTING DEMO:\n");
   //printList(dupMovie);
-
-
-
-
+  deleteList(&dupMovie);                                                        //free up our memory
 
 }
 
-int main()
+void byLang(struct movie *head, char language[])
+{
+  int flag;                                                                     //our boolean
+  //make a temp for our list again
+  struct movie* dupMovie = copyList(head);
+  while(dupMovie!=NULL)
+  {
+    if (strcmp(dupMovie->language, language)==0)
+    {
+      printf("%d ", dupMovie->year);
+      printf("%s ", dupMovie->title);
+      printf("\n");
+      flag = 1;
+      dupMovie = dupMovie->next;
+    }
+    else
+    {
+      dupMovie = dupMovie->next;
+    }
+  }
+  if (flag == 0)
+  {
+    printf("\nNo data about movies released in %s\n", language);
+  }
+
+}
+int main(int argc, char** argv)
 {
   //build out file reading which will create its own linked list
+  if (argc == 1)
+  {
+    printf("Movie file not specified!\n");                                      //if we cannot open the file
+  }
+  else
+  {
+    //create the struct node that we can allocate memory for
+    struct movie *head = malloc(sizeof(struct movie));
 
+    //extract the file contents and begin storing it into the struct
+    char* fileName = argv[1];                                                   //set the name user specified to fileName
 
-  //allocate all the the memories
-  struct movie* head = malloc(sizeof(struct movie));
-  struct movie* second = malloc(sizeof(struct movie));
-  struct movie* third = malloc(sizeof(struct movie));
-  struct movie* fourth = malloc(sizeof(struct movie));
-  struct movie* fifth = malloc(sizeof(struct movie));
-  struct movie* sixth = malloc(sizeof(struct movie));
-  struct movie* seventh = malloc(sizeof(struct movie));
-  struct movie* eigth = malloc(sizeof(struct movie));
-  struct movie* ningth = malloc(sizeof(struct movie));
-  struct movie* tenth = malloc(sizeof(struct movie));
-  struct movie* eleventh = malloc(sizeof(struct movie));
-  struct movie* twelveth = malloc(sizeof(struct movie));
-  struct movie* thirteenth = malloc(sizeof(struct movie));
-  struct movie* fourteenth = malloc(sizeof(struct movie));
-  struct movie* fifteenth = malloc(sizeof(struct movie));
-  struct movie* sixteenth = malloc(sizeof(struct movie));
-  struct movie* seventeenth = malloc(sizeof(struct movie));
-  struct movie* eighteenth = malloc(sizeof(struct movie));
-  struct movie* nineteenth = malloc(sizeof(struct movie));
-  struct movie* twentieth = malloc(sizeof(struct movie));
-  struct movie* twentyone = malloc(sizeof(struct movie));
-  struct movie* twentytwo = malloc(sizeof(struct movie));
-  struct movie* twentythree = malloc(sizeof(struct movie));
-  struct movie* twentyfour = malloc(sizeof(struct movie));
+    //open the file
+    FILE *file = fopen(fileName, "r");
 
-  strcpy(head->title, "The Incredible Hulk");                                   //need strcpy
-  head->year = 2008;
-  strcpy(head->language, "[English;Portuguese;Spanish]");                       //need strcpy
-  head->rating = 6.8;
-  head->next = second;
+    //error validation to open the file
+    if (file == NULL)
+    {
+      printf("There is some error opening the file %s", fileName);
+      return 0;
+    }
 
-  strcpy(second->title, "Sherlock Holmes");                                     //need strcpy
-  second->year = 2009;
-  strcpy(second->language, "[English;French]");                                 //need strcpy
-  second->rating = 7.6;
-  second->next = third;
+    char line[4096];
+    int count = 0;
 
-  strcpy(third->title, "Iron Man");                                             //need strcpy
-  third->year = 2008;
-  strcpy(third->language, "[English;Persian;Urdu;Arabic;Hungarian]");           //need strcpy
-  third->rating = 7.9;
-  third->next = fourth;
-
-  strcpy(fourth->title, "Iron Man 2");                                          //need strcpy
-  fourth->year = 2010;
-  strcpy(third->language, "[English;French;Russian]");                          //need strcpy
-  fourth->rating = 7;
-  fourth->next = fifth;
-
-  strcpy(fifth->title, "Iron Man 3");                                           //need strcpy
-  fifth->year = 2013;
-  strcpy(third->language, "[English]");                                         //need strcpy
-  fifth->rating = 7.2;
-  fifth->next = sixth;
-
-  strcpy(sixth->title, "Thor: Ragnarok,2017");                                  //need strcpy
-  sixth->year = 2013;
-  strcpy(third->language, "[English]");                                         //need strcpy
-  sixth->rating = 7.9;
-  sixth->next = seventh;
-
-  strcpy(seventh->title, "The Avengers");                                       //need strcpy
-  seventh->year = 2012;
-  strcpy(third->language, "[English;Russian;Hindi]");                           //need strcpy
-  seventh->rating = 8.1;
-  seventh->next = eigth;
-
-  strcpy(eigth->title, "Doctor Strange");                                       //need strcpy
-  eigth->year = 2016;
-  strcpy(third->language, "[English]");                                         //need strcpy
-  eigth->rating = 7.5;
-  eigth->next = ningth;
-
-  strcpy(ningth->title, "Avengers: Infinity War");                               //need strcpy
-  ningth->year = 2018;
-  strcpy(third->language, "[English]");                                         //need strcpy
-  ningth->rating = 8.5;
-  ningth->next = tenth;
-
-  strcpy(tenth->title, "Avengers: Age of Ultron");                              //need strcpy
-  tenth->year = 2015;
-  strcpy(third->language, "[English;Korean]");                                  //need strcpy
-  tenth->rating = 7.4;
-  tenth->next = eleventh;
-
-  strcpy(eleventh->title, "Thor: Ragnarok");                                              //need strcpy
-  eleventh->year = 2011;
-  strcpy(third->language, "[English]");                                         //need strcpy
-  eleventh->rating = 7.4;
-  eleventh->next = twelveth;
-
-  strcpy(twelveth->title, "Thor: The Dark World");                              //need strcpy
-  twelveth->year = 2013;
-  strcpy(third->language, "[English]");                                         //need strcpy
-  twelveth->rating = 7;
-  twelveth->next = thirteenth;
-
-  strcpy(thirteenth->title, "Spider-Man: Homecoming");                          //need strcpy
-  thirteenth->year = 2017;
-  strcpy(third->language, "[English;Spanish]");                                 //need strcpy
-  thirteenth->rating = 7.5;
-  thirteenth->next = fourteenth;
-
-  strcpy(fourteenth->title, "Captain America: The First Avenger");              //need strcpy
-  fourteenth->year = 2011;
-  strcpy(third->language, "[English;Norwegian;French]");                        //need strcpy
-  fourteenth->rating = 6.9;
-  fourteenth->next = fifteenth;
-
-  strcpy(fifteenth->title, "Captain America: Civil War");                       //need strcpy
-  fifteenth->year = 2016;
-  strcpy(third->language, "[English;German;Russian;Romanian;Hindi]");           //need strcpy
-  fifteenth->rating = 7.8;
-  fifteenth->next = sixteenth;
-
-  strcpy(sixteenth->title, "Ant-Man");                                          //need strcpy
-  sixteenth->year = 2015;
-  strcpy(third->language, "[English]");                                         //need strcpy
-  sixteenth->rating = 7.3;
-  sixteenth->next = seventeenth;
-
-  strcpy(seventeenth->title, "Captain America: The Winter Soldier");            //need strcpy
-  seventeenth->year = 2014;
-  strcpy(third->language, "[English;French]");                                  //need strcpy
-  seventeenth->rating = 7.8;
-  seventeenth->next = eighteenth;
-
-  strcpy(eighteenth->title, "Mary Queen of Scots");                             //need strcpy
-  eighteenth->year = 2018;
-  strcpy(third->language, "[English]");                                         //need strcpy
-  eighteenth->rating = 6.9;
-  eighteenth->next = nineteenth;
-
-  strcpy(nineteenth->title, "Revolting Rhymes Part One");                       //need strcpy
-  nineteenth->year = 2016;
-  strcpy(third->language, "[English;Swedish]");                                 //need strcpy
-  nineteenth->rating = 7.7;
-  nineteenth->next = twentieth;
-
-  strcpy(twentieth->title, "The Glass Castle");                                 //need strcpy
-  twentieth->year = 2017;
-  strcpy(third->language, "[English]");                                         //need strcpy
-  twentieth->rating = 7.2;
-  twentieth->next = twentyone;
-
-  strcpy(twentyone->title, "Free Fire");                                        //need strcpy
-  twentyone->year = 2016;
-  strcpy(third->language, "[English]");                                         //need strcpy
-  twentyone->rating = 6.4;
-  twentyone->next = twentytwo;
-
-  strcpy(twentytwo->title, "Right on Track");                                   //need strcpy
-  twentytwo->year = 2003;
-  strcpy(third->language, "[English]");                                         //need strcpy
-  twentytwo->rating = 6.6;
-  twentytwo->next = twentythree;
-
-  strcpy(twentythree->title, "Rise of the Guardians");                          //need strcpy
-  twentythree->year = 2012;
-  strcpy(third->language, "[English;French]");                                  //need strcpy
-  twentythree->rating = 7.3;
-  twentythree->next = twentyfour;
-
-  strcpy(twentyfour->title, "Anna Karenina");                                   //need strcpy
-  twentyfour->year = 2012;
-  strcpy(third->language, "[English]");                                         //need strcpy
-  twentyfour->rating = 8.1;
-  twentyfour->next = NULL;
-
+    //read the file line by line
+    while(fgets(line, sizeof(line),file))
+    {
+      if (count >=1)
+      {
+        char *tp = strdup(line);
+        char *tok = strtok(tp, "\n");
+        int k = 1;
+        while (tok!=NULL)
+        {
+          //extract each element based on how the format is in the CSV
+          if (k==1)
+          {
+            strcpy(head->title, tok);
+          }
+          if (k==2)
+          {
+            head->year = atoi(tok);
+          }
+          if (k==3)
+          {
+            strcpy(head->language, tok);
+          }
+          if (k==4)
+          {
+            head->rating = atof(tok);
+          }
+          k++;
+        }
+        free(tp);
+      }
+      count++;
+    }
+    //print the processing message
+    printf("Processed file %s and parsed data for %d movies\n", fileName, count);
+  }
 
   printList(head);
   printf("TEST COMPLETE\n");
@@ -412,7 +324,7 @@ int main()
       {
         printf("Enter the language for which you want to see movies: ");        //asks the user for what language input
         scanf("%s", userLanguage);                                              //scans for user input on the language
-        //show_movies_bylang(m, count, lang);                                   //passes it to the function we created above
+        byLang(head, userLanguage);                                             //passes it to the function we created above
         break;
       }
       case 4:

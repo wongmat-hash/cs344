@@ -16,6 +16,23 @@ struct movie
   struct movie *next;                                                           //pointer to next movie
 };
 
+//push to our linked list data structure
+void push(struct movie *head, char t[], int y, char l[], float f)
+{
+  struct movie * current = head;
+  while (current->next !=NULL)                                    //iterates to the end of the linked list first
+  {
+    current = current->next;
+  }
+  current->next = (struct movie*)malloc(sizeof(struct movie));
+  strcpy(current->next->title, t);         //copy title to next
+  current->next->year = y;
+  strcpy(current->next->language, l);
+  current->next->rating = f;
+  current->next->next = NULL;
+
+}
+
 //function to print our linked list for TESTING
 void printList(struct movie *m)
 {
@@ -231,8 +248,9 @@ int main(int argc, char** argv)
   else
   {
     //create the struct node that we can allocate memory for
-    struct movie *head = malloc(sizeof(struct movie));
+    //struct movie *head = malloc(sizeof(struct movie));
 
+    struct movie *head;
     //extract the file contents and begin storing it into the struct
     char* fileName = argv[1];                                                   //set the name user specified to fileName
 
@@ -247,92 +265,71 @@ int main(int argc, char** argv)
     }
 
     char line[4096];
-    int count = 0;
+    int count =0;                    //stores the number of lines we looked at
 
-    //read the file line by line
-    while(fgets(line, sizeof(line),file))
+    while(fgets(line, sizeof(line), file) !=NULL)
     {
-      if (count >=1)
-      {
-        char *tp = strdup(line);
-        char *tok = strtok(tp, "\n");
-        int k = 1;
-        while (tok!=NULL)
-        {
-          //extract each element based on how the format is in the CSV
-          if (k==1)
-          {
-            strcpy(head->title, tok);
-          }
-          if (k==2)
-          {
-            head->year = atoi(tok);
-          }
-          if (k==3)
-          {
-            strcpy(head->language, tok);
-          }
-          if (k==4)
-          {
-            head->rating = atof(tok);
-          }
-          k++;
-        }
-        free(tp);
-      }
+      char *val1 = strtok(line, ",");                                   //read up to the first comma
+      char *num1 = strtok(NULL, ",");                                   //read up to the next comma
+      int year = atoi(num1);                                                  //convert the char to an int
+      char *val2 = strtok(NULL, "],");                                  //read up to the ]
+      char *float1 = strtok(NULL, " ");                                 //read up to the end of line
+      float tempNum = atof(float1);                                           //convert the char to a float
+
+      push(head, val1, year, val2, tempNum);
       count++;
+      //now push to the linked list
     }
     //print the processing message
     printf("Processed file %s and parsed data for %d movies\n", fileName, count);
-  }
 
-  printList(head);
-  printf("TEST COMPLETE\n");
-  printf("\n");
+    printList(head);
+    printf("TEST COMPLETE\n");
+    printf("\n");
 
-  //build out menu options for user to display DONE
-  int userChoice, year;                                                         //user entry variable holder
-  char userLanguage[100];                                                       //user entry for language
-  while(1)                                                                      //use a loop to continue asking user for inputs
-  {                                                                             //our menu system
-    printf("1. Show movies released in the specified year\n");
-    printf("2. Show highest rated movie for each year\n");
-    printf("3. Show the title and year of release of all movies in a specific language\n");
-    printf("4. Exit from the program\n");
-    printf("Enter a choice from 1 to 4:\n");
+    //build out menu options for user to display DONE
+    int userChoice, year;                                                         //user entry variable holder
+    char userLanguage[100];                                                       //user entry for language
+    while(1)                                                                      //use a loop to continue asking user for inputs
+    {                                                                             //our menu system
+      printf("1. Show movies released in the specified year\n");
+      printf("2. Show highest rated movie for each year\n");
+      printf("3. Show the title and year of release of all movies in a specific language\n");
+      printf("4. Exit from the program\n");
+      printf("Enter a choice from 1 to 4:\n");
 
-    scanf("%d", &userChoice);                                                   //scan for user input and store into op
+      scanf("%d", &userChoice);                                                   //scan for user input and store into op
 
-    switch(userChoice)                                                          //use a switch to display the secondary menu (submenu after first)
-    {
-      case 1:
+      switch(userChoice)                                                          //use a switch to display the secondary menu (submenu after first)
       {
-        printf("Enter the year for which you want to see movies: ");            //asks user for what year they which to look up
-        scanf("%d", &year);                                                     //scans for user input on year
-        //test to show user input saved correctly
-        //printf("YEAR: %d", year);                                             //TEST PASS
-        printf("\n");
-        byYear(head, year);                                                     //passes it to the function we created above
-        break;
-      }
-      case 2:
-      {
-        byHighestRated(head);                                                   //passes and shows the user the highest rated sorted movie list
-        break;
-      }
-      case 3:
-      {
-        printf("Enter the language for which you want to see movies: ");        //asks the user for what language input
-        scanf("%s", userLanguage);                                              //scans for user input on the language
-        byLang(head, userLanguage);                                             //passes it to the function we created above
-        break;
-      }
-      case 4:
-      {
-        exit(0);
+        case 1:
+        {
+          printf("Enter the year for which you want to see movies: ");            //asks user for what year they which to look up
+          scanf("%d", &year);                                                     //scans for user input on year
+          //test to show user input saved correctly
+          //printf("YEAR: %d", year);                                             //TEST PASS
+          printf("\n");
+          byYear(head, year);                                                     //passes it to the function we created above
+          break;
+        }
+        case 2:
+        {
+          byHighestRated(head);                                                   //passes and shows the user the highest rated sorted movie list
+          break;
+        }
+        case 3:
+        {
+          printf("Enter the language for which you want to see movies: ");        //asks the user for what language input
+          scanf("%s", userLanguage);                                              //scans for user input on the language
+          byLang(head, userLanguage);                                             //passes it to the function we created above
+          break;
+        }
+        case 4:
+        {
+          exit(0);
+        }
       }
     }
-  }
-
 return 0;
+}
 }

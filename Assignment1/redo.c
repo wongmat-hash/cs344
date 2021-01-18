@@ -166,7 +166,7 @@ void byYear(struct movie *head, int y)
   //printf("DUPLICATE LIST\n");
   dupMovie = copyList(head);                                      //first pass the original list to the copy list and return a temp list that we can use to sort
   //TESTING print out our duplicate copied list
-  printList(dupMovie);
+  //printList(dupMovie);
   //use the year to find matching movies and print those
   while(dupMovie!=NULL)                                                         //while we are not at the end of the linked list
   {
@@ -198,22 +198,27 @@ void swapper(struct movie *a, struct movie *b)
 {
   char tempTitle[100];
   strcpy(tempTitle, a->title);
-  int tempYear = atoi(a->year);
+  //int tempYear = atoi(a->year);
+  char tempYear[100];
+  strcpy(tempYear, a->year);
   char tempLanguage[100];
   strcpy(tempLanguage, a->language);
-  float tempRating = atof(a->rating);
-
+  //float tempRating = atof(a->rating);
+  char tempRating[100];
+  strcpy(tempRating, a->rating);
   //now set a to b and b to temp
   strcpy(a->title, b->title);
-  a->year = b->year;
+  strcpy(a->year, b->year);
   strcpy(a->language, b->language);
-  a->rating = b->rating;
+  strcpy(a->rating, b->rating);
 
   strcpy(b->title, tempTitle);
-  sprintf(b->year, "%d", tempYear);
+  //sprintf(b->year, "%d", tempYear);
+  strcpy(b->year, tempYear);
   //b->year = tempYear;
   strcpy(b->language, tempLanguage);
-  sprintf(b->rating, "%f", tempRating);
+  //sprintf(b->rating, "%f", tempRating);
+  strcpy(b->rating, tempRating);
   //b->rating = tempRating;
 }
 
@@ -221,6 +226,7 @@ void swapper(struct movie *a, struct movie *b)
 //function to sort by year then rating
 void sorting(struct movie *head)
 {
+  printf("inside sorting function now\n");
   //run a simple bubble sort to sort out by year first
   int swapped, i;                                                               //storage variable
   struct movie *ptr1;
@@ -237,14 +243,23 @@ void sorting(struct movie *head)
     ptr1 = head;                                                                //set our pointer to the head list
     while (ptr1->next != lptr)                                                  //while our crwaler is not equal to null for next
     {
-      if (ptr1->year > ptr1->next->year)                                        //if the crawler year is greater than the next value
+      int p1, p2;
+      p1 = atoi(ptr1->year);
+      p2 = atoi(ptr1->next->year);
+      //if (ptr1->year > ptr1->next->year)                                        //if the crawler year is greater than the next value
+      if(p1 > p2)
       {
         swapper(ptr1, ptr1->next);                                              //swap them
         swapped = 1;                                                            //set our counter
       }
-      else if (ptr1->year == ptr1->next->year)                                  //if the years are the same we need to check the rating and if the ratings are out of order swap
+      //else if (ptr1->year == ptr1->next->year)                                  //if the years are the same we need to check the rating and if the ratings are out of order swap
+      else if (p1 == p2)
       {
-        if (ptr1->rating > ptr1->next->rating)
+        float f1, f2;
+        f1 = atof(ptr1->rating);
+        f2 = atof(ptr1->next->rating);
+        //if (ptr1->rating > ptr1->next->rating)
+        if (f1 > f2)
         {
           swapper(ptr1,ptr1->next);
           swapped = 1;
@@ -262,7 +277,11 @@ void sorting(struct movie *head)
   ptr1 = head;
   do
   {
-    if (ptr1->year != ptr1->next->year)
+    int x1, x2;
+    x1 = atoi(ptr1->year);
+    x2 = atoi(ptr1->next->year);
+    //if (ptr1->year != ptr1->next->year)
+    if (x1 != x2)
     {
       printf("%s ", ptr1->year);
       printf("%s ", ptr1->rating);
@@ -278,8 +297,10 @@ void sorting(struct movie *head)
 //function to get the highest rated by year
 void byHighestRated (struct movie *head)
 {
+  printf("inside highest rated function\n");
   struct movie *dupMovie = copyList(head);                                      //make a copy of our linked list and sort it
   //sort by years then ratings
+  printf("going into sorting function\n");
   sorting(dupMovie);
   //test to make sure its been sorted correctly
   //printf("PRINTING DEMO:\n");

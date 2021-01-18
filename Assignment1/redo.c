@@ -25,19 +25,19 @@ struct movie *createMovie(char *currLine)
 
   char *saveptr;
   //copy the title
-  char *token = strtok_r(currLine, ", ", &saveptr);
+  char *token = strtok_r(currLine, ",", &saveptr);
   currMovie->title = calloc(strlen(token) + 1, sizeof(char));
   strcpy(currMovie->title, token);
   //tit = calloc(strlen(token) + 1, sizeof(char));
   //strcpy(currMovie->title, tit);
   //copy the year
-  token = strtok_r(NULL, ", ", &saveptr);
+  token = strtok_r(NULL, ",", &saveptr);
   //currMovie->year = calloc(strlen(token) + 1, sizeof(char));
   //strcpy(currMovie->year, token);
   yea = calloc(strlen(token) +1, sizeof(char));
   currMovie->year = atoi(yea);
   //copy the language
-  token = strtok_r(NULL, ", ", &saveptr);
+  token = strtok_r(NULL, ",", &saveptr);
   currMovie->language = calloc(strlen(token) + 1, sizeof(char));
   strcpy(currMovie->language, token);
   //lang = calloc(strlen(token) + 1, sizeof(char));

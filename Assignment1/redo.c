@@ -114,7 +114,7 @@ void printList(struct movie *m)
 struct movie* copyList(struct movie *head)                                      //takes the head in then will make a copy to sort
 {
   //TEST TO SHOW THAT FUNCTION IS WORKING
-  printf("TEST: Now inside COPYLIST Function\n");
+  //printf("TEST: Now inside COPYLIST Function\n");
   //now create a temp which will be a copy of the entire list
   if(head==NULL)                                                                //checks our function to see if its NULL or not
   {
@@ -123,19 +123,17 @@ struct movie* copyList(struct movie *head)                                      
   }
   else
   {
-    printf("attempting to copy\n");
-    struct movie *tempMovie = NULL;      //declare our temp list
-    printf("Testing newly created list\n");
-    printList(tempMovie);
-
-    strcpy(tempMovie->title, head->title);                                      //pass all our data now
-    printf("attempted to copy title\n");
-    strcpy(tempMovie->year, head->year);
-    strcpy(tempMovie->language, head->language);
-    strcpy(tempMovie->rating, head->rating);
-    tempMovie->next = copyList(head->next);                                     //recursivly now continue and copy the rest of the list until the end
-
-    return tempMovie;                                                           //returns the temp movie list now to whatever function needs it
+    //printf("attempting to copy\n");
+    struct movie *newHead = NULL;                                               //declare our temp list
+    struct movie **newIt = &newHead;
+    while(head!=NULL)
+    {
+      *newIt = malloc(sizeof(struct movie));
+      memcpy(*newIt, head, sizeof(struct movie));
+      head = head->next;
+      newIt = &((*newIt)->next);
+    }                                                                          //recursivly now continue and copy the rest of the list until the end
+    return newHead;                                                           //returns the temp movie list now to whatever function needs it
   }
 }
 
@@ -160,20 +158,22 @@ void byYear(struct movie *head, int y)
   //convert our y into a string
   char *year;
   sprintf(year, "%d", y);
+  //printf("TESTING YEAR %s: \n", year);
   int flag = 0;                                                                 //this will trigger our warning msg if 0 still
   //TESTING
-  printf("TEST: NOW I AM IN byYear FUNCTION \n");
+  //printf("TEST: NOW I AM IN byYear FUNCTION \n");
   struct movie* dupMovie = (struct movie*)malloc(sizeof(struct movie));
-  printf("DUPLICATE LIST\n");
+  //printf("DUPLICATE LIST\n");
   dupMovie = copyList(head);                                      //first pass the original list to the copy list and return a temp list that we can use to sort
   //TESTING print out our duplicate copied list
   //printList(dupMovie);
   //use the year to find matching movies and print those
   while(dupMovie->next!=NULL)                                                         //while we are not at the end of the linked list
   {
+    //printf("inside our while function\n");
     //int x = atoi(dupMovie->year);
     //if (x == y)                                                    //if we find a value equal to the year we entered
-    if (dupMovie->year == year)
+    if (strcmp(dupMovie->year, year)==0)
     {
       printf("%s \n", dupMovie->title);                                         //print the title of the movie
       flag = 1;

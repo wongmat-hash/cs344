@@ -17,21 +17,32 @@ struct movie
 };
 
 //push to our linked list data structure
-void push(struct movie *head, char t[], int y, char l[], float f)
+void push(struct movie** head, char t[], int y, char l[], float f)
 {
-  struct movie * current = head;
-  while (current->next !=NULL)                                    //iterates to the end of the linked list first
-  {
-    current = current->next;
-  }
-  current->next = (struct movie*)malloc(sizeof(struct movie));
-  strcpy(current->next->title, t);         //copy title to next
-  current->next->year = y;
-  strcpy(current->next->language, l);
-  current->next->rating = f;
-  current->next->next = NULL;
+  struct movie* temp = (struct movie*)malloc(sizeof(struct movie));              //create a storage node
+  struct movie *last = *head;                                                   //hold our head value
 
+  strcpy(temp->title, t);
+  temp->year = y;                                                         //store all our new data in current
+  strcpy(temp->language, l);
+  temp->rating = f;
+  temp->next = NULL;
+
+  if (*head == NULL)                                                            //if our list was NULL we just set it to current
+  {
+    *head = temp;
+    return;
+  }
+
+  while (last->next !=NULL)                                                     //iterates to the end of the linked list first
+  {
+    last = last->next;                                                          //iterate last until it hits NULL
+  }
+  last->next = temp;                                                         //last nex
+  return;
 }
+
+
 
 //function to print our linked list for TESTING
 void printList(struct movie *m)
@@ -240,62 +251,9 @@ void byLang(struct movie *head, char language[])
 }
 int main(int argc, char** argv)
 {
-  //build out file reading which will create its own linked list
-  if (argc == 1)
-  {
-    printf("Movie file not specified!\n");                                      //if we cannot open the file
-  }
-  else
-  {
-    //printf("INSIDE ELSE STATEMENT\n");
-    //create the struct node that we can allocate memory for
-    //struct movie *head = malloc(sizeof(struct movie));
-
-    struct movie *head = (struct movie*)malloc(sizeof(struct movie));
-    //extract the file contents and begin storing it into the struct
-    char* fileName = argv[1];                                                   //set the name user specified to fileName
-
-    //open the file
-    FILE *file = fopen(fileName, "r");
-
-    //error validation to open the file
-    if (file == NULL)
-    {
-      printf("There is some error opening the file %s\n", fileName);
-      return 0;
-    }
-
-    char line[4096];
-    int count =0;                    //stores the number of lines we looked at
-
-    //printf("IM OUTSIDE THE PROGRAM\n");
-    while(fgets(line, sizeof(line), file) !=NULL)
-    {
-      if (count >=1)
-      {
-        char* tp = strdup(line);                                                 //tp holds the entire source now from strdup
-        char* tok = strtok(tp, "\n");                                            //parsing the tp file until we hit new lines as our token
-        char *val1, *val2, *val3, *val4;
-        int k =1;
-        while(tok !=NULL)
-        {
-          if (k==1) strcpy(val1, tok);
-          if (k==2) strcpy(val2, tok);
-          int year = atoi(val2);
-          if (k==3) strcpy(val3, tok);
-          if (k==4) strcpy(val4, tok);
-          float tempNum = atof(val4);
-          push(head, val1, year, val2, tempNum);                                //push it to our linked list
-          tok = strtok(NULL, "\n");
-          k++;
-        }
-        free(tp);
-      }
-      count++;
-      //now push to the linked list
-    }
-    //print the processing message
-    printf("Processed file %s and parsed data for %d movies\n", fileName, count);
+    struct movie* head = NULL;
+    push(&head, "The Incredible Hulk", 2008, "English", 6.8);
+    push(&head, "Sherlock Holmes", 2008, "English", 7.6);
 
     printList(head);
     printf("TEST COMPLETE\n");
@@ -346,5 +304,5 @@ int main(int argc, char** argv)
     }
     deleteList(&head);
 return 0;
-}
+
 }

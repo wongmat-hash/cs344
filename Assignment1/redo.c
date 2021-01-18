@@ -11,16 +11,16 @@
 struct movie
 {
   char *title;//[100];                                                              //title
-  int year;                                                                     //year
+  char *year;                                                                     //year
   char *language;//[100];                                                           //language
-  float rating;                                                                 //rating value
+  char *rating;                                                                 //rating value
   struct movie *next;                                                           //pointer to next movie
 };
 
 //to create a new node
 struct movie *createMovie(char *currLine)
 {
-  char *yea, *rat;
+  int yea, rat;
   struct movie *currMovie = malloc(sizeof(struct movie));
 
   char *saveptr;
@@ -32,10 +32,11 @@ struct movie *createMovie(char *currLine)
   //strcpy(currMovie->title, tit);
   //copy the year
   token = strtok_r(NULL, ",", &saveptr);
-  //currMovie->year = calloc(strlen(token) + 1, sizeof(char));
-  //strcpy(currMovie->year, token);
-  yea = calloc(strlen(token) +1, sizeof(char));
-  currMovie->year = atoi(yea);
+  currMovie->year = calloc(strlen(token) + 1, sizeof(char));
+  strcpy(currMovie->year, token);
+  //yea = calloc(strlen(token) +1, sizeof(char));
+  //printf("YEA TEST: %s\n", yea);
+  //currMovie->year = atoi(yea);
   //copy the language
   token = strtok_r(NULL, ",", &saveptr);
   currMovie->language = calloc(strlen(token) + 1, sizeof(char));
@@ -44,10 +45,11 @@ struct movie *createMovie(char *currLine)
   //strcpy(currMovie->language, lang);
   //copy the rating
   token = strtok_r(NULL, "\n", &saveptr);
-  //currMovie->rating = calloc(strlen(token) + 1, sizeof(char));
-  //strcpy(currMovie->rating, token);
-  rat = calloc(strlen(token) + 1, sizeof(char));
-  currMovie->rating = atof(rat);
+  currMovie->rating = calloc(strlen(token) + 1, sizeof(char));
+  strcpy(currMovie->rating, token);
+  //rat = calloc(strlen(token) + 1, sizeof(char));
+  //printf("RAT TEST: %s\n", rat);
+  //currMovie->rating = atof(rat);
 
   currMovie->next = NULL;
 
@@ -93,9 +95,9 @@ void printList(struct movie *m)
   while(m !=NULL)
   {
     printf("Title: %s, ", m->title);
-    printf("Year: %d, ", m->year);
+    printf("Year: %s, ", m->year);
     printf("Language(s): %s, ", m->language);
-    printf("Rating: %.1f ", m->rating);
+    printf("Rating: %s ", m->rating);
     printf("\n");
     m = m->next;
   }
@@ -153,7 +155,8 @@ void byYear(struct movie *head, int y)
   //use the year to find matching movies and print those
   while(dupMovie!=NULL)                                                         //while we are not at the end of the linked list
   {
-    if (dupMovie->year == y)                                                    //if we find a value equal to the year we entered
+    int x = atoi(dupMovie->year);
+    if (x == y)                                                    //if we find a value equal to the year we entered
     {
       printf("%s \n", dupMovie->title);                                         //print the title of the movie
       flag = 1;
@@ -178,10 +181,10 @@ void swapper(struct movie *a, struct movie *b)
 {
   char tempTitle[100];
   strcpy(tempTitle, a->title);
-  int tempYear = a->year;
+  int tempYear = atoi(a->year);
   char tempLanguage[100];
   strcpy(tempLanguage, a->language);
-  float tempRating = a->rating;
+  float tempRating = atof(a->rating);
 
   //now set a to b and b to temp
   strcpy(a->title, b->title);
@@ -190,9 +193,11 @@ void swapper(struct movie *a, struct movie *b)
   a->rating = b->rating;
 
   strcpy(b->title, tempTitle);
-  b->year = tempYear;
+  sprintf(b->year, "%d", tempYear);
+  //b->year = tempYear;
   strcpy(b->language, tempLanguage);
-  b->rating = tempRating;
+  sprintf(b->rating, "%f", tempRating);
+  //b->rating = tempRating;
 }
 
 //WORKING HERE 01/16 AM
@@ -242,8 +247,8 @@ void sorting(struct movie *head)
   {
     if (ptr1->year != ptr1->next->year)
     {
-      printf("%d ", ptr1->year);
-      printf("%.1f ", ptr1->rating);
+      printf("%s ", ptr1->year);
+      printf("%s ", ptr1->rating);
       printf("%s ", ptr1->title);
       printf("\n");
     }
@@ -275,7 +280,7 @@ void byLang(struct movie *head, char language[])
   {
     if (strcmp(dupMovie->language, language)==0)
     {
-      printf("%d ", dupMovie->year);
+      printf("%s ", dupMovie->year);
       printf("%s ", dupMovie->title);
       printf("\n");
       flag = 1;

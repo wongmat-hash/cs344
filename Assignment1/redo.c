@@ -247,10 +247,11 @@ int main(int argc, char** argv)
   }
   else
   {
+    //printf("INSIDE ELSE STATEMENT\n");
     //create the struct node that we can allocate memory for
     //struct movie *head = malloc(sizeof(struct movie));
 
-    struct movie *head;
+    struct movie *head = (struct movie*)malloc(sizeof(struct movie));
     //extract the file contents and begin storing it into the struct
     char* fileName = argv[1];                                                   //set the name user specified to fileName
 
@@ -260,23 +261,36 @@ int main(int argc, char** argv)
     //error validation to open the file
     if (file == NULL)
     {
-      printf("There is some error opening the file %s", fileName);
+      printf("There is some error opening the file %s\n", fileName);
       return 0;
     }
 
     char line[4096];
     int count =0;                    //stores the number of lines we looked at
 
+    //printf("IM OUTSIDE THE PROGRAM\n");
     while(fgets(line, sizeof(line), file) !=NULL)
     {
-      char *val1 = strtok(line, ",");                                   //read up to the first comma
-      char *num1 = strtok(NULL, ",");                                   //read up to the next comma
-      int year = atoi(num1);                                                  //convert the char to an int
-      char *val2 = strtok(NULL, "],");                                  //read up to the ]
-      char *float1 = strtok(NULL, " ");                                 //read up to the end of line
-      float tempNum = atof(float1);                                           //convert the char to a float
-
-      push(head, val1, year, val2, tempNum);
+      if (count >=1)
+      {
+        char* tp = strdup(line);                                                 //tp holds the entire source now from strdup
+        char* tok = strtok(tp, "\n");                                            //parsing the tp file until we hit new lines as our token
+        char *val1, *val2, *val3, *val4;
+        int k =1;
+        while(tok !=NULL)
+        {
+          if (k==1) strcpy(val1, tok);
+          if (k==2) strcpy(val2, tok);
+          int year = atoi(val2);
+          if (k==3) strcpy(val3, tok);
+          if (k==4) strcpy(val4, tok);
+          float tempNum = atof(val4);
+          push(head, val1, year, val2, tempNum);                                //push it to our linked list
+          tok = strtok(NULL, "\n");
+          k++;
+        }
+        free(tp);
+      }
       count++;
       //now push to the linked list
     }
@@ -330,6 +344,7 @@ int main(int argc, char** argv)
         }
       }
     }
+    deleteList(&head);
 return 0;
 }
 }

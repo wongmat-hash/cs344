@@ -146,8 +146,16 @@ void sorting(struct movie *head)
     {
       if (ptr1->year > ptr1->next->year)                                        //if the crawler year is greater than the next value
       {
-        swapper(ptr1, ptr1->next);                                                 //swap them
+        swapper(ptr1, ptr1->next);                                              //swap them
         swapped = 1;                                                            //set our counter
+      }
+      else if (ptr1->year == ptr1->next->year)                                  //if the years are the same we need to check the rating and if the ratings are out of order swap
+      {
+        if (ptr1->rating > ptr1->next->rating)
+        {
+          swapper(ptr1,ptr1->next);
+          swapped = 1;
+        }
       }
       ptr1=ptr1->next;                                                          //set the next value so crwaler keeps going
     }
@@ -155,9 +163,9 @@ void sorting(struct movie *head)
   }
   while(swapped);
   //TESTING PRINTING OUT NEW LIST
-  //printf("PRINTING OUR SORTED LIST BY YEAR\n");
-  //printList(head);
-  //printf("\n");
+  printf("PRINTING OUR SORTED LIST BY YEAR->RATING\n");
+  printList(head);
+  printf("\n");
 }
 
 //WORKING HERE 01/16 AM
@@ -170,28 +178,7 @@ void byHighestRated (struct movie *head)
   //test to make sure its been sorted correctly
   //printf("PRINTING DEMO:\n");
   //printList(dupMovie);
-  struct movie  *ptr1;                                                          //storage for iterating
-  struct movie *lptr = NULL;                                                    //storage for interating
-  do
-  {
-    ptr1 = dupMovie;                                                            //set this to the beginning of our list
-    lptr = dupMovie->next;                                                      //set this to the next in line
-    if (ptr1->year != lptr->year)
-    { //if it is the only one in that year its the highets rated for that year so print it
-      printf("Title: %s, ", ptr1->title);
-      printf("Year: %d, ", ptr1->year);
-      printf("Language(s): %s, ", ptr1->language);
-      printf("Rating: %.1f ", ptr1->rating);
-      printf("\n");
-      //iterate
-      ptr1 = ptr1->next;
-      lptr = lptr->next;
-    }
-    else if (ptr1->year == lptr->year)
-    { //otherwise check if the years are equal and then check if the ratings are equal
-      if ()
-    }
-  }while (lptr->next !=NULL);
+
 }
 
 int main()

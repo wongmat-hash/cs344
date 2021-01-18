@@ -17,6 +17,7 @@ struct movie
   struct movie *next;                                                           //pointer to next movie
 };
 
+
 //to create a new node DONE
 struct movie *createMovie(char *currLine)
 {
@@ -64,6 +65,7 @@ struct movie *processFile(char *filePath)
   size_t len = 0;
   ssize_t nread;
   char *token;
+  int count= -1;
 
   struct movie *head = NULL;
   struct movie *tail = NULL;
@@ -76,13 +78,17 @@ struct movie *processFile(char *filePath)
     {
       head = newNode;
       tail = newNode;
+      count++;
     }
     else
     {
       tail->next = newNode;
       tail = newNode;
+      count++;
     }
   }
+  printf("Processed file %s and parsed data for %d movies\n", filePath, count);
+  printf("\n");
   free(currLine);
   fclose(movieFile);
   return head;
@@ -108,20 +114,25 @@ void printList(struct movie *m)
 struct movie* copyList(struct movie *head)                                      //takes the head in then will make a copy to sort
 {
   //TEST TO SHOW THAT FUNCTION IS WORKING
-  //printf("TEST: Now inside COPYLIST Function\n");
+  printf("TEST: Now inside COPYLIST Function\n");
   //now create a temp which will be a copy of the entire list
   if(head==NULL)                                                                //checks our function to see if its NULL or not
   {
-    //printf("ERROR list passed into COPYLIST is NULL\n");
+    printf("ERROR list passed into COPYLIST is NULL\n");
     return NULL;                                                                //not possible so return to main
   }
   else
   {
-    struct movie *tempMovie = (struct movie*)malloc(sizeof(struct movie));      //declare our temp list
+    printf("attempting to copy\n");
+    struct movie *tempMovie = NULL;      //declare our temp list
+    printf("Testing newly created list\n");
+    printList(tempMovie);
+
     strcpy(tempMovie->title, head->title);                                      //pass all our data now
-    tempMovie->year = head->year;
+    printf("attempted to copy title\n");
+    strcpy(tempMovie->year, head->year);
     strcpy(tempMovie->language, head->language);
-    tempMovie->rating = head->rating;
+    strcpy(tempMovie->rating, head->rating);
     tempMovie->next = copyList(head->next);                                     //recursivly now continue and copy the rest of the list until the end
 
     return tempMovie;                                                           //returns the temp movie list now to whatever function needs it
@@ -146,18 +157,23 @@ void deleteList(struct movie** head_ref)
 //function that will sort by the year by making a copy passing it to copyList DONE
 void byYear(struct movie *head, int y)
 {
+  //convert our y into a string
+  char *year;
+  sprintf(year, "%d", y);
   int flag = 0;                                                                 //this will trigger our warning msg if 0 still
   //TESTING
-  //printf("TEST: NOW I AM IN byYear FUNCTION \n");
-  struct movie* dupMovie = copyList(head);                                      //first pass the original list to the copy list and return a temp list that we can use to sort
+  printf("TEST: NOW I AM IN byYear FUNCTION \n");
+  struct movie* dupMovie = (struct movie*)malloc(sizeof(struct movie));
+  printf("DUPLICATE LIST\n");
+  dupMovie = copyList(head);                                      //first pass the original list to the copy list and return a temp list that we can use to sort
   //TESTING print out our duplicate copied list
-  //printf("DUPLICATE LIST\n");
   //printList(dupMovie);
   //use the year to find matching movies and print those
-  while(dupMovie!=NULL)                                                         //while we are not at the end of the linked list
+  while(dupMovie->next!=NULL)                                                         //while we are not at the end of the linked list
   {
-    int x = atoi(dupMovie->year);
-    if (x == y)                                                    //if we find a value equal to the year we entered
+    //int x = atoi(dupMovie->year);
+    //if (x == y)                                                    //if we find a value equal to the year we entered
+    if (dupMovie->year == year)
     {
       printf("%s \n", dupMovie->title);                                         //print the title of the movie
       flag = 1;
@@ -300,22 +316,17 @@ void byLang(struct movie *head, char language[])
 }
 int main(int argc, char* argv[])
 {
-  //if (argc < 2)
-  //{
-  //  printf("no file specified: \n");
-  //  return EXIT_FAILURE;
-  //}
+  if (argc < 2)
+  {
+    printf("Movie file not specified!\n");
+    return EXIT_FAILURE;
+  }
 
   struct movie *head = processFile(argv[1]);
 
-
-    //print the processing message
-    //printf("Processed file %s and parsed data for %d movies\n", fileName, count);
-
-
-    printList(head);
-    printf("TEST COMPLETE\n");
-    printf("\n");
+    //printList(head);
+    //printf("TEST COMPLETE\n");
+    //printf("\n");
 
 
     //build out menu options for user to display DONE

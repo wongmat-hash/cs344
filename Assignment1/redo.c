@@ -17,7 +17,7 @@ struct movie
   struct movie *next;                                                           //pointer to next movie
 };
 
-//to create a new node
+//to create a new node DONE
 struct movie *createMovie(char *currLine)
 {
   int yea, rat;
@@ -56,6 +56,7 @@ struct movie *createMovie(char *currLine)
   return currMovie;
 }
 
+//processing the read file DONE
 struct movie *processFile(char *filePath)
 {
   FILE *movieFile = fopen(filePath, "r");
@@ -94,10 +95,10 @@ void printList(struct movie *m)
 {
   while(m !=NULL)
   {
-    printf("Title: %s, ", m->title);
-    printf("Year: %s, ", m->year);
-    printf("Language(s): %s, ", m->language);
-    printf("Rating: %s ", m->rating);
+    printf(" %s, ", m->title);
+    printf("%s, ", m->year);
+    printf("%s, ", m->language);
+    printf("%s ", m->rating);
     printf("\n");
     m = m->next;
   }

@@ -166,9 +166,9 @@ void byYear(struct movie *head, int y)
   //printf("DUPLICATE LIST\n");
   dupMovie = copyList(head);                                      //first pass the original list to the copy list and return a temp list that we can use to sort
   //TESTING print out our duplicate copied list
-  //printList(dupMovie);
+  printList(dupMovie);
   //use the year to find matching movies and print those
-  while(dupMovie->next!=NULL)                                                         //while we are not at the end of the linked list
+  while(dupMovie!=NULL)                                                         //while we are not at the end of the linked list
   {
     //printf("inside our while function\n");
     //int x = atoi(dupMovie->year);

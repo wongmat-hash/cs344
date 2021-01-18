@@ -163,9 +163,22 @@ void sorting(struct movie *head)
   }
   while(swapped);
   //TESTING PRINTING OUT NEW LIST
-  printf("PRINTING OUR SORTED LIST BY YEAR->RATING\n");
-  printList(head);
-  printf("\n");
+  //printf("PRINTING OUR SORTED LIST BY YEAR->RATING\n");
+  //printList(head);
+  //printf("\n");
+  ptr1 = head;
+  do
+  {
+    if (ptr1->year != ptr1->next->year)
+    {
+      printf("%d ", ptr1->year);
+      printf("%.1f ", ptr1->rating);
+      printf("%s ", ptr1->title);
+      printf("\n");
+    }
+    ptr1 = ptr1->next;
+
+  }while(ptr1->next !=NULL);
 }
 
 //WORKING HERE 01/16 AM
@@ -178,6 +191,10 @@ void byHighestRated (struct movie *head)
   //test to make sure its been sorted correctly
   //printf("PRINTING DEMO:\n");
   //printList(dupMovie);
+
+
+
+
 
 }
 
@@ -272,7 +289,7 @@ int main()
   tenth->rating = 7.4;
   tenth->next = eleventh;
 
-  strcpy(eleventh->title, "Thor");                                              //need strcpy
+  strcpy(eleventh->title, "Thor: Ragnarok");                                              //need strcpy
   eleventh->year = 2011;
   strcpy(third->language, "[English]");                                         //need strcpy
   eleventh->rating = 7.4;

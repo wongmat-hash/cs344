@@ -196,6 +196,7 @@ void byYear(struct movie *head, int y)
 //function to swap our movie node data
 void swapper(struct movie *a, struct movie *b)
 {
+  printf("Inside swapper function\n");
   char tempTitle[100];
   strcpy(tempTitle, a->title);
   //int tempYear = atoi(a->year);
@@ -239,16 +240,23 @@ void sorting(struct movie *head)
   }
   do
   {
+    //printf("here is our list: \n");
+    //printList(head);
     swapped = 0;                                                                //initiate our counter for swap
     ptr1 = head;                                                                //set our pointer to the head list
     while (ptr1->next != lptr)                                                  //while our crwaler is not equal to null for next
     {
+      //skip the first line since its our title and random fields
+      ptr1 = ptr1->next;              //skip
       int p1, p2;
       p1 = atoi(ptr1->year);
       p2 = atoi(ptr1->next->year);
       //if (ptr1->year > ptr1->next->year)                                        //if the crawler year is greater than the next value
+      printf("this is our p1: %d\n", p1);
+      printf("this is our p2: %d\n", p2);
       if(p1 > p2)
       {
+        printf("inside our first conditional\n");
         swapper(ptr1, ptr1->next);                                              //swap them
         swapped = 1;                                                            //set our counter
       }

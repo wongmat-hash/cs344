@@ -5,15 +5,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define LINESIZE 128
+#define _GNU_SOURCE
 
 //struct for movies DONE
 struct movie
 {
   char *title;//[100];                                                              //title
-  int *year;                                                                     //year
+  int year;                                                                     //year
   char *language;//[100];                                                           //language
-  float *rating;                                                                 //rating value
+  float rating;                                                                 //rating value
   struct movie *next;                                                           //pointer to next movie
 };
 
@@ -35,9 +35,9 @@ struct movie *createMovie(char *currLine)
   //currMovie->year = calloc(strlen(token) + 1, sizeof(char));
   //strcpy(currMovie->year, token);
   yea = calloc(strlen(token) +1, sizeof(char));
-  *currMovie->year = atoi(yea);
+  currMovie->year = atoi(yea);
   //copy the language
-  token = strtok_r(NULL, " ", &saveptr);
+  token = strtok_r(NULL, ", ", &saveptr);
   currMovie->language = calloc(strlen(token) + 1, sizeof(char));
   strcpy(currMovie->language, token);
   //lang = calloc(strlen(token) + 1, sizeof(char));
@@ -47,7 +47,7 @@ struct movie *createMovie(char *currLine)
   //currMovie->rating = calloc(strlen(token) + 1, sizeof(char));
   //strcpy(currMovie->rating, token);
   rat = calloc(strlen(token) + 1, sizeof(char));
-  *currMovie->rating = atof(rat);
+  currMovie->rating = atof(rat);
 
   currMovie->next = NULL;
 
@@ -93,9 +93,9 @@ void printList(struct movie *m)
   while(m !=NULL)
   {
     printf("Title: %s, ", m->title);
-    printf("Year: %d, ", *m->year);
+    printf("Year: %d, ", m->year);
     printf("Language(s): %s, ", m->language);
-    printf("Rating: %.1f ", *m->rating);
+    printf("Rating: %.1f ", m->rating);
     printf("\n");
     m = m->next;
   }
@@ -153,7 +153,7 @@ void byYear(struct movie *head, int y)
   //use the year to find matching movies and print those
   while(dupMovie!=NULL)                                                         //while we are not at the end of the linked list
   {
-    if (*dupMovie->year == y)                                                    //if we find a value equal to the year we entered
+    if (dupMovie->year == y)                                                    //if we find a value equal to the year we entered
     {
       printf("%s \n", dupMovie->title);                                         //print the title of the movie
       flag = 1;
@@ -178,10 +178,10 @@ void swapper(struct movie *a, struct movie *b)
 {
   char tempTitle[100];
   strcpy(tempTitle, a->title);
-  int tempYear = *a->year;
+  int tempYear = a->year;
   char tempLanguage[100];
   strcpy(tempLanguage, a->language);
-  float tempRating = *a->rating;
+  float tempRating = a->rating;
 
   //now set a to b and b to temp
   strcpy(a->title, b->title);
@@ -190,9 +190,9 @@ void swapper(struct movie *a, struct movie *b)
   a->rating = b->rating;
 
   strcpy(b->title, tempTitle);
-  *b->year = tempYear;
+  b->year = tempYear;
   strcpy(b->language, tempLanguage);
-  *b->rating = tempRating;
+  b->rating = tempRating;
 }
 
 //WORKING HERE 01/16 AM
@@ -242,8 +242,8 @@ void sorting(struct movie *head)
   {
     if (ptr1->year != ptr1->next->year)
     {
-      printf("%d ", *ptr1->year);
-      printf("%.1f ", *ptr1->rating);
+      printf("%d ", ptr1->year);
+      printf("%.1f ", ptr1->rating);
       printf("%s ", ptr1->title);
       printf("\n");
     }
@@ -275,7 +275,7 @@ void byLang(struct movie *head, char language[])
   {
     if (strcmp(dupMovie->language, language)==0)
     {
-      printf("%d ", *dupMovie->year);
+      printf("%d ", dupMovie->year);
       printf("%s ", dupMovie->title);
       printf("\n");
       flag = 1;
@@ -301,8 +301,7 @@ int main(int argc, char* argv[])
   //}
 
   struct movie *head = processFile(argv[1]);
-  printList(head);
-  return EXIT_SUCCESS;
+
 
     //print the processing message
     //printf("Processed file %s and parsed data for %d movies\n", fileName, count);
@@ -356,5 +355,7 @@ int main(int argc, char* argv[])
         }
       }
     }
+
+    return EXIT_SUCCESS;
 return 0;
 }

@@ -157,7 +157,7 @@ void byYear(struct movie *head, int y)
 {
   //convert our y into a string
   char *year;
-  sprintf(year, "%d", y);
+  sprintf(year, "%d", y);           //convert the char to an int to verify correct
   //printf("TESTING YEAR %s: \n", year);
   int flag = 0;                                                                 //this will trigger our warning msg if 0 still
   //TESTING
@@ -203,7 +203,7 @@ void swapper(struct movie *a, struct movie *b)
   *tempTemp = malloc(sizeof(struct movie));
   memcpy(*tempTemp, a, sizeof(struct movie));
 
-  printf("Inside swapper function\n");
+  //printf("Inside swapper function\n");
     ///char tempTitle[100];
     ///strcpy(tempTitle, a->title);
   //int tempYear = atoi(a->year);
@@ -240,7 +240,7 @@ void swapper(struct movie *a, struct movie *b)
 //function to sort by year then rating
 void sorting(struct movie *head)
 {
-  printf("inside sorting function now\n");
+  //printf("inside sorting function now\n");
   //run a simple bubble sort to sort out by year first
   int swapped, i;                                                               //storage variable
   struct movie *ptr1;
@@ -251,34 +251,41 @@ void sorting(struct movie *head)
   {
     return;
   }
+  //ptr1 = head;
+  //ptr1 = ptr1->next;
+  //FIRST WE NEED TO SORT IT BY YEAR AND GET A COMPLETE LIST
   do
   {
     //printf("here is our list: \n");
     //printList(head);
-    swapped = 0;                                                                //initiate our counter for swap
+    swapped = 0;                    //triger when its greater or equal not less                                                                 //initiate our counter for swap
     ptr1 = head;                                                                //set our pointer to the head list
+    //ptr1 = ptr1->next;              //skip the first line since its our titles
     while (ptr1->next != lptr)                                                  //while our crwaler is not equal to null for next
     {
       //skip the first line since its our title and random fields
-      ptr1 = ptr1->next;              //skip
       int p1, p2;
       p1 = atoi(ptr1->year);
       p2 = atoi(ptr1->next->year);
       //if (ptr1->year > ptr1->next->year)                                        //if the crawler year is greater than the next value
-      printf("this is our p1: %d\n", p1);
-      printf("this is our p2: %d\n", p2);
+      //printf("this is our p1: %d\n", p1);
+      //printf("this is our p2: %d\n", p2);
       if(p1 > p2)
       {
-        printf("inside our first conditional\n");
+        //printf("inside our first conditional\n");
         swapper(ptr1, ptr1->next);                                              //swap them
         swapped = 1;                                                            //set our counter
       }
       //else if (ptr1->year == ptr1->next->year)                                  //if the years are the same we need to check the rating and if the ratings are out of order swap
+
+      //IGNORE FOR NOW
       else if (p1 == p2)
       {
         float f1, f2;
         f1 = atof(ptr1->rating);
         f2 = atof(ptr1->next->rating);
+        printf("this is my f1 rating: %f\n", f1);
+        printf("this is my f2 rating: %f\n", f2);
         //if (ptr1->rating > ptr1->next->rating)
         if (f1 > f2)
         {
@@ -287,14 +294,14 @@ void sorting(struct movie *head)
         }
       }
       ptr1=ptr1->next;                                                          //set the next value so crwaler keeps going
-    }
-    lptr = ptr1;                                                                //move the next value to the crawler
+      }
+    //lptr = ptr1;                                                                //move the next value to the crawler
   }
   while(swapped);
   //TESTING PRINTING OUT NEW LIST
-  //printf("PRINTING OUR SORTED LIST BY YEAR->RATING\n");
-  //printList(head);
-  //printf("\n");
+  printf("PRINTING OUR SORTED LIST BY YEAR->RATING\n");
+  printList(head);
+  printf("\n");
   ptr1 = head;
   do
   {
@@ -318,10 +325,12 @@ void sorting(struct movie *head)
 //function to get the highest rated by year
 void byHighestRated (struct movie *head)
 {
-  printf("inside highest rated function\n");
+  //printf("inside highest rated function\n");
   struct movie *dupMovie = copyList(head);                                      //make a copy of our linked list and sort it
+  //printf("Duplicate List:\n");
+  //printList(dupMovie);
   //sort by years then ratings
-  printf("going into sorting function\n");
+  //printf("going into sorting function\n");
   sorting(dupMovie);
   //test to make sure its been sorted correctly
   //printf("PRINTING DEMO:\n");

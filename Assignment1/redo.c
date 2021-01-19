@@ -402,7 +402,7 @@ int main(int argc, char* argv[])
         }
         case 3:
         {
-          printf("Enter the language for which you want to see movies: ");        //asks the user for what language input
+          printf("Enter the language for which you want to see movies (use brackets around entry ex)[English]): ");        //asks the user for what language input
           scanf("%s", userLanguage);                                              //scans for user input on the language
           byLang(head, userLanguage);                                             //passes it to the function we created above
           break;

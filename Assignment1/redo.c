@@ -280,7 +280,7 @@ void sorting(struct movie *head)
   printList(head);
   printf("\n");
 
-  ptr1 = head;
+  ptr1 = head->next;                  //put our iterator back to head to restart
   do
   {
     int x1, x2;
@@ -288,15 +288,27 @@ void sorting(struct movie *head)
     x2 = atoi(ptr1->next->year);
     //if (ptr1->year != ptr1->next->year)
     if (x1 != x2)
-    {
-      printf("%s ", ptr1->year);
-      printf("%s ", ptr1->rating);
+    { int a;
+      float b;
+      a = atoi(ptr1->year);
+      b = atof(ptr1->rating);
+      printf("%d ", a);
+      printf("%.1f ", b);
       printf("%s ", ptr1->title);
       printf("\n");
     }
     ptr1 = ptr1->next;
 
   }while(ptr1->next !=NULL);
+  int a;
+  float b;
+    a = atoi(ptr1->year);
+    b = atof(ptr1->rating);
+    printf("%d ", a);
+    printf("%.1f ", b);
+  printf("%s ", ptr1->title);
+  printf("\n");
+  printf("\n");
 }
 
 //WORKING HERE 01/16 AM DONE 1/17/21

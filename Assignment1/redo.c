@@ -156,10 +156,11 @@ void deleteList(struct movie** head_ref)
 void byYear(struct movie *head, int y)
 {
   //convert our y into a string
-  char *year;
-  sprintf(year, "%d", y);           //convert the char to an int to verify correct
+  //char *year[5];
+  //sprintf(year, "%d", y);           //convert the char to an int to verify correct
   //printf("TESTING YEAR %s: \n", year);
   int flag = 0;                                                                 //this will trigger our warning msg if 0 still
+
   //TESTING
   //printf("TEST: NOW I AM IN byYear FUNCTION \n");
   struct movie* dupMovie = (struct movie*)malloc(sizeof(struct movie));
@@ -171,9 +172,9 @@ void byYear(struct movie *head, int y)
   while(dupMovie!=NULL)                                                         //while we are not at the end of the linked list
   {
     //printf("inside our while function\n");
-    //int x = atoi(dupMovie->year);
-    //if (x == y)                                                    //if we find a value equal to the year we entered
-    if (strcmp(dupMovie->year, year)==0)
+    int x = atoi(dupMovie->year);
+    if (x == y)                                                    //if we find a value equal to the year we entered
+    //if (strcmp(dupMovie->year, year)==0)
     {
       printf("%s \n", dupMovie->title);                                         //print the title of the movie
       flag = 1;
@@ -189,7 +190,7 @@ void byYear(struct movie *head, int y)
     printf("\nNo data about movies released in year %d\n", y);                  //print out that we found nothing in relation to it
   }
 
-  deleteList(&dupMovie);                                                        //delete the temp list
+  //deleteList(&dupMovie);                                                        //delete the temp list
   printf("\n");                                                                 //line for formatting
 }
 

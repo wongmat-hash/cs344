@@ -198,57 +198,21 @@ void swapper(struct movie *a, struct movie *b)
 {
   //fix declaration of temp node so it can actually store.
   //declare a temp node
-  struct movie *tempNode = NULL;
-  struct movie **tempTemp = &tempNode;
+  struct movie tmp;
+  tmp.title = a->title;
+  tmp.year = a->year;
+  tmp.language = a->language;
+  tmp.rating = a->rating;
 
-  *tempTemp = malloc(sizeof(struct movie));
-  memcpy(*tempTemp, a, sizeof(struct movie));
-  printf("\n this is our tempTemp:");
-  printList(*tempTemp);
+  a->title = b->title;
+  a->year = b->year;
+  a->language = b->language;
+  a->rating = b->rating;
 
-  ///////struct movie **tempTemp = &tempNode;
-  //copy contents of a to tempNode
-  ////////tempNode = malloc(sizeof(struct movie));
-  ////////memcpy(tempNode, a, sizeof(struct movie));
-/////////
-  //printf("Inside swapper function\n");
-    ///char tempTitle[100];
-    ///strcpy(tempTitle, a->title);
-  //int tempYear = atoi(a->year);
-    ///char tempYear[100];
-    ///strcpy(tempYear, a->year);
-    ///char tempLanguage[100];
-    ///strcpy(tempLanguage, a->language);
-  //float tempRating = atof(a->rating);
-    ///char tempRating[100];
-    ///strcpy(tempRating, a->rating);
-  //now set a to b and b to temp
-
-  //now use memcpy to copy b > a
-
-
-
-  //>>memcpy(a, b, sizeof(struct movie));
-  //now memcpy temp > b
-  //>>memcpy(b, *tempTemp, (sizeof(struct movie)));
-
-
-
-
-
-    ///strcpy(a->title, b->title);
-    ///strcpy(a->year, b->year);
-    ///strcpy(a->language, b->language);
-    ///strcpy(a->rating, b->rating);
-
-    ///strcpy(b->title, tempTitle);
-  //sprintf(b->year, "%d", tempYear);
-    ///strcpy(b->year, tempYear);
-  //b->year = tempYear;
-    ///strcpy(b->language, tempLanguage);
-  //sprintf(b->rating, "%f", tempRating);
-    ///strcpy(b->rating, tempRating);
-  //b->rating = tempRating;
+  b->title = tmp.title;
+  b->year = tmp.year;
+  b->language = tmp.language;
+  b->rating = tmp.rating;
 }
 
 //WORKING HERE 01/16 AM
@@ -312,9 +276,9 @@ void sorting(struct movie *head)
     lptr = ptr1;                                                                //move the next value to the crawler
   }while(swapped);
   //TESTING PRINTING OUT NEW LIST
-  //printf("PRINTING OUR SORTED LIST BY YEAR->RATING\n");
-  //printList(head);
-  //printf("\n");
+  printf("PRINTING OUR SORTED LIST BY YEAR->RATING\n");
+  printList(head);
+  printf("\n");
 
   ptr1 = head;
   do

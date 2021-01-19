@@ -196,13 +196,21 @@ void byYear(struct movie *head, int y)
 //function to swap our movie node data
 void swapper(struct movie *a, struct movie *b)
 {
+  //fix declaration of temp node so it can actually store.
   //declare a temp node
   struct movie *tempNode = NULL;
   struct movie **tempTemp = &tempNode;
-  //copy contents of a to tempNode
+
   *tempTemp = malloc(sizeof(struct movie));
   memcpy(*tempTemp, a, sizeof(struct movie));
+  printf("\n this is our tempTemp:");
+  printList(*tempTemp);
 
+  ///////struct movie **tempTemp = &tempNode;
+  //copy contents of a to tempNode
+  ////////tempNode = malloc(sizeof(struct movie));
+  ////////memcpy(tempNode, a, sizeof(struct movie));
+/////////
   //printf("Inside swapper function\n");
     ///char tempTitle[100];
     ///strcpy(tempTitle, a->title);
@@ -217,9 +225,16 @@ void swapper(struct movie *a, struct movie *b)
   //now set a to b and b to temp
 
   //now use memcpy to copy b > a
-  memcpy(a, b, sizeof(struct movie));
+
+
+
+  //>>memcpy(a, b, sizeof(struct movie));
   //now memcpy temp > b
-  memcpy(b, *tempTemp, (sizeof(struct movie)));
+  //>>memcpy(b, *tempTemp, (sizeof(struct movie)));
+
+
+
+
 
     ///strcpy(a->title, b->title);
     ///strcpy(a->year, b->year);
@@ -245,7 +260,7 @@ void sorting(struct movie *head)
   int swapped, i;                                                               //storage variable
   struct movie *ptr1;
   struct movie *lptr = NULL;
-
+  //printList(head);
   //check to see if our list is empty
   if (head == NULL)
   {
@@ -277,31 +292,30 @@ void sorting(struct movie *head)
         swapped = 1;                                                            //set our counter
       }
       //else if (ptr1->year == ptr1->next->year)                                  //if the years are the same we need to check the rating and if the ratings are out of order swap
-
-      //IGNORE FOR NOW
+      //if you get to a year now we must sort by secondary condition which is ratings
       else if (p1 == p2)
       {
         float f1, f2;
-        f1 = atof(ptr1->rating);
+        f1 = atof(ptr1->rating);  //convert our char to floats
         f2 = atof(ptr1->next->rating);
-        printf("this is my f1 rating: %f\n", f1);
-        printf("this is my f2 rating: %f\n", f2);
+        //printf("this is my f1 rating: %f\n", f1);
+        //printf("this is my f2 rating: %f\n", f2);
         //if (ptr1->rating > ptr1->next->rating)
         if (f1 > f2)
         {
-          swapper(ptr1,ptr1->next);
+          swapper(ptr1, ptr1->next);
           swapped = 1;
         }
       }
       ptr1=ptr1->next;                                                          //set the next value so crwaler keeps going
-      }
-    //lptr = ptr1;                                                                //move the next value to the crawler
-  }
-  while(swapped);
+    }
+    lptr = ptr1;                                                                //move the next value to the crawler
+  }while(swapped);
   //TESTING PRINTING OUT NEW LIST
-  printf("PRINTING OUR SORTED LIST BY YEAR->RATING\n");
-  printList(head);
-  printf("\n");
+  //printf("PRINTING OUR SORTED LIST BY YEAR->RATING\n");
+  //printList(head);
+  //printf("\n");
+
   ptr1 = head;
   do
   {

@@ -6,51 +6,7 @@
 #include <dirent.h>
 #include <unistd.h>
 
-struct stat statbuffer;
-struct dirent *entry;
-if(S_ISREG(statbuffer.st_size)
-{
-  int i = sizeof(entry->d_name);
-  printf("%d\n", i);
-}
 
-void findLargest(char *dir)                                                     //this function will find the largest file within a directory and return it
-{
-  //work cited: http://developerweb.net/viewtopic.php?pid=17081 found an example here of working with file sizes in a directory
-  DIR *dp;
-  struct dirent *entry;
-  struct stat statbuf;
-  struct stat statbuffer;
-  int i = 0;
-  char *name;
-
-  if ((dp == opendir(dir))== NULL)                                              //our error msg if the directory cannot be found
-  {
-    fprint(stderr, "Cannot open director: %s\n", dir);
-    return;
-  }
-  chdir(dir);
-  while((entry=readdir(dp)) != NULL)
-  {
-    lstat(entry->d_name, &statbuf);
-    {
-      lstat(entry->d_name, &statbuffer);
-
-      if(statbuffer.st_size >i)
-      {
-        i = (statbuffer.st_size);
-        name = (entry->d_name);
-        [b]                                                                     //names display fine here[/b]
-        [b]printf("%s\n", name);[/b]
-      }
-    }
-  }
-  [b]//name will display here[/b]
-  [b]printf("The largest file in the current direcotry is %s\n", name);[/b]
-  printf("It is %i bytes\n", i);
-
-  closedir(dp);
-}
 
 int menuA()                                                                     //first menu prompt
 {
@@ -76,8 +32,10 @@ int menuB()                                                                     
   return userOption;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
+  struct dirent *pDirent;
+  DIR *pDir;
   int userChoice, userOption;
   do
   {                                                                             //our do while loop helps our error validation
@@ -90,6 +48,30 @@ int main()
         if (userChoice == 1)
         {
           //make function for largest file in directory
+          //trying this out: https://stackoverflow.com/questions/3554120/open-directory-using-c
+          if (argc!=2)
+          {
+            printf("Usage testprog <dirname>\n");
+            return 1;
+          }
+
+          //test that we can open the directory
+          pDir = opendir (argv[1]);
+          if (pDir == NULL)
+          {
+            printf("Cannot open directory '%s'\n", argv[1]);
+            return 1;
+          }
+
+          //process entries
+          while((pDirent = readdir(pDir)) !=NULL)
+          {
+            printf("[%s]\n", pDirent->d_name);
+          }
+
+          //close the directory and exit
+          closedir(pDir);
+          break;
         }
         if (userChoice == 2)
         {

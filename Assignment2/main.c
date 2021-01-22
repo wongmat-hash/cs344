@@ -34,8 +34,7 @@ int menuB()                                                                     
 
 int main(int argc, char *argv[])
 {
-  struct dirent *pDirent;
-  DIR *pDir;
+
   int userChoice, userOption;
   do
   {                                                                             //our do while loop helps our error validation
@@ -48,30 +47,7 @@ int main(int argc, char *argv[])
         if (userChoice == 1)
         {
           //make function for largest file in directory
-          //trying this out: https://stackoverflow.com/questions/3554120/open-directory-using-c
-          if (argc!=2)
-          {
-            printf("Usage testprog <dirname>\n");
-            return 1;
-          }
 
-          //test that we can open the directory
-          pDir = opendir (argv[1]);
-          if (pDir == NULL)
-          {
-            printf("Cannot open directory '%s'\n", argv[1]);
-            return 1;
-          }
-
-          //process entries
-          while((pDirent = readdir(pDir)) !=NULL)
-          {
-            printf("[%s]\n", pDirent->d_name);
-          }
-
-          //close the directory and exit
-          closedir(pDir);
-          break;
         }
         if (userChoice == 2)
         {

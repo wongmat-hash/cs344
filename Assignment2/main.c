@@ -1,12 +1,11 @@
 //CS344 01/21/21
 //Matthew Wong
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <dirent.h>
+#include <sys/stat.h>
 #include <unistd.h>
-
-
 
 int menuA()                                                                     //first menu prompt
 {
@@ -32,10 +31,12 @@ int menuB()                                                                     
   return userOption;
 }
 
-int main(int argc, char *argv[])
+int main(void)
 {
 
-  int userChoice, userOption;
+  int userChoice, userOption;                                                   //user storage options
+  int fd;
+  char *newFilePath = "./movies_sample_1.csv";
   do
   {                                                                             //our do while loop helps our error validation
     userChoice = menuA();                                                       //set the return value to what the menu prompts for userChoice 1-2
@@ -47,7 +48,24 @@ int main(int argc, char *argv[])
         if (userChoice == 1)
         {
           //make function for largest file in directory
+          fd = open(newFilePath, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+          if (fd == -1)
+          {
+            printf("open() failed on \"%s\"\n", newFilePath);
+            perror("Error");
+            exit(1);
+          }
 
+          //otherwise open the file and count the bytes
+          fd = open(newFilePath, O_RDONLY);
+
+          //allocate a buffer to read from file
+          int howMany;
+          char* readBuffer = malloc(50 *sizeof(char));
+          lseek(fd, 0, SEEK_SET);
+          howMany = read(fd, readBuffer, 50);
+          printf("read %d bytes from the file\n", howMany);
+          printf("%s\n", readBuffer);
         }
         if (userChoice == 2)
         {

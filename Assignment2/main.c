@@ -6,6 +6,8 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <dirent.h>
+
 
 int menuA()                                                                     //first menu prompt
 {
@@ -31,12 +33,33 @@ int menuB()                                                                     
   return userOption;
 }
 
-int main(void)
+long int findSize(char file_name[])
+{
+  //open the file and read
+  FILE* fp = fopen(file_name, "r");
+
+  //check if the file exists
+  if (fp == NULL)
+  {
+    printf("File Not Found!\n");
+    return -1;
+  }
+
+  fseek(fp, 0L, SEEK_END);
+  //calculate the size of the file after reading to end
+  long int res = ftell(fp);
+
+  fclose(fp);
+  //returns the value back to main
+  return res;
+}
+
+int main(int argc, char *argv[])
 {
 
   int userChoice, userOption;                                                   //user storage options
   int fd;
-  char *newFilePath = "./movies_sample_1.csv";
+  char *newFilePath = "/Users/matthewwong/cs344/Assignment2/movies_sample_1.csv";
   do
   {                                                                             //our do while loop helps our error validation
     userChoice = menuA();                                                       //set the return value to what the menu prompts for userChoice 1-2
@@ -45,27 +68,15 @@ int main(void)
       do
       {                                                                         //secondary menu which will prompt user 1-3
         userOption = menuB();
-        if (userChoice == 1)
+        if (userChoice == 1)                                                    //work cited: https://www.geeksforgeeks.org/c-program-find-size-file/
         {
-          //make function for largest file in directory
-          fd = open(newFilePath, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-          if (fd == -1)
+          char file_name[] = {"movies_sample_1.csv"};
+          long int res = findSize(file_name);
+          if (res != -1)
           {
-            printf("open() failed on \"%s\"\n", newFilePath);
-            perror("Error");
-            exit(1);
+            printf("Size of file is %ld bytes \n", res);
+            printf("\n");
           }
-
-          //otherwise open the file and count the bytes
-          fd = open(newFilePath, O_RDONLY);
-
-          //allocate a buffer to read from file
-          int howMany;
-          char* readBuffer = malloc(50 *sizeof(char));
-          lseek(fd, 0, SEEK_SET);
-          howMany = read(fd, readBuffer, 50);
-          printf("read %d bytes from the file\n", howMany);
-          printf("%s\n", readBuffer);
         }
         if (userChoice == 2)
         {

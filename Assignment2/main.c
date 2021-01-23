@@ -54,12 +54,10 @@ long int findSize(char file_name[])
   return res;
 }
 
-int main(int argc, char *argv[])
+int main()
 {
 
   int userChoice, userOption;                                                   //user storage options
-  int fd;
-  char *newFilePath = "/Users/matthewwong/cs344/Assignment2/movies_sample_1.csv";
   do
   {                                                                             //our do while loop helps our error validation
     userChoice = menuA();                                                       //set the return value to what the menu prompts for userChoice 1-2

@@ -80,11 +80,12 @@ int main()
         userOption = menuB();
         if (userOption == 1)                                                    //work cited: https://www.geeksforgeeks.org/c-program-find-size-file/
         {
-          //work cited using portion from: https://oregonstate.instructure.com/courses/1798831/pages/exploration-directories?module_item_id=20163866 to open directory
+                                                                                //work cited using portion from: https://oregonstate.instructure.com/courses/1798831/pages/exploration-directories?module_item_id=20163866 to open directory
           DIR* currDir = opendir(".");                                          //opens the current directory
           struct dirent *aDir;                                                  //pointer for dirent
           struct stat dirStat;                                                  //delcaration of stat struct for files
           char entryName[256];                                                  //stores our largest filename
+          int i = 0;                                                            //for our comparison between files
           if (aDir == NULL)                                                     //if our file was null then proceed with error message
           {
             printf("There was an error opening the directory\n");
@@ -97,13 +98,25 @@ int main()
             {
               printf("filename: %s\n", aDir->d_name);                           //prints the file name
               //TEST                                                            work cited: https://stackoverflow.com/questions/29548013/loop-through-a-file-and-print-file-attributes-in-c
+              //display the file information for testing
+              printf("total size, in bytes: %lld\n", dirStat.st_size);
+              printf("\n");
               if ((stat(aDir->d_name, &dirStat)) == -1)
               {
                 printf("SOME ERROR HAPPENED IN THE WHILE LOOP\n");
               }
-              //display the file information for testing
-              printf("total size, in bytes: %lld\n", dirStat.st_size);
-              printf("\n");
+              if (i == 0)
+              {
+                //set the entryName to the current file being looked at because its the ONLY movies prefix csv
+                memset(entryName, '\0', sizeof(entryName));
+                strcpy(entryName, aDir->d_name);
+              }
+              if (i !=0)
+              {
+                //that means we have a prefix file with movie already so we need to compare the file size and see which one is greater
+
+              }
+              i++;                                                              //means we looked through 1 file with prefix movie 
             }
           }
           closedir(currDir);

@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/types.h>
-
+#define PREFIX "movies"
 
 //menu A prompts
 int menuA()                                                                     //first menu prompt
@@ -83,13 +83,21 @@ int main()
           //work cited using portion from: https://oregonstate.instructure.com/courses/1798831/pages/exploration-directories?module_item_id=20163866 to open directory
           DIR* currDir = opendir(".");                                          //opens the current directory
           struct dirent *aDir;
+          struct stat dirStat;
 
           while((aDir = readdir(currDir))!= NULL)                               //go through all the entries
           {
             printf("%s\n",aDir->d_name);                                        //print out all the information
+
+            if(strncmp(PREFIX, aDir->d_name, strlen(PREFIX))==0)                //looking for just files with movies as prefix
+            {
+              stat(aDir->d_name, &dirStat);                                     //pulls the metadata for the current entry
+            }
+            printf("%lld\n", dirStat.st_size);
+
           }
           closedir(currDir);
-          
+
 
 
 

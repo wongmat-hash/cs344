@@ -7,9 +7,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <dirent.h>
-#define MAX 100
+#include <sys/types.h>
 
 
+//menu A prompts
 int menuA()                                                                     //first menu prompt
 {
   int userChoice;
@@ -21,6 +22,7 @@ int menuA()                                                                     
   return userChoice;
 }
 
+//menu loop prompts
 int menuB()                                                                     //second menu prompt
 {
   int userOption;
@@ -34,6 +36,7 @@ int menuB()                                                                     
   return userOption;
 }
 
+//this function finds the size of the files
 long int findSize(char file_name[])
 {
   //open the file and read
@@ -55,6 +58,7 @@ long int findSize(char file_name[])
   return res;
 }
 
+//this function will process our file
 void processing(FILE *fp, char f[])
 {
   printf("Now processing the chosen file named %s\n\n", f);
@@ -76,6 +80,27 @@ int main()
         userOption = menuB();
         if (userOption == 1)                                                    //work cited: https://www.geeksforgeeks.org/c-program-find-size-file/
         {
+          //work cited using portion from: https://oregonstate.instructure.com/courses/1798831/pages/exploration-directories?module_item_id=20163866 to open directory
+          DIR* currDir = opendir(".");                                          //opens the current directory
+          struct dirent *aDir;
+
+          while((aDir = readdir(currDir))!= NULL)                               //go through all the entries
+          {
+            printf("%s\n",aDir->d_name);                                        //print out all the information
+          }
+          closedir(currDir);
+          
+
+
+
+
+
+
+
+
+
+
+
           //printf("IN USER CHOICE 1b\n");
           char file_name[] = {"movies_sample_1.csv"};
           long int res = findSize(file_name);

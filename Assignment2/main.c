@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <dirent.h>
+#define MAX 100
 
 
 int menuA()                                                                     //first menu prompt
@@ -54,6 +55,8 @@ long int findSize(char file_name[])
   return res;
 }
 
+
+
 int main()
 {
 
@@ -63,11 +66,13 @@ int main()
     userChoice = menuA();                                                       //set the return value to what the menu prompts for userChoice 1-2
     if (userChoice == 1)                                                        //if the user enters 1 we need to go to secondary menu
     {
+      printf("IN USER CHOICE 1a\n");
       do
       {                                                                         //secondary menu which will prompt user 1-3
         userOption = menuB();
-        if (userChoice == 1)                                                    //work cited: https://www.geeksforgeeks.org/c-program-find-size-file/
+        if (userOption == 1)                                                    //work cited: https://www.geeksforgeeks.org/c-program-find-size-file/
         {
+          printf("IN USER CHOICE 1b\n");
           char file_name[] = {"movies_sample_1.csv"};
           long int res = findSize(file_name);
           if (res != -1)
@@ -76,23 +81,35 @@ int main()
             printf("\n");
           }
         }
-        if (userChoice == 2)
+        if (userOption == 2)
         {
+          printf("IN USER CHOICE 2b\n");
           //make a function for smallest file in directory
         }
-        if (userChoice == 3)
+        if (userOption == 3)                                                    //work cited: https://stackoverflow.com/questions/25877635/my-c-program-reads-a-text-file-when-i-put-it-into-xcode-it-fails-whats-happen
         {
+          printf("IN USER CHOICE 3b\n");
           //makes a function for user entry file in directory
+          FILE *fp;
+          char name[MAX];
+
+          printf("Please enter a filename to open: ");
+          fgets(name, MAX, stdin);
+          if ((fp = fopen(name, "w")) == 0)
+          {
+            printf("File cannot be opened!");
+          }
         }
         else                                                                    //reprompt user which loops
         {
           printf("Please enter a valid menu entry\n");
           //userOption = menuB();                                                 //reprompt so menuB is displayed again
         }
-      }while (userOption !=1 || userOption !=2 || userOption != 3 || userOption != 4);
+      }while (userOption !=1 || userOption !=2 || userOption !=3 || userOption !=4);
     }
     if (userChoice == 2)
     {                                                                           //our exit statement
+      //printf("IN USER CHOICE 2a\n");
       exit(0);
     }
     else

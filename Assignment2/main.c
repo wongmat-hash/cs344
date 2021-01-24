@@ -84,16 +84,20 @@ int main()
           DIR* currDir = opendir(".");                                          //opens the current directory
           struct dirent *aDir;
           struct stat dirStat;
-
+          if (aDir == NULL)
+          {
+            printf("There was an error opening the directory\n");
+            return EXIT_FAILURE;
+          }
           while((aDir = readdir(currDir))!= NULL)                               //go through all the entries
           {
-            printf("%s\n",aDir->d_name);                                        //print out all the information
-
-            if(strncmp(PREFIX, aDir->d_name, strlen(PREFIX))==0)                //looking for just files with movies as prefix
-            {
-              stat(aDir->d_name, &dirStat);                                     //pulls the metadata for the current entry
-            }
-            printf("%lld\n", dirStat.st_size);
+            //printf("%s = %lld filesize in bytes:\n",aDir->d_name, dirStat.st_size);                                        //print out all the information
+            printf("%s\n", aDir->d_name);
+            //if(strncmp(PREFIX, aDir->d_name, strlen(PREFIX))==0)                //looking for just files with movies as prefix
+            //{
+            //  stat(aDir->d_name, &dirStat);                                     //pulls the metadata for the current entry
+            //}
+            //printf("filesize in bytes: %lld\n", dirStat.st_size);
 
           }
           closedir(currDir);

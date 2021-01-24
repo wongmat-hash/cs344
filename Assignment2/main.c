@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/types.h>
-#define PREFIX "movies"
+#define PREFIX "movies_"
 
 //menu A prompts
 int menuA()                                                                     //first menu prompt
@@ -91,14 +91,18 @@ int main()
           }
           while((aDir = readdir(currDir))!= NULL)                               //otherwise go through all the entries
           {
-            printf("filename: %s\n", aDir->d_name);                             //prints the file name
-            //TEST                                                              work cited: https://stackoverflow.com/questions/29548013/loop-through-a-file-and-print-file-attributes-in-c
-            if ((stat(aDir->d_name, &dirStat)) == -1)
+            //look only at the prefix student files
+            if (strncmp(PREFIX, aDir->d_name, strlen(PREFIX))==0)
             {
-              printf("SOME ERROR HAPPENED IN THE WHILE LOOP\n");
+              printf("filename: %s\n", aDir->d_name);                           //prints the file name
+              //TEST                                                            work cited: https://stackoverflow.com/questions/29548013/loop-through-a-file-and-print-file-attributes-in-c
+              if ((stat(aDir->d_name, &dirStat)) == -1)
+              {
+                printf("SOME ERROR HAPPENED IN THE WHILE LOOP\n");
+              }
+              //display the file information for testing
+              printf("total size, in bytes: %lld\n", dirStat.st_size);
             }
-            //display the file information for testing
-            printf("total size, in bytes: %lld\n", dirStat.st_size);
           }
           closedir(currDir);
         }

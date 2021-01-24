@@ -55,6 +55,10 @@ long int findSize(char file_name[])
   return res;
 }
 
+void processing(FILE *fp, char f[])
+{
+  printf("Now processing the chosen file named %s\n\n", f);
+}
 
 
 int main()
@@ -66,13 +70,13 @@ int main()
     userChoice = menuA();                                                       //set the return value to what the menu prompts for userChoice 1-2
     if (userChoice == 1)                                                        //if the user enters 1 we need to go to secondary menu
     {
-      printf("IN USER CHOICE 1a\n");
+      //printf("IN USER CHOICE 1a\n");
       do
       {                                                                         //secondary menu which will prompt user 1-3
         userOption = menuB();
         if (userOption == 1)                                                    //work cited: https://www.geeksforgeeks.org/c-program-find-size-file/
         {
-          printf("IN USER CHOICE 1b\n");
+          //printf("IN USER CHOICE 1b\n");
           char file_name[] = {"movies_sample_1.csv"};
           long int res = findSize(file_name);
           if (res != -1)
@@ -83,22 +87,30 @@ int main()
         }
         if (userOption == 2)
         {
-          printf("IN USER CHOICE 2b\n");
+          //printf("IN USER CHOICE 2b\n");
           //make a function for smallest file in directory
         }
-        if (userOption == 3)                                                    //work cited: https://stackoverflow.com/questions/25877635/my-c-program-reads-a-text-file-when-i-put-it-into-xcode-it-fails-whats-happen
+        if (userOption == 3)                                                    //work cited: https://stackoverflow.com/questions/19338929/how-to-get-user-input-in-fopen
         {
-          printf("IN USER CHOICE 3b\n");
+          //printf("IN USER CHOICE 3b\n");
           //makes a function for user entry file in directory
-          FILE *fp;
-          char name[MAX];
-
-          printf("Please enter a filename to open: ");
-          fgets(name, MAX, stdin);
-          if ((fp = fopen(name, "w")) == 0)
-          {
-            printf("File cannot be opened!");
-          }
+        char fileName[255];
+        FILE *fp;
+        printf("Please enter a fileName to open (example: movies): ");          //user prompt
+        scanf("%s", fileName);                                                  //looks for the file and stores it in our fileName
+        strcat(fileName, ".csv");                                               //append with csv
+        fp = fopen(fileName, "r");
+        if (fp == NULL)
+        {
+          printf("There was an error trying to open your file. Please try again\n");
+          printf("\n");                                                         //error validation for user specified file
+        }
+        else if (fp !=NULL)
+        {
+          //send to processing
+          processing(fp, fileName);
+        }
+        fclose(fp);                                                             //close our file
         }
         else                                                                    //reprompt user which loops
         {

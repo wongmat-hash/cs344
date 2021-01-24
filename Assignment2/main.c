@@ -84,6 +84,7 @@ int main()
           DIR* currDir = opendir(".");                                          //opens the current directory
           struct dirent *aDir;                                                  //pointer for dirent
           struct stat dirStat;                                                  //delcaration of stat struct for files
+          struct stat dirStat2;                                                 //used for 2nd file comparison
           char entryName[256];                                                  //stores our largest filename
           int i = 0;                                                            //for our comparison between files
           if (aDir == NULL)                                                     //if our file was null then proceed with error message
@@ -110,17 +111,28 @@ int main()
                 //set the entryName to the current file being looked at because its the ONLY movies prefix csv
                 memset(entryName, '\0', sizeof(entryName));
                 strcpy(entryName, aDir->d_name);
+                stat(aDir->d_name, &dirStat2);                                  //store it in dirStat2
               }
               if (i !=0)
               {
                 //that means we have a prefix file with movie already so we need to compare the file size and see which one is greater
-
+                if (dirStat.st_size > dirStat2.st_size)
+                {
+                  //the new stat is greater than the previous so we need it to take over the stat2 otherwise stat2 remains
+                  memset(entryName, '\0', sizeof(entryName));
+                  strcpy(entryName, aDir->d_name);
+                  stat(aDir->d_name, &dirStat2);
+                }
+                if (dirStat.st_size < dirStat2.st_size)
+                {
+                  continue; //it means the file sizes are the greater before
+                }
               }
               i++;                                                              //means we looked through 1 file with prefix movie
             }
           }
           closedir(currDir);
-          printf("The largest file with prefix: \"%s\" modified in the current directory is: %s\n", PREFIX, entryName);
+          printf("The largest file with prefix: \"%s\" in the current directory is: %s\n", PREFIX, entryName);
           printf("\n");
         }
         if (userOption == 2)

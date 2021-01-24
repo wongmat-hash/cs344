@@ -91,15 +91,15 @@ int main()
             printf("There was an error opening the directory\n");
             return EXIT_FAILURE;
           }
-          while((aDir = readdir(currDir))!= NULL)                               //otherwise go through all the entries
+          while((aDir = readdir(currDir)))                                       //otherwise go through all the entries
           {
             //look only at the prefix student files
             if (strncmp(PREFIX, aDir->d_name, strlen(PREFIX))==0)
             {
+              stat(aDir->d_name, &dirStat);                                     //get metadata for current entry
               printf("filename: %s\n", aDir->d_name);                           //prints the file name
-              //TEST                                                            work cited: https://stackoverflow.com/questions/29548013/loop-through-a-file-and-print-file-attributes-in-c
-              //display the file information for testing
-              printf("total size, in bytes: %lld\n", dirStat.st_size);
+                                                                                //work cited: https://stackoverflow.com/questions/29548013/loop-through-a-file-and-print-file-attributes-in-c
+              printf("total size, in bytes: %lld\n", dirStat.st_size);          //display the file information for testing
               printf("\n");
               if ((stat(aDir->d_name, &dirStat)) == -1)
               {
@@ -116,7 +116,7 @@ int main()
                 //that means we have a prefix file with movie already so we need to compare the file size and see which one is greater
 
               }
-              i++;                                                              //means we looked through 1 file with prefix movie 
+              i++;                                                              //means we looked through 1 file with prefix movie
             }
           }
           closedir(currDir);

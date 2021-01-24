@@ -84,6 +84,7 @@ int main()
           DIR* currDir = opendir(".");                                          //opens the current directory
           struct dirent *aDir;                                                  //pointer for dirent
           struct stat dirStat;                                                  //delcaration of stat struct for files
+          char entryName[256];                                                  //stores our largest filename
           if (aDir == NULL)                                                     //if our file was null then proceed with error message
           {
             printf("There was an error opening the directory\n");
@@ -102,9 +103,12 @@ int main()
               }
               //display the file information for testing
               printf("total size, in bytes: %lld\n", dirStat.st_size);
+              printf("\n");
             }
           }
           closedir(currDir);
+          printf("The largest file with prefix: \"%s\" modified in the current directory is: %s\n", PREFIX, entryName);
+          printf("\n");
         }
         if (userOption == 2)
         {

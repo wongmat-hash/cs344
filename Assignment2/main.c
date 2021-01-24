@@ -82,45 +82,25 @@ int main()
         {
           //work cited using portion from: https://oregonstate.instructure.com/courses/1798831/pages/exploration-directories?module_item_id=20163866 to open directory
           DIR* currDir = opendir(".");                                          //opens the current directory
-          struct dirent *aDir;
-          struct stat dirStat;
-          if (aDir == NULL)
+          struct dirent *aDir;                                                  //pointer for dirent
+          struct stat dirStat;                                                  //delcaration of stat struct for files
+          if (aDir == NULL)                                                     //if our file was null then proceed with error message
           {
             printf("There was an error opening the directory\n");
             return EXIT_FAILURE;
           }
-          while((aDir = readdir(currDir))!= NULL)                               //go through all the entries
+          while((aDir = readdir(currDir))!= NULL)                               //otherwise go through all the entries
           {
-            //printf("%s = %lld filesize in bytes:\n",aDir->d_name, dirStat.st_size);                                        //print out all the information
-            printf("%s\n", aDir->d_name);
-            //if(strncmp(PREFIX, aDir->d_name, strlen(PREFIX))==0)                //looking for just files with movies as prefix
-            //{
-            //  stat(aDir->d_name, &dirStat);                                     //pulls the metadata for the current entry
-            //}
-            //printf("filesize in bytes: %lld\n", dirStat.st_size);
-
+            printf("filename: %s\n", aDir->d_name);                             //prints the file name
+            //TEST                                                              work cited: https://stackoverflow.com/questions/29548013/loop-through-a-file-and-print-file-attributes-in-c
+            if ((stat(aDir->d_name, &dirStat)) == -1)
+            {
+              printf("SOME ERROR HAPPENED IN THE WHILE LOOP\n");
+            }
+            //display the file information for testing
+            printf("total size, in bytes: %lld\n", dirStat.st_size);
           }
           closedir(currDir);
-
-
-
-
-
-
-
-
-
-
-
-
-          //printf("IN USER CHOICE 1b\n");
-          char file_name[] = {"movies_sample_1.csv"};
-          long int res = findSize(file_name);
-          if (res != -1)
-          {
-            printf("Size of file is %ld bytes \n", res);
-            printf("\n");
-          }
         }
         if (userOption == 2)
         {

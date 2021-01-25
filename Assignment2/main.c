@@ -38,56 +38,37 @@ struct movie *createMovie(char *currLine)
 {
   int yea, rat;
   struct movie *currMovie = malloc(sizeof(struct movie));
-
   char *saveptr;
   //copy the title
   char *token = strtok_r(currLine, ",", &saveptr);
   currMovie->title = calloc(strlen(token) + 1, sizeof(char));
   strcpy(currMovie->title, token);
-  //tit = calloc(strlen(token) + 1, sizeof(char));
-  //strcpy(currMovie->title, tit);
-  //copy the year
   token = strtok_r(NULL, ",", &saveptr);
   currMovie->year = calloc(strlen(token) + 1, sizeof(char));
   strcpy(currMovie->year, token);
-  //yea = calloc(strlen(token) +1, sizeof(char));
-  //printf("YEA TEST: %s\n", yea);
-  //currMovie->year = atoi(yea);
-  //copy the language
   token = strtok_r(NULL, ",", &saveptr);
   currMovie->language = calloc(strlen(token) + 1, sizeof(char));
   strcpy(currMovie->language, token);
-  //lang = calloc(strlen(token) + 1, sizeof(char));
-  //strcpy(currMovie->language, lang);
-  //copy the rating
   token = strtok_r(NULL, "\n", &saveptr);
   currMovie->rating = calloc(strlen(token) + 1, sizeof(char));
   strcpy(currMovie->rating, token);
-  //rat = calloc(strlen(token) + 1, sizeof(char));
-  //printf("RAT TEST: %s\n", rat);
-  //currMovie->rating = atof(rat);
-
   currMovie->next = NULL;
-
   return currMovie;
 }
 
 //function to swap our movie node data
 void swapper(struct movie *a, struct movie *b)
 {
-  //fix declaration of temp node so it can actually store.
   //declare a temp node
   struct movie tmp;
   tmp.title = a->title;
   tmp.year = a->year;
   tmp.language = a->language;
   tmp.rating = a->rating;
-
   a->title = b->title;
   a->year = b->year;
   a->language = b->language;
   a->rating = b->rating;
-
   b->title = tmp.title;
   b->year = tmp.year;
   b->language = tmp.language;
@@ -96,24 +77,15 @@ void swapper(struct movie *a, struct movie *b)
 //function to sort by year then rating
 void sorting(struct movie *head)
 {
-  //printf("inside sorting function now\n");
-  //run a simple bubble sort to sort out by year first
   int swapped, i;                                                               //storage variable
   struct movie *ptr1;
   struct movie *lptr = NULL;
-  //printList(head);
-  //check to see if our list is empty
   if (head == NULL)
   {
     return;
   }
-  //ptr1 = head;
-  //ptr1 = ptr1->next;
-  //FIRST WE NEED TO SORT IT BY YEAR AND GET A COMPLETE LIST
   do
   {
-    //printf("here is our list: \n");
-    //printList(head);
     swapped = 0;                    //triger when its greater or equal not less                                                                 //initiate our counter for swap
     ptr1 = head;                                                                //set our pointer to the head list
     //ptr1 = ptr1->next;              //skip the first line since its our titles
@@ -123,25 +95,16 @@ void sorting(struct movie *head)
       int p1, p2;
       p1 = atoi(ptr1->year);
       p2 = atoi(ptr1->next->year);
-      //if (ptr1->year > ptr1->next->year)                                        //if the crawler year is greater than the next value
-      //printf("this is our p1: %d\n", p1);
-      //printf("this is our p2: %d\n", p2);
       if(p1 > p2)
       {
-        //printf("inside our first conditional\n");
         swapper(ptr1, ptr1->next);                                              //swap them
         swapped = 1;                                                            //set our counter
       }
-      //else if (ptr1->year == ptr1->next->year)                                  //if the years are the same we need to check the rating and if the ratings are out of order swap
-      //if you get to a year now we must sort by secondary condition which is ratings
       else if (p1 == p2)
       {
         float f1, f2;
         f1 = atof(ptr1->rating);  //convert our char to floats
         f2 = atof(ptr1->next->rating);
-        //printf("this is my f1 rating: %f\n", f1);
-        //printf("this is my f2 rating: %f\n", f2);
-        //if (ptr1->rating > ptr1->next->rating)
         if (f1 > f2)
         {
           swapper(ptr1, ptr1->next);
@@ -152,11 +115,6 @@ void sorting(struct movie *head)
     }
     lptr = ptr1;                                                                //move the next value to the crawler
   }while(swapped);
-  //TESTING PRINTING OUT NEW LIST
-  //printf("PRINTING OUR SORTED LIST BY YEAR->RATING\n");
-  //printList(head);
-  //printf("\n");
-
   ptr1 = head->next;                  //put our iterator back to head to restart
   do
   {
@@ -171,7 +129,6 @@ void sorting(struct movie *head)
       b = atof(ptr1->rating);
     }
     ptr1 = ptr1->next;
-
   }while(ptr1->next !=NULL);
   int a;
   float b;
@@ -264,6 +221,7 @@ void processing(struct movie *head, char f[])
     printf("TEST Directory created\n");
     //4. in the new directory create on file for each year in which at least one movie was released
     DIR *opendir(const char* pathname);
+
   }
   else if (check == 1)
   {

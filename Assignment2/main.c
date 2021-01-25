@@ -71,42 +71,7 @@ struct movie *createMovie(char *currLine)
 
   return currMovie;
 }
-//processing the read file DONE
-struct movie *processFile(char *filePath)
-{
-  FILE *movieFile = fopen(filePath, "r");
-  char *currLine = NULL;
-  size_t len = 0;
-  ssize_t nread;
-  char *token;
-  int count= -1;
 
-  struct movie *head = NULL;
-  struct movie *tail = NULL;
-
-  while ((nread = getline(&currLine, &len, movieFile)) != -1)
-  {
-    struct movie *newNode = createMovie(currLine);
-
-    if (head == NULL)
-    {
-      head = newNode;
-      tail = newNode;
-      count++;
-    }
-    else
-    {
-      tail->next = newNode;
-      tail = newNode;
-      count++;
-    }
-  }
-  printf("Processed file %s and parsed data for %d movies\n", filePath, count);
-  printf("\n");
-  free(currLine);
-  fclose(movieFile);
-  return head;
-}
 //function to swap our movie node data
 void swapper(struct movie *a, struct movie *b)
 {
@@ -188,9 +153,9 @@ void sorting(struct movie *head)
     lptr = ptr1;                                                                //move the next value to the crawler
   }while(swapped);
   //TESTING PRINTING OUT NEW LIST
-  printf("PRINTING OUR SORTED LIST BY YEAR->RATING\n");
-  printList(head);
-  printf("\n");
+  //printf("PRINTING OUR SORTED LIST BY YEAR->RATING\n");
+  //printList(head);
+  //printf("\n");
 
   ptr1 = head->next;                  //put our iterator back to head to restart
   do
@@ -204,10 +169,6 @@ void sorting(struct movie *head)
       float b;
       a = atoi(ptr1->year);
       b = atof(ptr1->rating);
-      printf("%d ", a);
-      printf("%.1f ", b);
-      printf("%s ", ptr1->title);
-      printf("\n");
     }
     ptr1 = ptr1->next;
 
@@ -216,13 +177,44 @@ void sorting(struct movie *head)
   float b;
     a = atoi(ptr1->year);
     b = atof(ptr1->rating);
-    printf("%d ", a);
-    printf("%.1f ", b);
-  printf("%s ", ptr1->title);
-  printf("\n");
-  printf("\n");
 }
+//processing the read file DONE
+struct movie *processFile(char *filePath)
+{
+  FILE *movieFile = fopen(filePath, "r");
+  char *currLine = NULL;
+  size_t len = 0;
+  ssize_t nread;
+  char *token;
+  int count= -1;
 
+  struct movie *head = NULL;
+  struct movie *tail = NULL;
+
+  while ((nread = getline(&currLine, &len, movieFile)) != -1)
+  {
+    struct movie *newNode = createMovie(currLine);
+
+    if (head == NULL)
+    {
+      head = newNode;
+      tail = newNode;
+      count++;
+    }
+    else
+    {
+      tail->next = newNode;
+      tail = newNode;
+      count++;
+    }
+  }
+  printf("Processed file %s and parsed data for %d movies\n", filePath, count);
+  printf("\n");
+  free(currLine);
+  fclose(movieFile);
+  sorting(head);                                                                //pass head to sorting to sort by year
+  return head;
+}
 //menu A prompts
 int menuA()                                                                     //first menu prompt
 {
@@ -290,7 +282,6 @@ int main()
     userChoice = menuA();                                                       //set the return value to what the menu prompts for userChoice 1-2
     if (userChoice == 1)                                                        //if the user enters 1 we need to go to secondary menu
     {
-      //printf("IN USER CHOICE 1a\n");
       do
       {                                                                         //secondary menu which will prompt user 1-3
         userOption = menuB();
@@ -304,11 +295,6 @@ int main()
           char entryName[256];                                                  //stores our largest filename
           int i = 0;                                                            //for our comparison between files
           FILE *fp;
-          //if (aDir == NULL)                                                     //if our file was null then proceed with error message
-          //{
-          //  printf("There was an error opening the directory\n");
-          //  return EXIT_FAILURE;
-          //}
           while((aDir = readdir(currDir)))                                       //otherwise go through all the entries
           {
             //look only at the prefix student files
@@ -319,10 +305,6 @@ int main()
                                                                                 //work cited: https://stackoverflow.com/questions/29548013/loop-through-a-file-and-print-file-attributes-in-c
               printf("total size, in bytes: %lld\n", dirStat.st_size);          //display the file information for testing
               printf("\n");
-              if ((stat(aDir->d_name, &dirStat)) == -1)
-              {
-                printf("SOME ERROR HAPPENED IN THE WHILE LOOP\n");
-              }
               if (i == 0)
               {
                 //set the entryName to the current file being looked at because its the ONLY movies prefix csv
@@ -356,13 +338,12 @@ int main()
           printList(head);
           //TESTING END//
 
-          processing(fp, entryName);
-          printf("\n");
+          //processing(fp, entryName);
+          //printf("\n");
           break;
         }
         if (userOption == 2)
         {
-          printf("IN USER CHOICE 2b\n");
                                                                                 //work cited using portion from: https://oregonstate.instructure.com/courses/1798831/pages/exploration-directories?module_item_id=20163866 to open directory
           DIR* currDir = opendir(".");                                          //opens the current directory
           struct dirent *aDir;                                                  //pointer for dirent
@@ -371,11 +352,6 @@ int main()
           char entryName[256];                                                  //stores our largest filename
           int i = 0;                                                            //for our comparison between files
           FILE *fp;
-          //if (aDir == NULL)                                                     //if our file was null then proceed with error message
-          //{
-          //  printf("There was an error opening the directory\n");
-          //  return EXIT_FAILURE;
-          //}
           while((aDir = readdir(currDir)))                                       //otherwise go through all the entries
           {
             //look only at the prefix student files
@@ -386,10 +362,6 @@ int main()
                                                                                 //work cited: https://stackoverflow.com/questions/29548013/loop-through-a-file-and-print-file-attributes-in-c
               printf("total size, in bytes: %lld\n", dirStat.st_size);          //display the file information for testing
               printf("\n");
-              if ((stat(aDir->d_name, &dirStat)) == -1)
-              {
-                printf("SOME ERROR HAPPENED IN THE WHILE LOOP\n");
-              }
               if (i == 0)
               {
                 //set the entryName to the current file being looked at because its the ONLY movies prefix csv
@@ -424,8 +396,8 @@ int main()
 
 
 
-          processing(fp, entryName);
-          printf("\n");
+          //processing(fp, entryName);
+          //printf("\n");
           break;
         }
         if (userOption == 3)                                                    //work cited: https://stackoverflow.com/questions/19338929/how-to-get-user-input-in-fopen

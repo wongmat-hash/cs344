@@ -211,8 +211,15 @@ int main()
         {
           printf("There was an error trying to open your file. Please try again\n");
           printf("\n");                                                         //error validation for user specified file
+          do
+          {
+            printf("Please enter a fileName to open (example: movies): ");          //user prompt
+            scanf("%s", fileName);                                                  //looks for the file and stores it in our fileName
+            strcat(fileName, ".csv");                                               //append with csv
+            fp = fopen(fileName, "r");
+          } while(fp == NULL);
         }
-        else if (fp !=NULL)
+        if (fp !=NULL)
         {
           //send to processing
           processing(fp, fileName);

@@ -37,49 +37,43 @@ int menuB()                                                                     
   return userOption;
 }
 
-//this function finds the size of the files
-long int findSize(char file_name[])
-{
-  //open the file and read
-  FILE* fp = fopen(file_name, "r");
-
-  //check if the file exists
-  if (fp == NULL)
-  {
-    printf("File Not Found!\n");
-    return -1;
-  }
-
-  fseek(fp, 0L, SEEK_END);
-  //calculate the size of the file after reading to end
-  long int res = ftell(fp);
-
-  fclose(fp);
-  //returns the value back to main
-  return res;
-}
-
 //this function will process our file
 void processing(FILE *fp, char f[])
 {
   int r = rand() % 99999;                                                       //generate a random number between 1-99999 work cited: https://stackoverflow.com/questions/822323/how-to-generate-a-random-int-in-c
   char rando[16];
   sprintf(rando, "%d", r);
-  char pathname = "wongmat.movies." + rando;
-  //printf("random number: %d\n", r);
+  char pathname[40] = "wongmat.movies.";
+  strcat(pathname, rando);
+  printf("random number: %d\n", r);
   printf("Now processing the chosen file named %s\n\n", f);
   //1. create a new directory and print a message with the name of the directory that has been made
-  int mkdir(const char*pathname, mode_t mode);                                  //from lecture: https://oregonstate.instructure.com/courses/1798831/pages/exploration-directories?module_item_id=20163866
+  printf("new directory made: %s\n", pathname);
+  //int mkdir(char*pathname, mode_t mode);                                  //from lecture: https://oregonstate.instructure.com/courses/1798831/pages/exploration-directories?module_item_id=20163866
+  //work cited for below: https://www.geeksforgeeks.org/create-directoryfolder-cc-program/
+  int check;
+  check = mkdir(pathname, 0777);
+
+  if (!check)
+  {
+    printf("Directory created\n");
+  }
+  else
+  {
+    printf("Directory was not created\n");
+    exit(1);
+  }
+
+
+
   //2. the permissions of the directory must be set to rwxr-x--
   //3. prase the data in the chosen file to find out the movies released in each year
   //4. in the new directory create on file for each year in which at least one movie was released
   //5. within the file for a year write the titles for all the movies released in that year one on each line
 }
 
-
 int main()
 {
-
   int userChoice, userOption;                                                   //user storage options
   do
   {                                                                             //our do while loop helps our error validation

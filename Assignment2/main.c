@@ -219,9 +219,25 @@ void processing(struct movie *head, char f[])
   if (check != 1)
   {
     printf("TEST Directory created\n");
-    //4. in the new directory create on file for each year in which at least one movie was released
-    DIR *opendir(const char* pathname);
-
+    //open said directory
+    struct dirent *pDirent;
+    char strPath[100] = "./";
+    strcat(strPath, pathname);
+    printf("test pathway: %s\n", strPath);
+    DIR *pDir = opendir(strPath);
+    if (pDir == NULL)
+    {
+      printf("cannot open this directory for some reason\n");
+      exit(1);
+    }
+    while ((pDirent = readdir(pDir)) !=NULL)
+    {
+      //head = head->next;
+      FILE *f= fopen("TEST.txt", "w");
+      fputs(head->title, f);
+      fclose(f);
+    }
+    closedir(pDir);
   }
   else if (check == 1)
   {

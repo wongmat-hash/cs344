@@ -87,6 +87,7 @@ int main()
           struct stat dirStat2;                                                 //used for 2nd file comparison
           char entryName[256];                                                  //stores our largest filename
           int i = 0;                                                            //for our comparison between files
+          FILE *fp;
           //if (aDir == NULL)                                                     //if our file was null then proceed with error message
           //{
           //  printf("There was an error opening the directory\n");
@@ -133,6 +134,7 @@ int main()
           }
           closedir(currDir);
           printf("The largest file with prefix: \"%s\" in the current directory is: %s\n", PREFIX, entryName);
+          processing(fp, entryName);
           printf("\n");
         }
         if (userOption == 2)
@@ -145,6 +147,7 @@ int main()
           struct stat dirStat2;                                                 //used for 2nd file comparison
           char entryName[256];                                                  //stores our largest filename
           int i = 0;                                                            //for our comparison between files
+          FILE *fp;
           //if (aDir == NULL)                                                     //if our file was null then proceed with error message
           //{
           //  printf("There was an error opening the directory\n");
@@ -191,6 +194,7 @@ int main()
           }
           closedir(currDir);
           printf("The smallest file with prefix: \"%s\" in the current directory is: %s\n", PREFIX, entryName);
+          processing(fp, entryName);
           printf("\n");
         }
         if (userOption == 3)                                                    //work cited: https://stackoverflow.com/questions/19338929/how-to-get-user-input-in-fopen

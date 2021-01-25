@@ -53,7 +53,7 @@ void processing(FILE *fp, char f[])
   //int mkdir(char*pathname, mode_t mode);                                  //from lecture: https://oregonstate.instructure.com/courses/1798831/pages/exploration-directories?module_item_id=20163866
   //work cited for below: https://www.geeksforgeeks.org/create-directoryfolder-cc-program/
   int check;
-  check = mkdir(pathname, 0777);
+  check = mkdir(pathname, 0750);                                                //work cited for permission: http://www.unixmantra.com/2013/04/unix-linux-file-permissions.html
   if (!check)
   {
     printf("TEST Directory created\n");
@@ -63,9 +63,6 @@ void processing(FILE *fp, char f[])
     printf("TEST Directory was not created\n");
     exit(1);
   }
-
-
-
   //2. the permissions of the directory must be set to rwxr-x--
   //3. prase the data in the chosen file to find out the movies released in each year
   //4. in the new directory create on file for each year in which at least one movie was released

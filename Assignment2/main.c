@@ -9,6 +9,7 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <time.h>
+#include <fcntl.h>
 #define PREFIX "movies_"
 
 //struct for movies DONE
@@ -231,11 +232,12 @@ void processing(struct movie *head, char f[])
       exit(1);
     }
     while ((pDirent = readdir(pDir)) !=NULL)
-    {
-      //head = head->next;
-      FILE *f= fopen("TEST.txt", "w");
-      fputs(head->title, f);
-      fclose(f);
+    {                                                                           //work cited: https://stackoverflow.com/questions/21236508/to-create-all-needed-folders-with-fopen
+      chdir(strPath);
+      FILE *fp = fopen("TEST.txt", "w");
+      head = head->next;
+      fputs(head->title, fp);
+      fclose(fp);
     }
     closedir(pDir);
   }

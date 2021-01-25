@@ -242,7 +242,7 @@ int menuB()                                                                     
 }
 
 //this function will process our file
-void processing(FILE *fp, char f[])
+void processing(struct movie *head, char f[])
 {
   int r = rand() % 99999;                                                       //generate a random number between 1-99999 work cited: https://stackoverflow.com/questions/822323/how-to-generate-a-random-int-in-c
   char rando[16];
@@ -259,18 +259,19 @@ void processing(FILE *fp, char f[])
   int check;
   //2. the permissions of the directory must be set to rwxr-x--
   check = mkdir(pathname, 0750);                                                //work cited for permission: http://www.unixmantra.com/2013/04/unix-linux-file-permissions.html
-  if (!check)
+  if (check != 1)
   {
     printf("TEST Directory created\n");
+    //4. in the new directory create on file for each year in which at least one movie was released
+    DIR *opendir(const char* pathname);
   }
-  else
+  else if (check == 1)
   {
     printf("TEST Directory was not created\n");
     exit(1);
   }
   //3. prase the data in the chosen file to find out the movies released in each year
-  //4. in the new directory create on file for each year in which at least one movie was released
-  DIR *opendir(const char* pathname);
+
   //5. within the file for a year write the titles for all the movies released in that year one on each line
 }
 
@@ -336,10 +337,9 @@ int main()
           struct movie *head = processFile(entryName);
 
           printList(head);
-          //TESTING END//
 
-          //processing(fp, entryName);
-          //printf("\n");
+          processing(head, entryName);
+          printf("\n");
           break;
         }
         if (userOption == 2)
@@ -396,8 +396,8 @@ int main()
 
 
 
-          //processing(fp, entryName);
-          //printf("\n");
+          processing(head, entryName);
+          printf("\n");
           break;
         }
         if (userOption == 3)                                                    //work cited: https://stackoverflow.com/questions/19338929/how-to-get-user-input-in-fopen
@@ -434,7 +434,7 @@ int main()
 
 
 
-          processing(fp, fileName);
+          processing(head, fileName);
         }
         fclose(fp);                                                             //close our file
         break;

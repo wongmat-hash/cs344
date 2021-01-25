@@ -87,11 +87,11 @@ int main()
           struct stat dirStat2;                                                 //used for 2nd file comparison
           char entryName[256];                                                  //stores our largest filename
           int i = 0;                                                            //for our comparison between files
-          if (aDir == NULL)                                                     //if our file was null then proceed with error message
-          {
-            printf("There was an error opening the directory\n");
-            return EXIT_FAILURE;
-          }
+          //if (aDir == NULL)                                                     //if our file was null then proceed with error message
+          //{
+          //  printf("There was an error opening the directory\n");
+          //  return EXIT_FAILURE;
+          //}
           while((aDir = readdir(currDir)))                                       //otherwise go through all the entries
           {
             //look only at the prefix student files
@@ -137,8 +137,61 @@ int main()
         }
         if (userOption == 2)
         {
-          //printf("IN USER CHOICE 2b\n");
-          //make a function for smallest file in directory
+          printf("IN USER CHOICE 2b\n");
+                                                                                //work cited using portion from: https://oregonstate.instructure.com/courses/1798831/pages/exploration-directories?module_item_id=20163866 to open directory
+          DIR* currDir = opendir(".");                                          //opens the current directory
+          struct dirent *aDir;                                                  //pointer for dirent
+          struct stat dirStat;                                                  //delcaration of stat struct for files
+          struct stat dirStat2;                                                 //used for 2nd file comparison
+          char entryName[256];                                                  //stores our largest filename
+          int i = 0;                                                            //for our comparison between files
+          //if (aDir == NULL)                                                     //if our file was null then proceed with error message
+          //{
+          //  printf("There was an error opening the directory\n");
+          //  return EXIT_FAILURE;
+          //}
+          while((aDir = readdir(currDir)))                                       //otherwise go through all the entries
+          {
+            //look only at the prefix student files
+            if (strncmp(PREFIX, aDir->d_name, strlen(PREFIX))==0)
+            {
+              stat(aDir->d_name, &dirStat);                                     //get metadata for current entry
+              printf("filename: %s\n", aDir->d_name);                           //prints the file name
+                                                                                //work cited: https://stackoverflow.com/questions/29548013/loop-through-a-file-and-print-file-attributes-in-c
+              printf("total size, in bytes: %lld\n", dirStat.st_size);          //display the file information for testing
+              printf("\n");
+              if ((stat(aDir->d_name, &dirStat)) == -1)
+              {
+                printf("SOME ERROR HAPPENED IN THE WHILE LOOP\n");
+              }
+              if (i == 0)
+              {
+                //set the entryName to the current file being looked at because its the ONLY movies prefix csv
+                memset(entryName, '\0', sizeof(entryName));
+                strcpy(entryName, aDir->d_name);
+                stat(aDir->d_name, &dirStat2);                                  //store it in dirStat2
+              }
+              if (i !=0)
+              {
+                //that means we have a prefix file with movie already so we need to compare the file size and see which one is greater
+                if (dirStat.st_size < dirStat2.st_size)
+                {
+                  //the new stat is greater than the previous so we need it to take over the stat2 otherwise stat2 remains
+                  memset(entryName, '\0', sizeof(entryName));
+                  strcpy(entryName, aDir->d_name);
+                  stat(aDir->d_name, &dirStat2);
+                }
+                if (dirStat.st_size > dirStat2.st_size)
+                {
+                continue; //it means the file sizes are the greater before
+                }
+              }
+            i++;                                                              //means we looked through 1 file with prefix movie
+            }
+          }
+          closedir(currDir);
+          printf("The smallest file with prefix: \"%s\" in the current directory is: %s\n", PREFIX, entryName);
+          printf("\n");
         }
         if (userOption == 3)                                                    //work cited: https://stackoverflow.com/questions/19338929/how-to-get-user-input-in-fopen
         {

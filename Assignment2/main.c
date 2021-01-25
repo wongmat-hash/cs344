@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/types.h>
+#include <time.h>
 #define PREFIX "movies_"
 
 //menu A prompts
@@ -61,7 +62,18 @@ long int findSize(char file_name[])
 //this function will process our file
 void processing(FILE *fp, char f[])
 {
+  int r = rand() % 99999;                                                       //generate a random number between 1-99999 work cited: https://stackoverflow.com/questions/822323/how-to-generate-a-random-int-in-c
+  char rando[16];
+  sprintf(rando, "%d", r);
+  char pathname = "wongmat.movies." + rando;
+  //printf("random number: %d\n", r);
   printf("Now processing the chosen file named %s\n\n", f);
+  //1. create a new directory and print a message with the name of the directory that has been made
+  int mkdir(const char*pathname, mode_t mode);                                  //from lecture: https://oregonstate.instructure.com/courses/1798831/pages/exploration-directories?module_item_id=20163866
+  //2. the permissions of the directory must be set to rwxr-x--
+  //3. prase the data in the chosen file to find out the movies released in each year
+  //4. in the new directory create on file for each year in which at least one movie was released
+  //5. within the file for a year write the titles for all the movies released in that year one on each line
 }
 
 

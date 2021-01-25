@@ -45,22 +45,22 @@ void processing(FILE *fp, char f[])
   sprintf(rando, "%d", r);
   char pathname[40] = "wongmat.movies.";
   strcat(pathname, rando);
-  printf("random number: %d\n", r);
+  //TESTING RANDO
+  //printf("random number: %d\n", r);
   printf("Now processing the chosen file named %s\n\n", f);
   //1. create a new directory and print a message with the name of the directory that has been made
-  printf("new directory made: %s\n", pathname);
+  printf("Created directory with name: %s\n", pathname);
   //int mkdir(char*pathname, mode_t mode);                                  //from lecture: https://oregonstate.instructure.com/courses/1798831/pages/exploration-directories?module_item_id=20163866
   //work cited for below: https://www.geeksforgeeks.org/create-directoryfolder-cc-program/
   int check;
   check = mkdir(pathname, 0777);
-
   if (!check)
   {
-    printf("Directory created\n");
+    printf("TEST Directory created\n");
   }
   else
   {
-    printf("Directory was not created\n");
+    printf("TEST Directory was not created\n");
     exit(1);
   }
 
@@ -142,6 +142,7 @@ int main()
           printf("The largest file with prefix: \"%s\" in the current directory is: %s\n", PREFIX, entryName);
           processing(fp, entryName);
           printf("\n");
+          break;
         }
         if (userOption == 2)
         {
@@ -202,6 +203,7 @@ int main()
           printf("The smallest file with prefix: \"%s\" in the current directory is: %s\n", PREFIX, entryName);
           processing(fp, entryName);
           printf("\n");
+          break;
         }
         if (userOption == 3)                                                    //work cited: https://stackoverflow.com/questions/19338929/how-to-get-user-input-in-fopen
         {
@@ -231,6 +233,7 @@ int main()
           processing(fp, fileName);
         }
         fclose(fp);                                                             //close our file
+        break;
         }
         else                                                                    //reprompt user which loops
         {

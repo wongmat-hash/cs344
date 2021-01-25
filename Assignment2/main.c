@@ -226,20 +226,56 @@ void processing(struct movie *head, char f[])
     strcat(strPath, pathname);
     printf("test pathway: %s\n", strPath);
     DIR *pDir = opendir(strPath);
+    head = head->next;
     if (pDir == NULL)
     {
       printf("cannot open this directory for some reason\n");
       exit(1);
     }
+    printList(head);
     while ((pDirent = readdir(pDir)) !=NULL)
-    {                                                                           //work cited: https://stackoverflow.com/questions/21236508/to-create-all-needed-folders-with-fopen
-      chdir(strPath);
-      FILE *fp = fopen("TEST.txt", "w");
-      head = head->next;
-      fputs(head->title, fp);
-      fclose(fp);
-    }
+    {
+      chdir(strPath);                                                           //work cited: //work cited: https://stackoverflow.com/questions/21236508/to-create-all-needed-folders-with-fopen
+      //create a loop to create files for every thing in the struct until end of struct
+      while(head!=NULL)
+      {
+        int a, b;
+        a = atoi(head->year);
+        b = atoi(head->next->year);
+
+        if (a < b)                                                              // if the second comapred year is greater just print one and iterate
+        {
+          printf("the second compared year is greater so we just create 1 file\n");
+          char *year = head->year;                                            //store the filename as the year
+          char *newYear = ".txt";
+          strcat(year, newYear);
+          printf("testing our filename: %s\n", year);                            //testing that our strcat copied correctly
+          FILE *fp = fopen(year, "w");                                         //open that file with that year title
+          fputs(head->title, fp);
+          fputs("\n", fp);
+          head = head->next;
+          fclose(fp);
+        }
+        else if (a == b)                                                        //if the years are the same
+        {
+          printf("the years are the same so keep storing and iterating until not the same\n");
+          char *year = head->year;                                            //store the filename as the year
+          char newYear[4] = ".txt";
+          strcat(year, newYear);
+          printf("testing our filename: %s\n", year);                            //testing that our strcat copied correctly
+          FILE *fp = fopen(year, "a+");                                         //open that file with that year title
+          while (strcmp(head->year, head->next->year) == 0)                       //check if the years are equal
+          {
+            fputs(head->title, fp);
+            fputs("\n", fp);
+            head = head->next;
+          }
+          fputs(head->title, fp);                                               //put the last year before next is not equal
+          fclose(fp);
+        }
+      }
     closedir(pDir);
+    }
   }
   else if (check == 1)
   {

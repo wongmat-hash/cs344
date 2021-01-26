@@ -225,7 +225,7 @@ int counter(struct movie *head)                                                 
 }
 
 //this function will process our file
-void processing(struct movie *head, char f[])
+void processing(struct movie *head, const char *f)
 {
   time_t t;
   srand((unsigned) time(&t));

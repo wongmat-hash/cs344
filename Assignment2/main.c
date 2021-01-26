@@ -232,7 +232,8 @@ void processing(struct movie *head, char f[])
   int random = rand() % 99999;                                                       //generate a random number between 1-99999 work cited: https://stackoverflow.com/questions/822323/how-to-generate-a-random-int-in-c
   char rando[16];
   sprintf(rando, "%d", random);
-  char pathname[40] = "wongmat.movies.";
+  char *pathname = malloc(strlen("wongmat.movies."));
+  strcpy(pathname, "wongmat.movies.");
   strcat(pathname, rando);
   //TESTING RANDO
   //printf("random number: %d\n", r);
@@ -249,7 +250,8 @@ void processing(struct movie *head, char f[])
     //printf("TEST Directory created\n");
     //open said directory
     struct dirent *pDirent;
-    char strPath[100] = "./";
+    char strPath[100];
+    strcpy(strPath,"./");
     strcat(strPath, pathname);
     printf("test pathway: %s\n", strPath);
     DIR *pDir = opendir(strPath);
@@ -277,8 +279,10 @@ void processing(struct movie *head, char f[])
           if ((head->next->next !=NULL) && (x != 0))                                          //if theres more values to add after the next
           {
             //printf("the second compared year is greater so we just create 1 file\n");
-            char *year = head->year;                                            //store the filename as the year
-            char *newYear = ".txt";
+            char *year = malloc(strlen(head->year)+1);                                            //store the filename as the year
+            strcpy(year, head->year);
+            char *newYear = malloc(strlen(".txt")+1);
+            strcpy(newYear, ".txt");
             strcat(year, newYear);
             //printf("testing our filename: %s\n", year);                            //testing that our strcat copied correctly
             FILE *fp = fopen(year, "a+");                                         //open that file with that year title
@@ -295,8 +299,10 @@ void processing(struct movie *head, char f[])
           {
             //first create the current file
             //printf("the last year is single so we just create 2 for current and next file\n");
-            char *year = head->year;                                            //store the filename as the year
-            char *newYear = ".txt";
+            char *year = malloc(strlen(head->year)+1);                                            //store the filename as the year
+            strcpy(year, head->year);
+            char *newYear = malloc(strlen(".txt")+1);
+            strcpy(newYear, ".txt");
             strcat(year, newYear);
             //printf("testing our filename: %s\n", year);                            //testing that our strcat copied correctly
             FILE *fp = fopen(year, "a+");                                         //open that file with that year title
@@ -308,7 +314,8 @@ void processing(struct movie *head, char f[])
             //printf("\n\n%d\n\n", x);
             head = head->next;
             //printf("now creating last file\n");
-            char *y = head->year;
+            char *y = malloc(strlen(head->year)+1);                                            //store the filename as the year
+            strcpy(y, head->year);
             strcat(y, newYear);
             //printf("testing our last filename: %s\n", y);
             FILE *f = fopen(y, "a+");
@@ -323,8 +330,10 @@ void processing(struct movie *head, char f[])
         else if ((a == b) & (x!=0))                                                        //if the years are the same
         {
           //printf("the years are equal so:\n");
-          char *year = head->year;
-          char *newYear = ".txt";
+          char *year = malloc(strlen(head->year)+1);                                            //store the filename as the year
+          strcpy(year, head->year);
+          char *newYear = malloc(strlen(".txt")+1);
+          strcpy(newYear, ".txt");
           strcat(year, newYear);
           //printf("testing filename: %s\n", year);
           FILE *fp = fopen(year, "a+");

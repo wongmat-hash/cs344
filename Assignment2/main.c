@@ -180,8 +180,8 @@ struct movie *processFile(char *filePath)
       count++;
     }
   }
-  printf("Processed file %s and parsed data for %d movies\n", filePath, count);
-  printf("\n");
+  //printf("Processed file %s and parsed data for %d movies\n", filePath, count);
+  //printf("\n");
   free(currLine);
   fclose(movieFile);
   sorting(head);                                                                //pass head to sorting to sort by year
@@ -246,7 +246,7 @@ void processing(struct movie *head, char f[])
   check = mkdir(pathname, 0750);                                                //work cited for permission: http://www.unixmantra.com/2013/04/unix-linux-file-permissions.html
   if (check != 1)
   {
-    printf("TEST Directory created\n");
+    //printf("TEST Directory created\n");
     //open said directory
     struct dirent *pDirent;
     char strPath[100] = "./";
@@ -256,7 +256,7 @@ void processing(struct movie *head, char f[])
     head = head->next;
     //count our head values
     int x = counter(head);
-    printf("\n\n%d\n\n", x);
+    //printf("\n\n%d\n\n", x);
     if (pDir == NULL)
     {
       printf("cannot open this directory for some reason\n");
@@ -276,11 +276,11 @@ void processing(struct movie *head, char f[])
         {
           if ((head->next->next !=NULL) && (x != 0))                                          //if theres more values to add after the next
           {
-            printf("the second compared year is greater so we just create 1 file\n");
+            //printf("the second compared year is greater so we just create 1 file\n");
             char *year = head->year;                                            //store the filename as the year
             char *newYear = ".txt";
             strcat(year, newYear);
-            printf("testing our filename: %s\n", year);                            //testing that our strcat copied correctly
+            //printf("testing our filename: %s\n", year);                            //testing that our strcat copied correctly
             FILE *fp = fopen(year, "a+");                                         //open that file with that year title
             //TEST
             //FILE *fp = fopen("2018.txt", "w");
@@ -288,45 +288,45 @@ void processing(struct movie *head, char f[])
             fputs("\n", fp);
             head = head->next;
             x--;
-            printf("\n\n%d\n\n", x);
+            //printf("\n\n%d\n\n", x);
             fclose(fp);
           }
           else if ((head->next->next == NULL) && (x!=0))                                    //if there are no more values to add after next
           {
             //first create the current file
-            printf("the last year is single so we just create 2 for current and next file\n");
+            //printf("the last year is single so we just create 2 for current and next file\n");
             char *year = head->year;                                            //store the filename as the year
             char *newYear = ".txt";
             strcat(year, newYear);
-            printf("testing our filename: %s\n", year);                            //testing that our strcat copied correctly
+            //printf("testing our filename: %s\n", year);                            //testing that our strcat copied correctly
             FILE *fp = fopen(year, "a+");                                         //open that file with that year title
             //TEST
             //FILE *fp = fopen("2018.txt", "w");
             fputs(head->title, fp);
             fputs("\n", fp);
             x--;
-            printf("\n\n%d\n\n", x);
+            //printf("\n\n%d\n\n", x);
             head = head->next;
-            printf("now creating last file\n");
+            //printf("now creating last file\n");
             char *y = head->year;
             strcat(y, newYear);
-            printf("testing our last filename: %s\n", y);
+            //printf("testing our last filename: %s\n", y);
             FILE *f = fopen(y, "a+");
             fputs(head->title, f);
             fputs("\n", f);
             x--;
-            printf("\n\n%d\n\n", x);
+            //printf("\n\n%d\n\n", x);
             fclose(f);
             fclose(fp);
           }
         }
         else if ((a == b) & (x!=0))                                                        //if the years are the same
         {
-          printf("the years are equal so:\n");
+          //printf("the years are equal so:\n");
           char *year = head->year;
           char *newYear = ".txt";
           strcat(year, newYear);
-          printf("testing filename: %s\n", year);
+          //printf("testing filename: %s\n", year);
           FILE *fp = fopen(year, "a+");
           if ((head->next->next !=NULL) && (x != 0))
           {
@@ -335,14 +335,14 @@ void processing(struct movie *head, char f[])
               fputs(head->title, fp);
               fputs("\n", fp);
               x--;
-              printf("\n\n%d\n\n", x);
+              //printf("\n\n%d\n\n", x);
               head = head->next;
             }
             fputs(head->title, fp);
             fputs("\n", fp);
             head = head->next;
             x--;
-            printf("\n\n%d\n\n", x);
+            //printf("\n\n%d\n\n", x);
             fclose(fp);
           }
           else if (head->next->next == NULL)
@@ -350,7 +350,7 @@ void processing(struct movie *head, char f[])
             fputs(head->title, fp);
             fputs("\n", fp);
             x--;
-            printf("\n\n%d\n\n", x);
+            //printf("\n\n%d\n\n", x);
             head = head->next;
             fputs(head->title, fp);
             fputs("\n", fp);
@@ -398,10 +398,10 @@ int main()
             if (strncmp(PREFIX, aDir->d_name, strlen(PREFIX))==0)
             {
               stat(aDir->d_name, &dirStat);                                     //get metadata for current entry
-              printf("filename: %s\n", aDir->d_name);                           //prints the file name
+              //printf("filename: %s\n", aDir->d_name);                           //prints the file name
                                                                                 //work cited: https://stackoverflow.com/questions/29548013/loop-through-a-file-and-print-file-attributes-in-c
-              printf("total size, in bytes: %lld\n", dirStat.st_size);          //display the file information for testing
-              printf("\n");
+              //printf("total size, in bytes: %lld\n", dirStat.st_size);          //display the file information for testing
+              //printf("\n");
               if (i == 0)
               {
                 //set the entryName to the current file being looked at because its the ONLY movies prefix csv
@@ -428,11 +428,11 @@ int main()
             }
           }
           closedir(currDir);
-          printf("The largest file with prefix: \"%s\" in the current directory is: %s\n", PREFIX, entryName);
+          //printf("The largest file with prefix: \"%s\" in the current directory is: %s\n", PREFIX, entryName);
 
           struct movie *head = processFile(entryName);
 
-          printList(head);
+          //printList(head);
 
           processing(head, entryName);
           printf("\n");
@@ -455,10 +455,10 @@ int main()
             if (strncmp(PREFIX, aDir->d_name, strlen(PREFIX))==0)
             {
               stat(aDir->d_name, &dirStat);                                     //get metadata for current entry
-              printf("filename: %s\n", aDir->d_name);                           //prints the file name
+              //printf("filename: %s\n", aDir->d_name);                           //prints the file name
                                                                                 //work cited: https://stackoverflow.com/questions/29548013/loop-through-a-file-and-print-file-attributes-in-c
-              printf("total size, in bytes: %lld\n", dirStat.st_size);          //display the file information for testing
-              printf("\n");
+              //printf("total size, in bytes: %lld\n", dirStat.st_size);          //display the file information for testing
+              //printf("\n");
               if (i == 0)
               {
                 //set the entryName to the current file being looked at because its the ONLY movies prefix csv
@@ -487,7 +487,7 @@ int main()
           closedir(currDir);
           printf("The smallest file with prefix: \"%s\" in the current directory is: %s\n", PREFIX, entryName);
           struct movie *head = processFile(entryName);
-          printList(head);
+          //printList(head);
           processing(head, entryName);
           printf("\n");
           deleteList(&head);
@@ -519,7 +519,7 @@ int main()
         {
           //send to processing
           struct movie *head = processFile(fileName);
-          printList(head);
+          //printList(head);
           processing(head, fileName);
           deleteList(&head);
         }

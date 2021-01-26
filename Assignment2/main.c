@@ -213,6 +213,17 @@ int menuB()                                                                     
   return userOption;
 }
 
+int counter(struct movie *head)                                                 //counts our linked list
+{
+  int i = 0;
+  while (head != NULL)
+  {
+    i++;
+    head = head->next;
+  }
+  return i;
+}
+
 //this function will process our file
 void processing(struct movie *head, char f[])
 {
@@ -243,6 +254,9 @@ void processing(struct movie *head, char f[])
     printf("test pathway: %s\n", strPath);
     DIR *pDir = opendir(strPath);
     head = head->next;
+    //count our head values
+    int x = counter(head);
+    printf("\n\n%d\n\n", x);
     if (pDir == NULL)
     {
       printf("cannot open this directory for some reason\n");
@@ -258,25 +272,26 @@ void processing(struct movie *head, char f[])
         int a, b;
         a = atoi(head->year);
         b = atoi(head->next->year);
-
         if (a < b)                                                              // if the second comapred year is greater just print one and iterate
         {
-          if (head->next->next !=NULL)
+          if ((head->next->next !=NULL) && (x != 0))                                          //if theres more values to add after the next
           {
             printf("the second compared year is greater so we just create 1 file\n");
             char *year = head->year;                                            //store the filename as the year
             char *newYear = ".txt";
             strcat(year, newYear);
             printf("testing our filename: %s\n", year);                            //testing that our strcat copied correctly
-            FILE *fp = fopen(year, "w");                                         //open that file with that year title
+            FILE *fp = fopen(year, "a+");                                         //open that file with that year title
             //TEST
             //FILE *fp = fopen("2018.txt", "w");
             fputs(head->title, fp);
             fputs("\n", fp);
             head = head->next;
+            x--;
+            printf("\n\n%d\n\n", x);
             fclose(fp);
           }
-          else
+          else if ((head->next->next == NULL) && (x!=0))                                    //if there are no more values to add after next
           {
             //first create the current file
             printf("the last year is single so we just create 2 for current and next file\n");
@@ -289,6 +304,8 @@ void processing(struct movie *head, char f[])
             //FILE *fp = fopen("2018.txt", "w");
             fputs(head->title, fp);
             fputs("\n", fp);
+            x--;
+            printf("\n\n%d\n\n", x);
             head = head->next;
             printf("now creating last file\n");
             char *y = head->year;
@@ -297,55 +314,46 @@ void processing(struct movie *head, char f[])
             FILE *f = fopen(y, "a+");
             fputs(head->title, f);
             fputs("\n", f);
+            x--;
+            printf("\n\n%d\n\n", x);
             fclose(f);
             fclose(fp);
           }
         }
-        else if (a == b)                                                        //if the years are the same
+        else if ((a == b) & (x!=0))                                                        //if the years are the same
         {
-          if (head->next->next !=NULL)
+          printf("the years are equal so:\n");
+          char *year = head->year;
+          char *newYear = ".txt";
+          strcat(year, newYear);
+          printf("testing filename: %s\n", year);
+          FILE *fp = fopen(year, "a+");
+          if ((head->next->next !=NULL) && (x != 0))
           {
-            printf("the years are the same so keep storing and iterating until not the same\n");
-            char *year = head->year;                                            //store the filename as the year
-            char *newYear = ".txt";
-            strcat(year, newYear);
-            printf("testing our filename: %s\n", year);                            //testing that our strcat copied correctly
-            FILE *fp = fopen(year, "a+");                                         //open that file with that year title
-            //FILE *fp = fopen("2019.txt", "w");
-            do
+            while ((head->year == head->next->year) && (head->next->next !=NULL))
             {
-              printf("in my do while loop\n");
-              printf(" %s\n, ", head->title);
               fputs(head->title, fp);
               fputs("\n", fp);
+              x--;
+              printf("\n\n%d\n\n", x);
               head = head->next;
-            }while(strcmp(head->year, head->next->year) == 0);                       //check if the years are equal)
-            printf("outside of my do while loop\n");
-            printf(" %s\n, ", head->title);
-            fputs(head->title, fp);                                               //put the last year before next is not equal
-            fputs("\n", fp);
-            fclose(fp);
-            head = head->next;
-          }
-          else
-          {
-            printf("we are on the last items on the list\n");
-            char *year = head->year;                                            //store the filename as the year
-            char *newYear = ".txt";
-            strcat(year, newYear);
-            printf("testing our filename: %s\n", year);                            //testing that our strcat copied correctly
-            FILE *fp = fopen(year, "a+");                                         //open that file with that year title
+            }
             fputs(head->title, fp);
             fputs("\n", fp);
             head = head->next;
-            printf("now creating last file\n");
-            char *y = head->year;
-            strcat(y, newYear);
-            printf("testing our last filename: %s\n", y);
-            FILE *f = fopen(y, "a+");
-            fputs(head->title, f);
-            fputs("\n", f);
-            fclose(f);
+            x--;
+            printf("\n\n%d\n\n", x);
+            fclose(fp);
+          }
+          else if (head->next->next == NULL)
+          {
+            fputs(head->title, fp);
+            fputs("\n", fp);
+            x--;
+            printf("\n\n%d\n\n", x);
+            head = head->next;
+            fputs(head->title, fp);
+            fputs("\n", fp);
             fclose(fp);
           }
         }

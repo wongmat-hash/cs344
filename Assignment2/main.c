@@ -232,7 +232,7 @@ void processing(struct movie *head, char f[])
       printf("cannot open this directory for some reason\n");
       exit(1);
     }
-    printList(head);
+    //printList(head);
     while ((pDirent = readdir(pDir)) !=NULL)
     {
       chdir(strPath);                                                           //work cited: //work cited: https://stackoverflow.com/questions/21236508/to-create-all-needed-folders-with-fopen
@@ -251,6 +251,8 @@ void processing(struct movie *head, char f[])
           strcat(year, newYear);
           printf("testing our filename: %s\n", year);                            //testing that our strcat copied correctly
           FILE *fp = fopen(year, "w");                                         //open that file with that year title
+          //TEST
+          //FILE *fp = fopen("2018.txt", "w");
           fputs(head->title, fp);
           fputs("\n", fp);
           head = head->next;
@@ -260,18 +262,33 @@ void processing(struct movie *head, char f[])
         {
           printf("the years are the same so keep storing and iterating until not the same\n");
           char *year = head->year;                                            //store the filename as the year
-          char newYear[4] = ".txt";
+          char *newYear = ".txt";
           strcat(year, newYear);
           printf("testing our filename: %s\n", year);                            //testing that our strcat copied correctly
           FILE *fp = fopen(year, "a+");                                         //open that file with that year title
-          while (strcmp(head->year, head->next->year) == 0)                       //check if the years are equal
+          //FILE *fp = fopen("2019.txt", "w");
+          do
           {
             fputs(head->title, fp);
             fputs("\n", fp);
             head = head->next;
-          }
+          }while(strcmp(head->year, head->next->year) == 0);                       //check if the years are equal)
           fputs(head->title, fp);                                               //put the last year before next is not equal
           fclose(fp);
+          head = head->next;
+        }
+        else if ((a < b) && (head->next->next == NULL))
+        {
+          //we are on the last element so save that into its own file
+          printf("we are on the last element that is not equal to previous element\n");
+          char *year = head->next->year;
+          char *newYear = ".txt";
+          strcat(year, newYear);
+          printf("testing our filename: %s\n", year);
+          FILE *fp = fopen(year, "a+");
+          fputs(head->next->title, fp);
+          fclose(fp);
+          break;
         }
       }
     closedir(pDir);
@@ -401,13 +418,8 @@ int main()
           }
           closedir(currDir);
           printf("The smallest file with prefix: \"%s\" in the current directory is: %s\n", PREFIX, entryName);
-
           struct movie *head = processFile(entryName);
-
           printList(head);
-
-
-
           processing(head, entryName);
           printf("\n");
           break;
@@ -437,15 +449,8 @@ int main()
         if (fp !=NULL)
         {
           //send to processing
-
           struct movie *head = processFile(fileName);
-
           printList(head);
-
-
-
-
-
           processing(head, fileName);
         }
         fclose(fp);                                                             //close our file

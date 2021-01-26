@@ -21,6 +21,20 @@ struct movie
   char *rating;                                                                 //rating value
   struct movie *next;                                                           //pointer to next movie
 };
+//function to delete our temp linked lists DONE
+void deleteList(struct movie** head_ref)
+{
+  struct movie* current = *head_ref;
+  struct movie* next;
+
+  while (current != NULL)
+  {
+    next = current->next;
+    free(current);
+    current = next;
+  }
+  *head_ref = NULL;
+}
 //function to print our linked list DONE 1/18
 void printList(struct movie *m)
 {
@@ -202,9 +216,12 @@ int menuB()                                                                     
 //this function will process our file
 void processing(struct movie *head, char f[])
 {
-  int r = rand() % 99999;                                                       //generate a random number between 1-99999 work cited: https://stackoverflow.com/questions/822323/how-to-generate-a-random-int-in-c
+  int i, n;
+  time_t t;
+  srand((unsigned) time(&t));
+  int random = rand() % 99999;                                                       //generate a random number between 1-99999 work cited: https://stackoverflow.com/questions/822323/how-to-generate-a-random-int-in-c
   char rando[16];
-  sprintf(rando, "%d", r);
+  sprintf(rando, "%d", random);
   char pathname[40] = "wongmat.movies.";
   strcat(pathname, rando);
   //TESTING RANDO
@@ -369,6 +386,7 @@ int main()
 
           processing(head, entryName);
           printf("\n");
+          deleteList(&head);
           break;
         }
         if (userOption == 2)
@@ -422,6 +440,7 @@ int main()
           printList(head);
           processing(head, entryName);
           printf("\n");
+          deleteList(&head);
           break;
         }
         if (userOption == 3)                                                    //work cited: https://stackoverflow.com/questions/19338929/how-to-get-user-input-in-fopen
@@ -452,6 +471,7 @@ int main()
           struct movie *head = processFile(fileName);
           printList(head);
           processing(head, fileName);
+          deleteList(&head);
         }
         fclose(fp);                                                             //close our file
         break;

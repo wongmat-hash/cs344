@@ -23,3 +23,44 @@
 #include <sys/wait.h>                                                           //for waitpid
 #include <fcntl.h>
 #include <errno.h>
+
+//****************************
+// BUILT IN FUNCTIONS
+// This function will check the user input to see if it matches:
+// exit, cd, status
+// if it hits a match it will process and run that specific call
+//****************************
+int builtinCheck()
+[
+  if (strcmp(argArr[0], "cd")==0)                                               //we will use strcmp to string compare to see if we get a true for cd
+  {
+    builtIn = true;                                                             //trigger our boolean and set it to true
+    backGround = false;                                                         //since its a built in no need to run it in the background
+    builtinCD(argArr);                                                          //pass the argument to the CD function
+    backGround = false;                                                         //background is still false
+  }
+  else if (strcmp(argArr[0], "status")==0)                                      //otherwise if our function returns true for status
+  {
+    builtIn = true;                                                             //trigger our boolean
+    backGround = false;                                                         //since its built in no need to run it in the backGround
+    if (WIFEXITED(currenState))                                                 //check if the child process terminated normally
+    {
+      printf("Exit Status: %d\n", WEXITSTATUS(currenState));                    //print the exit status of the child process
+    }
+    else if (WIFEXITED(backgroundStatus))                                       //check to see if the child process of the background process exited
+    {
+      printf("Exit Status: %d\n", WEXITSTATUS(backgroundStatus));;              //print the exit status of the child process
+    }
+    else if (WIFSIGNALED(currenState))                                          //check the exit status of the current process
+    {
+      if (currenState != -5)                                                    //if its been correctly initialized
+      {
+        printf("Terminated by signal: %d\n", WTERMSIG(currenState));            //print the exist status
+      }
+      else if (WIFSIGNALED(backgroundStatus))                                   //THIS MIGHT NOT BE NEEDED AT ALL
+      {
+        printf("Terminated by Signal: %d\n", WTERMSIG(backgroundStatus));       //THIS MIGHT NOT BE NEEDED AT ALL 
+      }
+    }
+  }
+]

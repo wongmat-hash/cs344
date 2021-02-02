@@ -58,6 +58,10 @@ int builtinCheck()
         printf("Terminated by signal: %d\n", WTERMSIG(currenState));            //print the exist status
       }
     }
+    else if (WIFSIGNALED(backGround))                                           //check if the exit status of background process
+    {
+
+    }
   }
   else if (strcmp(argArr[0], "exit")==0)                                        //otherwise if our string compares and matches exit true
   {
@@ -69,5 +73,29 @@ int builtinCheck()
     }
     exit(0);
   }
-  else if ()
+  else if (builtIn == false)                                                    //we set it to true for cd, status, exit so only runs this if its a different command
+  {
+    if (backGround == true && foreGroundActive == false)                        //if the background is also true and we have no foreGround
+    {
+      exec(BGCommand(argArr));                                                  //execute the user command in the background only
+    }
+    else if (foreGroundActive == true)                                          //if the foreground is active
+    {
+      backGround = false;                                                       //set the background to false
+      execCommand(argArr);                                                      //exec command
+    }
+    else
+    {
+      backGround = false;                                                       //otherwise set the background to false since all other cases are exhuasted
+      execCommand(argArr);                                                      //run the command
+    }
+  }
+  else
+  {
+    currenState = 1;
+    backgroundStatus = 1;
+    printf("\nERROR please enter valid command\n");
+  }
+  builtIn = false;
+  return 0;
 ]

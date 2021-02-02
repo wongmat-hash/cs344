@@ -57,10 +57,17 @@ int builtinCheck()
       {
         printf("Terminated by signal: %d\n", WTERMSIG(currenState));            //print the exist status
       }
-      else if (WIFSIGNALED(backgroundStatus))                                   //THIS MIGHT NOT BE NEEDED AT ALL
-      {
-        printf("Terminated by Signal: %d\n", WTERMSIG(backgroundStatus));       //THIS MIGHT NOT BE NEEDED AT ALL 
-      }
     }
   }
+  else if (strcmp(argArr[0], "exit")==0)                                        //otherwise if our string compares and matches exit true
+  {
+    builtIn = true;                                                             //set our booleans for built in that way we dont run background
+    backGround = false;                                                         //set background to false since we don't need to run
+    if (numPids > 0)                                                            //if our counter for pids is greater than 0 then processes are running
+    {
+      killPids();                                                               //kill all processes running since we exiting
+    }
+    exit(0);
+  }
+  else if ()
 ]

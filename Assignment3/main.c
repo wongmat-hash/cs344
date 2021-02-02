@@ -8,7 +8,7 @@
 // 1. Provide a prompt for running commands
 // 2. Handle blank lines and comments, which are lines beginning with the # character
 // 3. Provide expansion for the varaible $$
-// 4. Execute 3 commands exit, cd, and status via code built into the shell
+// 4. Execute 3 commands exit, cd, and status via code built into the shell 02/01/21 COMPLETE
 // 5. Execute other commands by creating new processes using a function from the exec family of functions
 // 6. Support input and ouput redirection
 // 7. Support running commands in foreground and background processes
@@ -31,7 +31,7 @@
 // if it hits a match it will process and run that specific call
 //****************************
 int builtinCheck()
-[
+{
   if (strcmp(argArr[0], "cd")==0)                                               //we will use strcmp to string compare to see if we get a true for cd
   {
     builtIn = true;                                                             //trigger our boolean and set it to true
@@ -98,4 +98,25 @@ int builtinCheck()
   }
   builtIn = false;
   return 0;
-]
+};
+//****************************
+// BUILT IN FUNCTION CD
+// this function is how we process CD in our program
+//
+//
+//****************************
+int builtInCD()
+{
+  if (argArr[1] == NULL)                                                        //check if the user input is NULL or not (see if it matches CD)
+  {
+    if (chdir(getenv("HOME"))==-1)                                              //check to see if the current directory is home
+    {
+      perror("chdir error");
+    }
+  }
+  else if (chdir(argArr[1])==-1)
+  {
+    perror("chdir error");
+  }
+  return 0;
+};

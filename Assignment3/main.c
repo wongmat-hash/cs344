@@ -102,6 +102,27 @@ void freeMemory(char** argList, int counter)
   }
 }
 //**************************
+// background process checker
+//**************************
+void bgStatus(int pid, int status)
+{
+  do
+  {
+    pid = waitpid(-1, &status, WNOHANG);                                        //wait for PID but return immediately if no child process is ready
+    if (pid > 0)                                                                //if return value is anything above 0
+    {
+      if (WIFEXITED(status)!= 0)                                                //tell user that background process is done and show value
+      {
+        printf("background pid %d is done: exit value %d\n", pid, WEXITSTATUS(status));
+      }
+      else if (WIFSIGNALED(status) != 0)                                        //tell user that the background process was terminated and show msg
+      {
+        printf("background pid %d is done: terminated by signal %d\n", pid, WTERMSIG(status));
+      }
+    }
+  }while (pid > 0);
+}
+//**************************
 // termination message for child process
 //**************************
 void childStatus(int status)
@@ -189,23 +210,78 @@ void redirectionArgs(char** argList, int counter, bool bgStatus)
   }
 }
 //**************************
-// background process checker
+// run smallsh function
 //**************************
-void bgStatus(int pid, int status)
+void runsmallSh(char** argList, int counter)
 {
-  do
+  struct sigaction SIGINT_action = {0};
+  SIGINT_action.sa_handler = SIG_IGN;                                           //set the sa handler to ignore any SIGINT
+  sigaction(SIGINT, &SIGINT_action, NULL);
+
+  static int status;
+  bool backgroundStatus = false;                                                //set our boolean to false
+
+  if ((strcmp(argList[counter - 1], "&") == 0))                                 //check if we have a process running in the background first
   {
-    pid = waitpid(-1, &status, WNOHANG);                                        //wait for PID but return immediately if no child process is ready
-    if (pid > 0)                                                                //if return value is anything above 0
+    backgroundStatus = true;                                                    //if we do then set our boolean trigger
+    argList[counter - 1] == NULL;
+  }
+
+  if (strcmp(argList[0], "exit") == 0)                                          //if we see the exit command in input
+  {
+    freeMemory(argList, counter);                                               //free our argList and counter to freeMemoery function
+    exit(0);                                                                    //exit program
+  }
+  else if (strcmp(argList[0], "cd") == 0)                                       //if we see a cd command in our input
+  {
+    if (counter < 2)                                                            //check if there are other arguments besides CD in input
     {
-      if (WIFEXITED(status)!= 0)                                                //tell user that background process is done and show value
+      chdir(getenv("HOME"));                                                    //none so navigate to the home directory
+    }
+    else                                                                        //otherwise change directory to the user input via argList
+    {
+      chdir(argList[1]);                                                        //navigate using CD to the user specified argList
+    }
+  }
+  else if (strcmp(argList[0], "status") == 0)                                   //if user inputted status we need to display status of process runnig
+  {
+    childStatus(status);                                                        //call our childStatus function to check for any child process running
+  }
+  else                                                                          //no other user inputs besides CD/ STATUS/ EXIT so fork a child process
+  {
+    pid_t pid = fork();                                                         //declare our pid and fork
+    if (pid == -1)                                                              //if a -1 returns display standard error message for fork process
+    {
+      fprint(stderr, "Error creating child\n"); exit(1);                        //error message is displayed
+    }
+    if (pid == 0)                                                               //if 0 is returned we can fork
+    {
+      if (!backgroundStatus)                                                    //check our boolean if we need to terminate foreground processes
       {
-        printf("background pid %d is done: exit value %d\n", pid, WEXITSTATUS(status));
+        SIGINT_action.sa_handler = SIG_DFL;                                     //termination of forground processes
+        sigaction(SIGINT, &SIGINT_action, NULL);
       }
-      else if (WIFSIGNALED(status) != 0)                                        //tell user that the background process was terminated and show msg 
+      redirectionArgs(argList, counter, backgroundStatus);                      //check for any redirection arguments using our function
+      execvp(argList[0], argList);                                              //execute the argList see: https://linux.die.net/man/3/execvp
+      fprint(stderr, "%s: command not found\n", argList[0]);                    //if unsuccessful exec then we need to display our prompt
+      exit(1);                                                                  //exit
+    }
+    else                                                                        //otherwise we are in our parent process
+    {
+      if (backgroundStatus)                                                     //check for boolean for foreground process
       {
-        printf("background pid %d is done: terminated by signal %d\n", pid, WTERMSIG(status));
+        printf("background pid is %d\n", pid);                                  //print our background process pid
+      }
+      else                                                                      //otherwise we need to use waitpid to wait for child process to complete
+      {
+        waitpid(pid, &status, 0);                                               //wait for our child process
+        if (WTERMSIG(status) != 0)                                              //if user input signal then we need to check if it was terminated
+        {
+          printf("terminated by signal %d\n", WTERMSIG(status));                //print the message
+        }
+        bgStatus(pid, status);                                                  //use our background process check function to check that it was correctly terminated
       }
     }
-  }while (pid > 0);
+  }
+  freeMemory(argList, counter);                                                 //user our free memory function to clear memory 
 }

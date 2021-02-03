@@ -90,3 +90,18 @@ int userEntry(char** argList)
 
   return counter;                                                               //returns the pointer back up
 }
+//**************************
+// we need a function to clear out our char array
+// it needs to loop through and clean each element to clear memory
+//**************************
+void freeMemory(char** argList, int counter)
+{
+  for (int i; i < counter; i++)                                                 //use a simple for loop
+  {
+    free(argList[i]);                                                           //for each element in the array it frees up the memory
+  }
+}
+//**************************
+// function to process forks
+//**************************
+void 

@@ -102,6 +102,75 @@ void freeMemory(char** argList, int counter)
   }
 }
 //**************************
-// function to process forks
+// argument redirection functions
+// work cited: https://stackoverflow.com/questions/26070346/c-how-do-you-accept-a-command-line-argument-via-redirection
 //**************************
-void 
+void redirectionArgs(char** argList, int counter, bool bgStatus)
+{
+  int targetFD;
+  char* file = NULL;
+  bool redirectYes = false;
+
+  for (int i = 1; i < counter; i++)                                             //loop through with for loop to check for redirection arguments
+  {
+    if ((strcmp(argList[i], "<") == 0) || (strcmp(argList[i], ">")== 0))
+    {
+      redirectYes = true;
+      file = strdup(argList[i + 1]);
+      if (bgStatus)
+      {
+        targetFD = open("/dev/null", 0_RDONLY);
+        if (dup2(targetFD, STDIN_FILENO) == -1)                                 //work cited: https://stackoverflow.com/questions/12902627/the-difference-between-stdout-and-stdout-fileno
+        {
+          fprintf(stderr, "ERROR redirecting...");
+          exit(1);
+        };
+        if (dup2(targetFD, STDOUT_FILENO) == -1)
+        {
+          fprintf(stderr, "ERROR redirecting...");
+          exit(1);
+        };
+      }
+      else
+      {
+        if ((strcmp(argList[i], "<") == 0))
+        {
+          targetFD = open(fileName, 0_RDONLY);
+          if (targetFD == -1)
+          {
+            fprint(stderr, "Cannot open %s for input\n", file);
+            exit(1);
+          }
+          if (dup2(targetFD, STDIN_FILENO) == -1)
+          {
+            fprint(stderr, "ERROR redirecting...");
+            exit(1);
+          }
+        }
+        else
+        {
+          targetFD = open(file, O_CREAT | O_RDWR | O_TRUNC, 0644);
+          if (targetFD == -1)
+          {
+            fprintf(stderr, "Cannot open %s for output\n", file);
+            exit(1);
+          }
+          if (dup2(targetFD, STDOUT_FILENO) == -1)
+          {
+            fprint(stderr, "ERROR redirecting...");
+            exit(1);
+          }
+        }
+      }
+      close (targetFD);
+      free(file);
+    }
+  }
+  if (redirectYes)
+  {
+    for (int x = 1; x < counter; x++)
+    {
+      argList[x] = NULL;
+    }
+  }
+}

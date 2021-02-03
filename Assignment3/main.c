@@ -53,17 +53,18 @@ int getUserInput(char** argList, char* input)
 // since bash uses $$ we need to convert it into process ID
 // https://unix.stackexchange.com/questions/291570/what-is-in-bash
 //**************************
-void pidConverter(char* input)
+void pidConverter(char* Userinput)
 {
-  char* buffer = strdup(input);
-  for (int i; i < strlen(buffer); i++)
+  char* storage;                                                                //declare a storage char
+  storage = strdup(Userinput);                                                  //use strdup to copy the user input into the storage
+  for (int i; i < strlen(storage); i++)                                         //use a loop to the length of the char we just copied
   {
-    if ((buffer[i]=='$')&&(i+1<strlen(buffer)) && (buffer[i+1]=='$'))
+    if ((storage[i] == '$') && (i+1 < strlen(storage)) && (storage[i+1] == '$'))//if the first inputs are $ check second for $
     {
-      buffer[i] = '%';
-      buffer[i+1] = 'd';
+      storage[i] = '%';                                                         //set the first to %
+      storage[i+1] = 'd';                                                       //set second to d so we can print an char
     }
   }
-  sprintf(input, buffer, getpid());
-  free(buffer);
+  sprintf(Userinput, storage, getpid());                                        //use sprintf to convert char to int
+  free(storage);                                                                //free up the array
 }

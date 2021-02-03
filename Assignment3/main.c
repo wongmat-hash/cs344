@@ -102,79 +102,6 @@ void freeMemory(char** argList, int counter)
   }
 }
 //**************************
-// argument redirection functions
-// work cited: https://stackoverflow.com/questions/26070346/c-how-do-you-accept-a-command-line-argument-via-redirection
-//**************************
-void redirectionArgs(char** argList, int counter, bool bgStatus)
-{
-  int targetFD;
-  char* file = NULL;
-  bool redirectYes = false;
-
-  for (int i = 1; i < counter; i++)                                             //loop through with for loop to check for redirection arguments
-  {
-    if ((strcmp(argList[i], "<") == 0) || (strcmp(argList[i], ">")== 0))
-    {
-      redirectYes = true;
-      file = strdup(argList[i + 1]);
-      if (bgStatus)
-      {
-        targetFD = open("/dev/null", 0_RDONLY);
-        if (dup2(targetFD, STDIN_FILENO) == -1)                                 //work cited: https://stackoverflow.com/questions/12902627/the-difference-between-stdout-and-stdout-fileno
-        {
-          fprintf(stderr, "ERROR redirecting...");
-          exit(1);
-        };
-        if (dup2(targetFD, STDOUT_FILENO) == -1)
-        {
-          fprintf(stderr, "ERROR redirecting...");
-          exit(1);
-        };
-      }
-      else
-      {
-        if ((strcmp(argList[i], "<") == 0))
-        {
-          targetFD = open(fileName, 0_RDONLY);
-          if (targetFD == -1)
-          {
-            fprint(stderr, "cannot open %s for input\n", file);
-            exit(1);
-          }
-          if (dup2(targetFD, STDIN_FILENO) == -1)
-          {
-            fprint(stderr, "ERROR redirecting...");
-            exit(1);
-          }
-        }
-        else
-        {
-          targetFD = open(file, O_CREAT | O_RDWR | O_TRUNC, 0644);
-          if (targetFD == -1)
-          {
-            fprintf(stderr, "Cannot open %s for output\n", file);
-            exit(1);
-          }
-          if (dup2(targetFD, STDOUT_FILENO) == -1)
-          {
-            fprint(stderr, "ERROR redirecting...");
-            exit(1);
-          }
-        }
-      }
-      close (targetFD);
-      free(file);
-    }
-  }
-  if (redirectYes)
-  {
-    for (int x = 1; x < counter; x++)
-    {
-      argList[x] = NULL;
-    }
-  }
-}
-//**************************
 // termination message for child process
 //**************************
 void childStatus(int status)
@@ -187,4 +114,98 @@ void childStatus(int status)
   {
     printf("terminated by signal %d\n", WTERMSIG(status));
   }
+}
+//**************************
+// argument redirection functions
+// work cited: https://stackoverflow.com/questions/26070346/c-how-do-you-accept-a-command-line-argument-via-redirection
+//**************************
+void redirectionArgs(char** argList, int counter, bool bgStatus)
+{
+  int targetFD;
+  char* file = NULL;
+  bool redirectYes = false;
+
+  for (int i = 1; i < counter; i++)                                             //loop through with for loop to check for redirection arguments
+  {
+    if ((strcmp(argList[i], "<") == 0) || (strcmp(argList[i], ">")== 0))        //if we find a char in our array matching < > as true
+    {
+      redirectYes = true;                                                       //flip our boolean value since its true
+      file = strdup(argList[i + 1]);                                            //set our file buffer to the value after the redirection
+      if (bgStatus)                                                             //if the boolean passed in is true
+      {
+        targetFD = open("/dev/null", 0_RDONLY);                                 //pass output and input to /dev/null
+        if (dup2(targetFD, STDIN_FILENO) == -1)                                 //work cited: https://stackoverflow.com/questions/12902627/the-difference-between-stdout-and-stdout-fileno
+        {
+          fprintf(stderr, "ERROR redirecting...");                              //print error message and exit loop
+          exit(1);
+        };
+        if (dup2(targetFD, STDOUT_FILENO) == -1)
+        {
+          fprintf(stderr, "ERROR redirecting...");                              //print error message and exit loop
+          exit(1);
+        };
+      }
+      else                                                                      //if our boolean is anything but true we have no bg processes
+      {
+        if ((strcmp(argList[i], "<") == 0))                                     //check for redirections in our char array
+        {
+          targetFD = open(fileName, 0_RDONLY);                                  //pass input and ouput to the file
+          if (targetFD == -1)
+          {
+            fprint(stderr, "cannot open %s for input\n", file);                 //display our error message and exit loop
+            exit(1);
+          }
+          if (dup2(targetFD, STDIN_FILENO) == -1)
+          {
+            fprint(stderr, "ERROR redirecting...");                             //display error message and exit loop
+            exit(1);
+          }
+        }
+        else                                                                    //otherwise final case is no redirection
+        {
+          targetFD = open(file, O_CREAT | O_RDWR | O_TRUNC, 0644);              //open file with 0644 permissions -rw-r--r-- http://www.filepermissions.com/file-permission/0644
+          if (targetFD == -1)
+          {
+            fprintf(stderr, "Cannot open %s for output\n", file);               //print error message and exit loop
+            exit(1);
+          }
+          if (dup2(targetFD, STDOUT_FILENO) == -1)
+          {
+            fprint(stderr, "ERROR redirecting...");                             //print error message and exit loop
+            exit(1);
+          }
+        }
+      }
+      close(targetFD);                                                          //close our targetFD
+      free(file);                                                               //close the fstream file
+    }
+  }
+  if (redirectYes)                                                              //if we do have a redireciton (boolean triggered)
+  {
+    for (int x = 1; x < counter; x++)                                           //use a loop and set our array to null
+    {
+      argList[x] = NULL;
+    }
+  }
+}
+//**************************
+// background process checker
+//**************************
+void bgStatus(int pid, int status)
+{
+  do
+  {
+    pid = waitpid(-1, &status, WNOHANG);                                        //wait for PID but return immediately if no child process is ready
+    if (pid > 0)                                                                //if return value is anything above 0
+    {
+      if (WIFEXITED(status)!= 0)                                                //tell user that background process is done and show value
+      {
+        printf("background pid %d is done: exit value %d\n", pid, WEXITSTATUS(status));
+      }
+      else if (WIFSIGNALED(status) != 0)                                        //tell user that the background process was terminated and show msg 
+      {
+        printf("background pid %d is done: terminated by signal %d\n", pid, WTERMSIG(status));
+      }
+    }
+  }while (pid > 0);
 }

@@ -138,7 +138,7 @@ void redirectionArgs(char** argList, int counter, bool bgStatus)
           targetFD = open(fileName, 0_RDONLY);
           if (targetFD == -1)
           {
-            fprint(stderr, "Cannot open %s for input\n", file);
+            fprint(stderr, "cannot open %s for input\n", file);
             exit(1);
           }
           if (dup2(targetFD, STDIN_FILENO) == -1)
@@ -172,5 +172,19 @@ void redirectionArgs(char** argList, int counter, bool bgStatus)
     {
       argList[x] = NULL;
     }
+  }
+}
+//**************************
+// termination message for child process
+//**************************
+void childStatus(int status)
+{
+  if (WEFEXITED(status))
+  {
+    printf("exit Value %d\n", WEXITSTATUS(status));
+  }
+  else if (WIFSIGNALED(status))
+  {
+    printf("terminated by signal %d\n", WTERMSIG(status));
   }
 }

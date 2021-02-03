@@ -23,115 +23,47 @@
 #include <sys/wait.h>                                                           //for waitpid
 #include <fcntl.h>
 #include <errno.h>
+#include <sys/stat.h>
 
-//****************************
-// BUILT IN FUNCTIONS
-// This function will check the user input to see if it matches:
-// exit, cd, status
-// if it hits a match it will process and run that specific call
-//****************************
-int builtinCheck()
-{
-  if (strcmp(argArr[0], "cd")==0)                                               //we will use strcmp to string compare to see if we get a true for cd
-  {
-    builtIn = true;                                                             //trigger our boolean and set it to true
-    backGround = false;                                                         //since its a built in no need to run it in the background
-    builtinCD(argArr);                                                          //pass the argument to the CD function
-    backGround = false;                                                         //background is still false
-  }
-  else if (strcmp(argArr[0], "status")==0)                                      //otherwise if our function returns true for status
-  {
-    builtIn = true;                                                             //trigger our boolean
-    backGround = false;                                                         //since its built in no need to run it in the backGround
-    if (WIFEXITED(currenState))                                                 //check if the child process terminated normally
-    {
-      printf("Exit Status: %d\n", WEXITSTATUS(currentState));                   //print the exit status of the child process
-    }
-    else if (WIFEXITED(backgroundStatus))                                       //check to see if the child process of the background process exited
-    {
-      printf("Exit Status: %d\n", WEXITSTATUS(backgroundStatus));;              //print the exit status of the child process
-    }
-    else if (WIFSIGNALED(currentState))                                         //check the exit status of the current process
-    {
-      if (currentState != -5)                                                   //if its been correctly initialized
-      {
-        printf("Terminated by signal: %d\n", WTERMSIG(currentState));           //print the exist status
-      }
-    }
-    else if (WIFSIGNALED(backgroundStatus))                                     //check if the exit status of background process
-    {
+typedef enum {false, true} bool;                                                //typedef for our boolean false and true
 
-    }
-  }
-  else if (strcmp(argArr[0], "exit")==0)                                        //otherwise if our string compares and matches exit true
-  {
-    builtIn = true;                                                             //set our booleans for built in that way we dont run background
-    backGround = false;                                                         //set background to false since we don't need to run
-    if (numPids > 0)                                                            //if our counter for pids is greater than 0 then processes are running
-    {
-      killPids();                                                               //kill all processes running since we exiting
-    }
-    exit(0);
-  }
-  else if (builtIn == false)                                                    //we set it to true for cd, status, exit so only runs this if its a different command
-  {
-    if (backGround == true && foreGroundActive == false)                        //if the background is also true and we have no foreGround
-    {
-      exec(BGCommand(argArr));                                                  //execute the user command in the background only
-    }
-    else if (foreGroundActive == true)                                          //if the foreground is active
-    {
-      backGround = false;                                                       //set the background to false
-      execCommand(argArr);                                                      //exec command
-    }
-    else
-    {
-      backGround = false;                                                       //otherwise set the background to false since all other cases are exhuasted
-      execCommand(argArr);                                                      //run the command
-    }
-  }
-  else
-  {
-    currentState = 1;
-    backgroundStatus = 1;
-    printf("\nERROR please enter valid command\n");
-  }
-  builtIn = false;
-  return 0;
-};
-//****************************
-// BUILT IN FUNCTION CD
-// this function is how we process CD in our program
-//
-//
-//****************************
-int builtInCD()
+#define MAX_ALLOWED 512
+#define MAX_USER_INPUT 2048
+
+//**************************
+// Argument input functions
+// this function will take in our user input
+// we need to store user input in an array to parse
+//**************************
+int getUserInput(char** argList, char* input)
 {
-  if (argArr[1] == NULL)                                                        //check if the user input is NULL or not (see if it matches CD)
+  int counter = 0;                                                              //initialize a counter storage int
+  memset(argList, '\0', MAX_ALLOWED);                                           //flush the input stream
+  char* token;                                                                  //declare a token buffer see: https://www.tutorialspoint.com/c_standard_library/c_function_strtok.htm
+  token = strtok(input, "\n");                                                  //get the first token
+  while(token != NULL)                                                          //walk through other tokens and check them
   {
-    if (chdir(getenv("HOME"))==-1)                                              //check to see if the current directory is home
-    {
-      perror("chdir error");
-    }
+    argList[counter++] = strdup(token);                                         //store the token into the array we pass in using strdup to duplicate: https://stackoverflow.com/questions/252782/strdup-what-does-it-do-in-c
+    token = strtok(NULL, "\n");                                                 //in the loop continue the token until new line is detected
   }
-  else if (chdir(argArr[1])==-1)
-  {
-    perror("chdir error");
-  }
-  return 0;
-};
-//****************************
-// This function will kill our PID's
-// Any PID's that are running will be killed
-//
-//****************************
-void killPids()
+  return counter;                                                               //returns our counter
+}
+//**************************
+// PID converter
+// since bash uses $$ we need to convert it into process ID
+// https://unix.stackexchange.com/questions/291570/what-is-in-bash
+//**************************
+void pidConverter(char* input)
 {
-  if (pidCount > 0)
+  char* buffer = strdup(input);
+  for (int i; i < strlen(buffer); i++)
   {
-    for (int i = 0; i < pidCount; i++)
+    if ((buffer[i]=='$')&&(i+1<strlen(buffer)) && (buffer[i+1]=='$'))
     {
-      kill(pidArray[i], SIGKILL);
+      buffer[i] = '%';
+      buffer[i+1] = 'd';
     }
   }
-};
+  sprintf(input, buffer, getpid());
+  free(buffer);
+}

@@ -45,20 +45,20 @@ int builtinCheck()
     backGround = false;                                                         //since its built in no need to run it in the backGround
     if (WIFEXITED(currenState))                                                 //check if the child process terminated normally
     {
-      printf("Exit Status: %d\n", WEXITSTATUS(currenState));                    //print the exit status of the child process
+      printf("Exit Status: %d\n", WEXITSTATUS(currentState));                   //print the exit status of the child process
     }
     else if (WIFEXITED(backgroundStatus))                                       //check to see if the child process of the background process exited
     {
       printf("Exit Status: %d\n", WEXITSTATUS(backgroundStatus));;              //print the exit status of the child process
     }
-    else if (WIFSIGNALED(currenState))                                          //check the exit status of the current process
+    else if (WIFSIGNALED(currentState))                                         //check the exit status of the current process
     {
-      if (currenState != -5)                                                    //if its been correctly initialized
+      if (currentState != -5)                                                   //if its been correctly initialized
       {
-        printf("Terminated by signal: %d\n", WTERMSIG(currenState));            //print the exist status
+        printf("Terminated by signal: %d\n", WTERMSIG(currentState));           //print the exist status
       }
     }
-    else if (WIFSIGNALED(backGround))                                           //check if the exit status of background process
+    else if (WIFSIGNALED(backgroundStatus))                                     //check if the exit status of background process
     {
 
     }
@@ -92,7 +92,7 @@ int builtinCheck()
   }
   else
   {
-    currenState = 1;
+    currentState = 1;
     backgroundStatus = 1;
     printf("\nERROR please enter valid command\n");
   }
@@ -119,4 +119,19 @@ int builtInCD()
     perror("chdir error");
   }
   return 0;
+};
+//****************************
+// This function will kill our PID's
+// Any PID's that are running will be killed
+//
+//****************************
+void killPids()
+{
+  if (pidCount > 0)
+  {
+    for (int i = 0; i < pidCount; i++)
+    {
+      kill(pidArray[i], SIGKILL);
+    }
+  }
 };

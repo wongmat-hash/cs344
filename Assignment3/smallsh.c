@@ -24,8 +24,8 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-typedef enum {false, true} bool;                                                //typedef for our boolean false and true
-const char *statusHandle[] = {"exit", "cd", "status"};													//for user entry comparison
+typedef enum {false=0, true=1} bool;                                            //typedef for our boolean false and true
+const char *statusHandle[] = {"exit", "cd", "status", "&"};											//for user entry comparison
 #define MAX_ALLOWED 512
 #define MAX_USER_INPUT 2048
 
@@ -39,7 +39,7 @@ int userArg(char** argumentInput, char* input)
   int counter = 0;                                                              //initialize a counter storage int
   memset(argumentInput, '\0', MAX_ALLOWED);                                     //flush the input stream
   char* token;                                                                  //declare a token buffer see: https://www.tutorialspoint.com/c_standard_library/c_function_strtok.htm
-  token = strtok(input, "\n");                                                  //get the first token
+  token = strtok(input, " \n");                                                 //get the first token
   while(token != NULL)                                                          //walk through other tokens and check them
   {
     argumentInput[counter++] = strdup(token);                                   //store the token into the array we pass in using strdup to duplicate: https://stackoverflow.com/questions/252782/strdup-what-does-it-do-in-c
@@ -221,7 +221,7 @@ void runsmallSh(char** argumentInput, int counter)
   static int status;
   bool backgroundStatus = false;                                                //set our boolean to false
 
-  if ((strcmp(argumentInput[counter - 1], "&") == 0))                           //check if we have a process running in the background first
+  if ((strcmp(argumentInput[counter - 1], statusHandle[3]) == 0))               //check if we have a process running in the background first
   {
     backgroundStatus = true;                                                    //if we do then set our boolean trigger
     argumentInput[counter - 1] = NULL;
@@ -238,7 +238,7 @@ void runsmallSh(char** argumentInput, int counter)
       chdir(getenv("HOME"));                                                    //none so navigate to the home directory
     }
     else                                                                        //otherwise change directory to the user input via argumentInput
-    {
+    {                                                                           //we use the argument after the first as the directory to navigate to
       chdir(argumentInput[1]);                                                  //navigate using CD to the user specified argumentInput
     }
   }

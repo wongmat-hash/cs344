@@ -218,22 +218,18 @@ void catchSIGTSTP(int signo)
 {
   if (allowBackground == 1)
   {
-    char* msg = "Entering forground-only mode (& is now ignored\n)";
-    char* msg1 = ": ";
+    char* msg = "\nEntering forground-only mode (& is now ignored)\n)";           //if it is still set to 1 we need to change to 0 and display our message
     write(1, msg, 49);
-    write(1, msg1, 2);
     fflush(stdout);
-    allowBackground = 0;
+    allowBackground = 0;                                                        //set our trigger
   }
 
   else
   {
-    char* msg = "Exiting foreground-only mode\n";
-    char* msg1 = ": ";
+    char* msg = "\nExiting foreground-only mode\n";                               //otherwise display our second prompt and set our trigger
     write(1, msg, 29);
-    write(1, msg1, 2);
     fflush(stdout);
-    allowBackground = 1;
+    allowBackground = 1;                                                        //set the trigger
   }
 }
 //**************************
@@ -241,9 +237,17 @@ void catchSIGTSTP(int signo)
 //**************************
 void runsmallSh(char** argumentInput, int counter)
 {
-  struct sigaction SIGINT_primary = {0};
+  struct sigaction SIGINT_primary = {0};                                        //we need to ignore the ^c
   SIGINT_primary.sa_handler = SIG_IGN;                                          //set the sa handler to not look at any SIGINT
+  sigfillset(&SIGINT_primary.sa_mask);
+  SIGINT_primary.sa_flags = 0;
   sigaction(SIGINT, &SIGINT_primary, NULL);
+
+  struct sigaction sa_sigtstp = {0};                                            //we need to catch ^Z and send it to our catchSIGTSTP function
+  sa_sigtstp.sa_handler = catchSIGTSTP;                                         //this will allow us to start background tasks
+  sigfillset(&sa_sigtstp.sa_mask);
+  sa_sigtstp.sa_flags = 0;
+  sigaction(SIGTSTP, &sa_sigtstp, NULL);
 
   static int status;
   bool backgroundStatus = false;                                                //set our boolean to false

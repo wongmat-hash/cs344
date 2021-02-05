@@ -28,6 +28,7 @@ typedef enum {false=0, true=1} bool;                                            
 const char *statusHandle[] = {"exit", "cd", "status", "&"};											//for user entry comparison
 #define MAX_ALLOWED 512
 #define MAX_USER_INPUT 2048
+int allowBackground = 1;
 
 //**************************
 // Argument input functions
@@ -43,7 +44,7 @@ int userArg(char** argumentInput, char* input)
   while(token != NULL)                                                          //walk through other tokens and check them
   {
     argumentInput[counter++] = strdup(token);                                   //store the token into the array we pass in using strdup to duplicate: https://stackoverflow.com/questions/252782/strdup-what-does-it-do-in-c
-    token = strtok(NULL, "\n");                                                 //in the loop continue the token until new line is detected
+    token = strtok(NULL, " \n");                                                 //in the loop continue the token until new line is detected
   }
   return counter;                                                               //returns our counter
 }
@@ -210,6 +211,32 @@ void bgStatus(int pid, int status)
   }while (pid > 0);
 }
 //**************************
+// catching sigstep
+// this shows the foreground only mode msg to the user and handles
+//**************************
+void catchSIGTSTP(int signo)
+{
+  if (allowBackground == 1)
+  {
+    char* msg = "Entering forground-only mode (& is now ignored\n)";
+    char* msg1 = ": ";
+    write(1, msg, 49);
+    write(1, msg1, 2);
+    fflush(stdout);
+    allowBackground = 0;
+  }
+
+  else
+  {
+    char* msg = "Exiting foreground-only mode\n";
+    char* msg1 = ": ";
+    write(1, msg, 29);
+    write(1, msg1, 2);
+    fflush(stdout);
+    allowBackground = 1;
+  }
+}
+//**************************
 // run smallsh function
 //**************************
 void runsmallSh(char** argumentInput, int counter)
@@ -258,7 +285,8 @@ void runsmallSh(char** argumentInput, int counter)
     {
       if (!backgroundStatus)                                                    //check our boolean if we need to terminate foreground processes
       {
-        SIGINT_primary.sa_handler = SIG_DFL;                                     //termination of forground processes
+        SIGINT_primary.sa_handler = SIG_DFL;                                    //termination of forground processes
+        //SIGINT_primary.sa_handler = SIG_DFL;
         sigaction(SIGINT, &SIGINT_primary, NULL);
       }
       redirectionArgs(argumentInput, counter, backgroundStatus);                //check for any redirection arguments using our function
@@ -291,7 +319,6 @@ int main()
 {
   int counter;
   char* argumentInput[MAX_ALLOWED];
-
   while(1)
   {
     counter = userEntry(argumentInput);                                         //should show the user menu/ prompt display

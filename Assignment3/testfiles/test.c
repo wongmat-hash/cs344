@@ -1,333 +1,345 @@
-#include <signal.h>
+/***************************************************************
+ * Filename: smallsh.c
+ * Author: Brent Irwin
+ * Date: 21 May 2017
+ * Description: Main file for smallsh, CS 344 Program 3
+***************************************************************/
+
+#include <sys/types.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
+#include <signal.h>
 #include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <sys/types.h>
 
-typedef enum { false, true } bool;
+#define INPUTLENGTH 2048
 
-#define MAX_AGR_NUMBER 512
-#define MAX_INPUT_LENGTH 2048
+int allowBackground = 1;
 
+void getInput(char*[], int*, char[], char[], int);
+void execCmd(char*[], int*, struct sigaction, int*, char[], char[]);
+void catchSIGTSTP(int);
+void printExitStatus(int);
 
+/* ---------------------- Main function --------------------- */
+/*	main() gets the input, checks for blanks or comments, processes
+ *	CD, EXIT, and STATUS, and then executes the command if the input
+ *	didn't call for any of the other functions.
+ * ---------------------------------------------------------- */
 
-/*************************************************************************************
-**Function: int getArgList(char**, char*)
-**Description: Parses a string into an array of words separated by white spaces or \n
-**Arguments:
-	(char**) an array of strings that hold the parsed words
-	(char*) string to be parsed
-**Returns: (int) the number of parsed words
-*************************************************************************************/
-int getArgList(char** argList, char* input)
-{
-	int numberOfArg = 0;
-	memset(argList, '\0', MAX_AGR_NUMBER);
-	char* token = strtok(input, " \n");
-	while(token != NULL)
-	{	// Seperate each arguement and store them into argList
-		argList[numberOfArg++] = strdup(token);
-		token = strtok(NULL, " \n");
-	}
-	return numberOfArg;
-}
+int main() {
 
-/*************************************************************************************
-**Function: void convertPID
-**Description: Iterates a string and converts the first "$$" to process id
-**Arguments: (char*) string to be iterated
-**Returns: none
-*************************************************************************************/
-void convertPID(char* input)
-{
-	char* buffer = strdup(input);
+	int pid = getpid();
+	int cont = 1;
 	int i;
-	for (i = 0; i < strlen(buffer); i ++)
-	{
-		// Change $$ to %d, then sprintf
-		if ((buffer[i] == '$') && (i + 1 < strlen(buffer)) && (buffer[i + 1] == '$'))
-		{
-			buffer[i] = '%';
-			buffer[i + 1] = 'd';
+	int exitStatus = 0;
+	int background = 0;
+
+	char inputFile[256] = "";
+	char outputFile[256] = "";
+	char* input[512];
+	for (i=0; i<512; i++) {
+		input[i] = NULL;
+	}
+
+	// Signal Handlers
+
+	// Ignore ^C
+	struct sigaction sa_sigint = {0};
+	sa_sigint.sa_handler = SIG_IGN;
+	sigfillset(&sa_sigint.sa_mask);
+	sa_sigint.sa_flags = 0;
+	sigaction(SIGINT, &sa_sigint, NULL);
+
+	// Redirect ^Z to catchSIGTSTP()
+	struct sigaction sa_sigtstp = {0};
+	sa_sigtstp.sa_handler = catchSIGTSTP;
+	sigfillset(&sa_sigtstp.sa_mask);
+	sa_sigtstp.sa_flags = 0;
+	sigaction(SIGTSTP, &sa_sigtstp, NULL);
+
+	do {
+		// Get input
+		getInput(input, &background, inputFile, outputFile, pid);
+
+		// COMMENT OR BLANK
+		if (input[0][0] == '#' ||
+					input[0][0] == '\0') {
+			continue;
 		}
-	}
-	sprintf(input, buffer, getpid());
-	free(buffer);
-}
 
-/*************************************************************************************
-**Function: int getUserCommand(char**)
-**Description: Gets user command and validates its input.
-**Arguments: (char**) store the command into array of strings
-**Returns: (int) number of arguments
-*************************************************************************************/
-int getUserCommand(char** argList)
-{
-	int numberOfArg;
-	char* input = malloc(MAX_INPUT_LENGTH * sizeof(char));
-	do
-	{
-		printf(": ");
-		fgets(input, MAX_INPUT_LENGTH, stdin);
-		input[strcspn(input, "\n")] = 0; // Remove trailing newline character from fgets
-	}while(strlen(input) < 1 || strlen(input) > MAX_INPUT_LENGTH || input[0] == '#');
+		// EXIT
+		else if (strcmp(input[0], "exit") == 0) {
+			cont = 0;
+		}
 
-	convertPID(input); // Convert $$ to process id
-	numberOfArg = getArgList(argList, input); // Parse user input into array of arguments
-	free(input);
-
-	return numberOfArg;
-}
-
-/****************************************************************
-**Function: void cleanUpMemory(char**, int)
-**Description: Clean up arguments list after it has been called
-**Arguments:
-	(char**) list of arguments
-	(int) number of arguments
-**Returns: none
-*****************************************************************/
-void cleanUpMemory(char** argList, int numberOfArg)
-{
-	int i;
-	for (i = 0; i < numberOfArg; i++)
-	{
-		free(argList[i]);
-	}
-}
-
-/**************************************************************************************
-**Function: void checkForFileRedirection(char**, int, bool)
-**Description:
-	Checks through command list and see if there are redirection arguments.
-	If there is, then redirect to correct file
-**Arguments:
-		(char**) list of arguments
-		(int) number of arguments
-		(bool) checks if command is ran in background or foreground
-**Returns: none
-**************************************************************************************/
-void checkForFileRedirection(char** argList, int numberOfArg, bool ranOnBackground)
-{
-	int targetFD;
-	char* fileName = NULL;
-	bool hasRedirection = false;
-
-	int i;
-	for (i = 1; i < numberOfArg; i++)
-	{	// Check for any redirections
-		if ((strcmp(argList[i], "<") == 0) || (strcmp(argList[i], ">") == 0))
-		{
-			hasRedirection = true;
-			fileName = strdup(argList[i + 1]);
-			if (ranOnBackground)
-			{	// Background process does not display in shell - pass all output and input to /dev/null
-				targetFD = open("/dev/null", O_RDONLY);
-				if (dup2(targetFD, STDIN_FILENO) == -1)
-				{
-					fprintf(stderr, "Error redirecting");
-					exit(1);
-				};
-				if (dup2(targetFD, STDOUT_FILENO) == -1)
-				{
-					fprintf(stderr, "Error redirecting");
-					exit(1);
-				};
-			}
-			else
-			{	// Non-background processes
-				if ((strcmp(argList[i], "<") == 0))
-				{
-					targetFD = open(fileName, O_RDONLY);
-					if (targetFD == -1)
-					{
-						fprintf(stderr, "Cannot open %s for input\n", fileName);
-						exit(1);
-					}
-					if (dup2(targetFD, STDIN_FILENO) == -1)
-					{
-						fprintf(stderr, "Error redirecting");
-						exit(1);
-					}
+		// CD
+		else if (strcmp(input[0], "cd") == 0) {
+			// Change to the directory specified
+			if (input[1]) {
+				if (chdir(input[1]) == -1) {
+					printf("Directory not found.\n");
+					fflush(stdout);
 				}
-				else
-				{
-					targetFD = open(fileName, O_CREAT | O_RDWR | O_TRUNC, 0644);
-					if (targetFD == -1)
-					{
-						fprintf(stderr, "Cannot open %s for ouput\n", fileName);
-						exit(1);
-					}
-					if (dup2(targetFD, STDOUT_FILENO) == -1)
-					{
-						fprintf(stderr, "Error redirecting");
-						exit(1);
-					};
-				}
-			}
-			close(targetFD);
-			free(fileName);
-		}
-	}
-	// If there was file redirection, remove all arguments except for first command so that we can call execvp later
-	if (hasRedirection)
-	{
-		for(i = 1; i < numberOfArg; i++)
-		{
-			argList[i] = NULL;
-		}
-	}
-}
-
-/***************************************************************************
-**Function: void checkStatus(int)
-**Description: Displays to the console how the last child was terminated
-**Arguments: (int) status code
-**Returns: none
-****************************************************************************/
-void checkStatus(int statusCode)
-{
-	if (WIFEXITED(statusCode))	// Terminated normally
-	{
-		printf("exit value %d\n", WEXITSTATUS(statusCode));
-	}
-	else if (WIFSIGNALED(statusCode))	// Killed by signal
-	{
-		printf("terminated by signal %d\n", WTERMSIG(statusCode));
-	}
-}
-
-/***************************************************************************
-**Function: void checkBackgroundProcess(int, int)
-**Description:
-	Loop to check if any of our background child processes has completed.
-	If yes, then write to console if it was exited or signaled.
-**Arguments:
-	(int) process id
-	(int) status code of terminated child process
-**Returns: none
-****************************************************************************/
-void checkBackgroundProcess(int pid, int statusCode)
-{
-	do
-	{ // Check if a child has terminated. However, do not wait for it.
-	pid = waitpid(-1, &statusCode, WNOHANG);
-		if (pid > 0)
-		{ // waitpid returns the process id of terminated child
-			if (WIFEXITED(statusCode) != 0) // Checks if exited
-			{
-				printf("background pid %d is done: exit value %d\n", pid, WEXITSTATUS(statusCode));
-			}
-			else if (WIFSIGNALED(statusCode) != 0) // If it was not exited, then it must have been killed by a signal
-			{
-				printf("background pid %d is done: terminated by signal %d\n", pid, WTERMSIG(statusCode));
+			} else {
+			// If directory is not specified, go to ~
+				chdir(getenv("HOME"));
 			}
 		}
-	} while (pid > 0); // Loop stops once pid returns 0 (no child process has terminated).
-}
 
-/**************************************************************************************
-**Function: void runSmallSh(char**, int)
-**Description:
-	Check command list for exit, cd, or status and executes. All other c
-	commands are performed by a spanwed child process
-**Arguments:
-	(char**) list of arguments
-	(int) number of arguments
-**Returns: none
-**************************************************************************************/
-void runSmallSh(char** argList, int numberOfArg)
-{
-
-	struct sigaction SIGINT_action = {0};
-	SIGINT_action.sa_handler = SIG_IGN; // Set to ignore SIGINT
-	sigaction(SIGINT, &SIGINT_action, NULL);
-
-	static int statusCode;
-	bool ranOnBackground = false;
-
-	if ((strcmp(argList[numberOfArg - 1], "&") == 0))
-	{	// Check if process is ran in background
-		ranOnBackground = true;
-		argList[numberOfArg - 1] = NULL;
-	}
-
-	if (strcmp(argList[0], "exit") == 0)
-	{ 	// User exits out of program
-		cleanUpMemory(argList, numberOfArg);
-		exit(0);
-	}
-	else if (strcmp(argList[0], "cd") == 0)
-	{		// User changes directory
-		if (numberOfArg < 2)  // If there are no other arguments other than cd, then go to home directory
-		{
-			chdir(getenv("HOME"));
+		// STATUS
+		else if (strcmp(input[0], "status") == 0) {
+			printExitStatus(exitStatus);
 		}
-		else	// If there are more then 1 argument, the next argument must be the directory to go to
-		{
-			chdir(argList[1]);
-		}
-	}
-	else if (strcmp(argList[0], "status") == 0)  	// User checks status of previous process
-	{
-		checkStatus(statusCode);
-	}
-	else
-	{		// All other commands fork a child process
-		pid_t pid = fork();
-		if (pid == -1)
-		{
-			fprintf(stderr, "Error creating child\n");
-			exit(1);
-		} // Error forking
-		if (pid == 0)
-		{	// Child process
-			if (!ranOnBackground)
-			{	// child processes ran on foreground can be terminated
-				SIGINT_action.sa_handler = SIG_DFL;
-				sigaction(SIGINT, &SIGINT_action, NULL);
-			}
-			checkForFileRedirection(argList, numberOfArg, ranOnBackground);
-			execvp(argList[0], argList);
-			// If execvp was unsuccessful, then print out error and exit
-			fprintf(stderr, "%s: command not found\n", argList[0]);
-			exit(1);
-		}
-		else
-		{ // Parent process
-			if (ranOnBackground)
-			{
-				printf("background pid is %d\n", pid);
-			}
-			else
-			{	// If ran in foreground, wait for child process to finish
-				waitpid(pid, &statusCode, 0);
-				if (WTERMSIG(statusCode) != 0)	// Check if child process was killed by signal
-				{
-					printf("terminated by signal %d\n", WTERMSIG(statusCode));
-				}
-				checkBackgroundProcess(pid, statusCode); // Check for any finished background processes
-			}
-		}
-	}
-	cleanUpMemory(argList, numberOfArg);
-}
 
-int main()
-{
-	int numberOfArg;
-	char* argList[MAX_AGR_NUMBER];
+		// Anything else
+		else {
+			execCmd(input, &exitStatus, sa_sigint, &background, inputFile, outputFile);
+		}
 
-	while (1)
-	{
-		// Prompt user command
-		numberOfArg = getUserCommand(argList);
-		// Execute command
-		runSmallSh(argList, numberOfArg);
-	}
+		// Reset variables
+		for (i=0; input[i]; i++) {
+			input[i] = NULL;
+		}
+		background = 0;
+		inputFile[0] = '\0';
+		outputFile[0] = '\0';
+
+	} while (cont);
+
 	return 0;
+}
+
+/***************************************************************
+ * 			void getInput(char*[], int, char*, char*, int)
+ *
+ * Prompts the user and parses the input into an array of words
+ *
+ * INPUT:
+ *		char*[512] arr		The output array
+ *		int* background	Is this a background process? boolean
+ *		char* inputName	Name of an input file
+ *		char* outputName	Name of an output file
+ *		int pid				PID of smallsh
+ *
+ *	OUTPUT:
+ *		void - n/a
+ ***************************************************************/
+void getInput(char* arr[], int* background, char inputName[], char outputName[], int pid) {
+
+	char input[INPUTLENGTH];
+	int i, j;
+
+	// Get input
+	printf(": ");
+	fflush(stdout);
+	fgets(input, INPUTLENGTH, stdin);
+
+	// Remove newline
+	int found = 0;
+	for (i=0; !found && i<INPUTLENGTH; i++) {
+		if (input[i] == '\n') {
+			input[i] = '\0';
+			found = 1;
+		}
+	}
+
+	// If it's blank, return blank
+	if (!strcmp(input, "")) {
+		arr[0] = strdup("");
+		return;
+	}
+
+	// Translate rawInput into individual strings
+	const char space[2] = " ";
+	char *token = strtok(input, space);
+
+	for (i=0; token; i++) {
+		// Check for & to be a background process
+		if (!strcmp(token, "&")) {
+			*background = 1;
+		}
+		// Check for < to denote input file
+		else if (!strcmp(token, "<")) {
+			token = strtok(NULL, space);
+			strcpy(inputName, token);
+		}
+		// Check for > to denote output file
+		else if (!strcmp(token, ">")) {
+			token = strtok(NULL, space);
+			strcpy(outputName, token);
+		}
+		// Otherwise, it's part of the command!
+		else {
+			arr[i] = strdup(token);
+			// Replace $$ with pid
+			// Only occurs at end of string in testscirpt
+			for (j=0; arr[i][j]; j++) {
+				if (arr[i][j] == '$' &&
+					 arr[i][j+1] == '$') {
+					arr[i][j] = '\0';
+					snprintf(arr[i], 256, "%s%d", arr[i], pid);
+				}
+			}
+		}
+		// Next!
+		token = strtok(NULL, space);
+	}
+}
+
+/***************************************************************
+ * 			void execCmd(char*[], int*, struct sigaction, int*, char[], char[])
+ *
+ * Executes the command parsed into arr[]
+ *
+ * INPUT:
+ * 	char* arr[]				The array with command information
+ *		int* childExitStatus	The success status of the command
+ *		struct sigaction sa	The sigaction for SIGINT
+ *		int* background		Is it a background process? boolean
+ *		char inputName[]		The name of the input file
+ *		char outputName[]		The name of the output file
+ *
+ * OUTPUT:
+ *		void - n/a
+***************************************************************/
+void execCmd(char* arr[], int* childExitStatus, struct sigaction sa, int* background, char inputName[], char outputName[]) {
+
+	int input, output, result;
+	pid_t spawnPid = -5;
+
+	// Fork that shit
+	// The structure of this is from Lecture 3.1, not much changed
+	spawnPid = fork();
+	switch (spawnPid) {
+
+		case -1:	;
+			perror("Hull Breach!\n");
+			exit(1);
+			break;
+
+		case 0:	;
+			// The process will now take ^C as default
+			sa.sa_handler = SIG_DFL;
+			sigaction(SIGINT, &sa, NULL);
+
+			// Handle input, code is basically straight from Lecture 3.4
+			if (strcmp(inputName, "")) {
+				// open it
+				input = open(inputName, O_RDONLY);
+				if (input == -1) {
+					perror("Unable to open input file\n");
+					exit(1);
+				}
+				// assign it
+				result = dup2(input, 0);
+				if (result == -1) {
+					perror("Unable to assign input file\n");
+					exit(2);
+				}
+				// trigger its close
+				fcntl(input, F_SETFD, FD_CLOEXEC);
+			}
+
+			// Handle output, code is basically straight from Lecture 3.4
+			if (strcmp(outputName, "")) {
+				// open it
+				output = open(outputName, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+				if (output == -1) {
+					perror("Unable to open output file\n");
+					exit(1);
+				}
+				// assign it
+				result = dup2(output, 1);
+				if (result == -1) {
+					perror("Unable to assign output file\n");
+					exit(2);
+				}
+				// trigger its close
+				fcntl(output, F_SETFD, FD_CLOEXEC);
+			}
+
+			// Execute it!
+			if (execvp(arr[0], (char* const*)arr)) {
+				printf("%s: no such file or directory\n", arr[0]);
+				fflush(stdout);
+				exit(2);
+			}
+			break;
+
+		default:	;
+			// Execute a process in the background ONLY if allowBackground
+			if (*background && allowBackground) {
+				pid_t actualPid = waitpid(spawnPid, childExitStatus, WNOHANG);
+				printf("background pid is %d\n", spawnPid);
+				fflush(stdout);
+			}
+			// Otherwise execute it like normal
+			else {
+				pid_t actualPid = waitpid(spawnPid, childExitStatus, 0);
+			}
+
+		// Check for terminated background processes!
+		while ((spawnPid = waitpid(-1, childExitStatus, WNOHANG)) > 0) {
+			printf("child %d terminated\n", spawnPid);
+			printExitStatus(*childExitStatus);
+			fflush(stdout);
+		}
+	}
+}
+
+/***************************************************************
+ * 			void catchSIGTSTP(int)
+ *
+ * When SIGTSTP is called, toggle the allowBackground boolean.
+ *
+ * I didn't know how to pass my own variables into this, so I made
+ * allowBackground a global variable. I know that's bad form.
+ *
+ * INPUT:
+ * 	int signo		Required, according to the homework. Isn't used.
+ *
+ * OUTPUT:
+ * 	void - n/a
+***************************************************************/
+void catchSIGTSTP(int signo) {
+
+	// If it's 1, set it to 0 and display a message reentrantly
+	if (allowBackground == 1) {
+		char* message = "Entering foreground-only mode (& is now ignored)\n";
+		write(1, message, 49);
+		fflush(stdout);
+		allowBackground = 0;
+	}
+
+	// If it's 0, set it to 1 and display a message reentrantly
+	else {
+		char* message = "Exiting foreground-only mode\n";
+		write (1, message, 29);
+		fflush(stdout);
+		allowBackground = 1;
+	}
+}
+
+/***************************************************************
+ * 			void printExitStatus(int)
+ *
+ * Calls the exit status
+ *
+ * INPUT:
+ * 	int childExitMethod	Child Exit Method
+ *
+ * OUTPUT:
+ * 	void - n/a
+***************************************************************/
+void printExitStatus(int childExitMethod) {
+
+	if (WIFEXITED(childExitMethod)) {
+		// If exited by status
+		printf("exit value %d\n", WEXITSTATUS(childExitMethod));
+	} else {
+		// If terminated by signal
+		printf("terminated by signal %d\n", WTERMSIG(childExitMethod));
+	}
 }

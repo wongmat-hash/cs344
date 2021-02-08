@@ -102,6 +102,28 @@ void freeMemory(char** argumentInput, int counter)
   }
 }
 //**************************
+// background process checker
+//**************************
+void bgStatus(int pid, int status)
+{
+  do
+  {
+    pid = waitpid(-1, &status, WNOHANG);                                        //wait for PID but return immediately if no child process is ready
+    if (pid > 0)                                                                //if return value is anything above 0
+    {
+      if (WIFEXITED(status)!= 0)                                                //tell user that background process is done and show value
+      {
+        printf("background pid %d is done: exit value %d\n", pid, WEXITSTATUS(status));
+      }
+      else if (WIFSIGNALED(status) != 0)                                        //tell user that the background process was terminated and show msg
+      {
+        printf("background pid %d is done: terminated by signal %d\n", pid, WTERMSIG(status));
+      }
+    }
+  }while (pid > 0);
+}
+
+//**************************
 // argument redirection functions
 // work cited: https://stackoverflow.com/questions/26070346/c-how-do-you-accept-a-command-line-argument-via-redirection
 //**************************
@@ -175,42 +197,6 @@ void redirectionArgs(char** argumentInput, int counter, bool bgStatuses)
   }
 }
 //**************************
-// termination message for child process
-//**************************
-void childStatusReport(int status)
-{
-  if (WIFEXITED(status))
-  {
-    printf("exit Value %d\n", WEXITSTATUS(status));
-  }
-  else if (WIFSIGNALED(status))
-  {
-    printf("terminated by signal %d\n", WTERMSIG(status));
-  }
-}
-
-//**************************
-// background process checker
-//**************************
-void bgStatus(int pid, int status)
-{
-  do
-  {
-    pid = waitpid(-1, &status, WNOHANG);                                        //wait for PID but return immediately if no child process is ready
-    if (pid > 0)                                                                //if return value is anything above 0
-    {
-      if (WIFEXITED(status)!= 0)                                                //tell user that background process is done and show value
-      {
-        printf("background pid %d is done: exit value %d\n", pid, WEXITSTATUS(status));
-      }
-      else if (WIFSIGNALED(status) != 0)                                        //tell user that the background process was terminated and show msg
-      {
-        printf("background pid %d is done: terminated by signal %d\n", pid, WTERMSIG(status));
-      }
-    }
-  }while (pid > 0);
-}
-//**************************
 // catching sigstep
 // this shows the foreground only mode msg to the user and handles
 //**************************
@@ -232,6 +218,21 @@ void catchSIGTSTP(int signo)
     allowBackground = 1;                                                        //set the trigger
   }
 }
+//**************************
+// termination message for child process
+//**************************
+void childStatusReport(int status)                                              //work cited: https://stackoverflow.com/questions/43031109/c-getting-wifexited-to-return-false-for-debuging-purposes
+{
+  if (WIFEXITED(status))
+  {
+    printf("exit Value %d\n", WEXITSTATUS(status));                             //return a status if true
+  }
+  else if (WIFSIGNALED(status))                                                 //other wise print a terminating signal message
+  {
+    printf("terminated by signal %d\n", WTERMSIG(status));
+  }
+}
+
 //**************************
 // run smallsh function
 //**************************

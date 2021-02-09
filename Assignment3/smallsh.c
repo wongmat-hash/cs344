@@ -323,8 +323,8 @@ void runsmallSh(char** argumentInput, int counter)
 int main()
 {
   int counter;
-  char* argumentInput[MAX_ALLOWED];
-  while(1)
+  char* argumentInput[MAX_ALLOWED];                                             //use our defined max allowed for input length
+  while(1)                                                                      //while its true just run 
   {
     counter = userEntry(argumentInput);                                         //should show the user menu/ prompt display
     runsmallSh(argumentInput, counter);                                         //runs our actual shell script with user input

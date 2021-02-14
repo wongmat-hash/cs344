@@ -43,26 +43,52 @@ void *producer(void *args)
     return NULL;
 }
 
-//function that consumer thread will run. Get item from buffer if the buffer is not empty WORK CITED LECTURE CONDITION VARIABLES 
+//function that consumer thread will run. Get item from buffer if the buffer is not empty WORK CITED LECTURE CONDITION VARIABLES
 void *consumer(void *args)
 {
-  int value = 0;
-  //continue consuming until the END_MARKER is seen
-  while (value != END_MARKER)
-  {
-    pthread_mutex_lock(&mutex);
-    while (count == 0)
+    int value = 0;
+    // Continue consuming until the END_MARKER is seen
+    while (value != END_MARKER)
     {
-      //buffer is empty and we need to wait for the producer to signal that the buffer has data
-      pthread_cond_wait(&full, &mutex);
+      // Lock the mutex before checking if the buffer has data
+      pthread_mutex_lock(&mutex);
+      while (count == 0)
+      {
+        // Buffer is empty. Wait for the producer to signal that the buffer has data
+        pthread_cond_wait(&full, &mutex);
+      }
+      value = get_item();
+      // Signal to the producer that the buffer has space
+      pthread_cond_signal(&empty);
+      // Unlock the mutex
+      pthread_mutex_unlock(&mutex);
+      // Print the message outside the critical section
+      printf("CONS %d\n", value);
     }
-    value = get_item();
-    //signal to the producer that the buffer has space since its empty
-    pthread_cond_signal(&empty);
-    //unlock the mutex
-    pthread_mutex_unlock(&mutex);
-    //print the message outside of the critical section
-    printf("CONSUMER: %d\n", value);
+    return NULL;
+}
+
+//thread 1 called input thread
+//will read in lines of char from the standard input
+//work cited: https://stackoverflow.com/questions/24907818/reading-from-stdin-in-a-thread-to-write-in-a-file-in-c
+void* read_stdin(void * null)
+{
+  int fd;
+  char len;
+  char ret;
+  char buff[255];
+
+  fd = open("dest", O_RDWR | O_TRUNC | O_CREAT, 0600);
+  len = 1;
+  while (len)
+  {
+    len = read(0, &len, sizeof(len));
+    if (len)
+    {
+      read(0, buff, len);
+      write(fd, buff, len);
+    }
   }
+  close(fd);
   return NULL;
 }

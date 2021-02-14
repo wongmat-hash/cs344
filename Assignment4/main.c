@@ -12,3 +12,57 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+
+//init our mutex
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
+//init our conditional vars
+pthread_cond_t full = PTHREAD_COND_INITIALIZER;
+pthread_cond_t empty = PTHREAD_COND_INITIALIZER;
+
+//function for our producer WORK CITED LECTURE CONDITION VARIABLES
+void *producer(void *args)
+{
+    for (int i = 0; i < num_items + 1; i++)
+    {
+      // Produce the item outside the critical section
+      int value = produce_item(i);
+      // Lock the mutex before checking where there is space in the buffer
+      pthread_mutex_lock(&mutex);
+      while (count == SIZE)
+        // Buffer is full. Wait for the consumer to signal that the buffer has space
+        pthread_cond_wait(&empty, &mutex);
+      put_item(value);
+      // Signal to the consumer that the buffer is no longer empty
+      pthread_cond_signal(&full);
+      // Unlock the mutex
+      pthread_mutex_unlock(&mutex);
+      // Print message outside the critical section
+      printf("PROD %d\n", value);
+    }
+    return NULL;
+}
+
+//function that consumer thread will run. Get item from buffer if the buffer is not empty WORK CITED LECTURE CONDITION VARIABLES 
+void *consumer(void *args)
+{
+  int value = 0;
+  //continue consuming until the END_MARKER is seen
+  while (value != END_MARKER)
+  {
+    pthread_mutex_lock(&mutex);
+    while (count == 0)
+    {
+      //buffer is empty and we need to wait for the producer to signal that the buffer has data
+      pthread_cond_wait(&full, &mutex);
+    }
+    value = get_item();
+    //signal to the producer that the buffer has space since its empty
+    pthread_cond_signal(&empty);
+    //unlock the mutex
+    pthread_mutex_unlock(&mutex);
+    //print the message outside of the critical section
+    printf("CONSUMER: %d\n", value);
+  }
+  return NULL;
+}

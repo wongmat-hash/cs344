@@ -13,82 +13,42 @@
 #include <stdlib.h>
 #include <string.h>
 
-//init our mutex
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+#define MAX_SIZE 1000
 
-//init our conditional vars
-pthread_cond_t full = PTHREAD_COND_INITIALIZER;
-pthread_cond_t empty = PTHREAD_COND_INITIALIZER;
 
-//function for our producer WORK CITED LECTURE CONDITION VARIABLES
-void *producer(void *args)
+
+//implement single threaded version 1x
+
+//function to process file/ userinput
+void userInput(char *arr, int size)                                             //work cited: https://www.programiz.com/c-programming/c-arrays-functions
 {
-    for (int i = 0; i < num_items + 1; i++)
-    {
-      // Produce the item outside the critical section
-      int value = produce_item(i);
-      // Lock the mutex before checking where there is space in the buffer
-      pthread_mutex_lock(&mutex);
-      while (count == SIZE)
-        // Buffer is full. Wait for the consumer to signal that the buffer has space
-        pthread_cond_wait(&empty, &mutex);
-      put_item(value);
-      // Signal to the consumer that the buffer is no longer empty
-      pthread_cond_signal(&full);
-      // Unlock the mutex
-      pthread_mutex_unlock(&mutex);
-      // Print message outside the critical section
-      printf("PROD %d\n", value);
-    }
-    return NULL;
+  fgets(arr, MAX_SIZE, stdin);                                                  //work cited: https://beginnersbook.com/2014/01/c-passing-array-to-function-example/
+  printf("this is your string in USERINPUT: %s\n", arr);                        //store user input up to 1000 chars in our array
 }
 
-//function that consumer thread will run. Get item from buffer if the buffer is not empty WORK CITED LECTURE CONDITION VARIABLES
-void *consumer(void *args)
+//function called line seperator thread replcaes every line seperator in the input by a space
+void lineSeperator(char *arr)
 {
-    int value = 0;
-    // Continue consuming until the END_MARKER is seen
-    while (value != END_MARKER)
-    {
-      // Lock the mutex before checking if the buffer has data
-      pthread_mutex_lock(&mutex);
-      while (count == 0)
-      {
-        // Buffer is empty. Wait for the producer to signal that the buffer has data
-        pthread_cond_wait(&full, &mutex);
-      }
-      value = get_item();
-      // Signal to the producer that the buffer has space
-      pthread_cond_signal(&empty);
-      // Unlock the mutex
-      pthread_mutex_unlock(&mutex);
-      // Print the message outside the critical section
-      printf("CONS %d\n", value);
-    }
-    return NULL;
+  
 }
+//function called plus sign thread replaces every pair of ++ with ^
 
-//thread 1 called input thread
-//will read in lines of char from the standard input
-//work cited: https://stackoverflow.com/questions/24907818/reading-from-stdin-in-a-thread-to-write-in-a-file-in-c
-void* read_stdin(void * null)
+//function called output thread that writes processed data to standard output as lines of exactly 80
+
+int main(int argc, char* argv[])
 {
-  int fd;
-  char len;
-  char ret;
-  char buff[255];
+  char ar[MAX_SIZE];                                                            //char array of 1000 that will store user input
+  userInput(ar, MAX_SIZE);                                                      //pass the array into user Input to grab and store data
 
-  fd = open("dest", O_RDWR | O_TRUNC | O_CREAT, 0600);
-  len = 1;
-  while (len)
-  {
-    len = read(0, &len, sizeof(len));
-    if (len)
-    {
-      read(0, buff, len);
-      write(fd, buff, len);
-    }
-  }
-  close(fd);
-  return NULL;
+  //check that the user input is stored correctly TEST
+  printf("this is your string in MAIN: %s\n", ar);
+
+  //test our array buffer
+  int x = sizeof(ar);
+  printf("\nTEST\n");
+  printf("\n%d\n", x);
+
+  //pass the array into linesepeator functino which will reaplce every line seperator in the input by a space
+  lineSepeator(ar);
+  return 0;
 }

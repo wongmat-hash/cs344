@@ -23,7 +23,8 @@
 void userInput(char *arr, int size)                                             //work cited: https://www.programiz.com/c-programming/c-arrays-functions
 {
   fgets(arr, MAX_SIZE, stdin);                                                  //work cited: https://beginnersbook.com/2014/01/c-passing-array-to-function-example/
-  printf("this is your string in USERINPUT:\n%s\n", arr);                        //store user input up to 1000 chars in our array
+  printf("this is your string in USERINPUT:\n%s\n", arr);                       //store user input up to 1000 chars in our array
+  //now the array has user input or user specified input from < when starting program
 }
 
 //function called line seperator thread replcaes every line seperator in the input by a space
@@ -41,20 +42,23 @@ void lineSeperator(char *arr)
 void plusplusSign(char *arr)
 {
   printf("in plusplus sign function\n");
-  for (int i = 0; i < MAX_SIZE; i++)
-  {
-    printf("%s ", arr);
-  }
+  printf("testing this is MAX_SIZE: %d\n", MAX_SIZE);
+  //for (int i = 0; i < MAX_SIZE; i++)
+  //{
+  //  printf("%s ", &arr[i]);
+  //}
+  printf("%s", &arr[0]);
 }
 //function called output thread that writes processed data to standard output as lines of exactly 80
 
 int main(int argc, char* argv[])
 {
-  char ar[MAX_SIZE];                                                            //char array of 1000 that will store user input
+  char ar[MAX_SIZE];                                                            //char array of 1000 that will store user input or standard argument 
   userInput(ar, MAX_SIZE);                                                      //pass the array into user Input to grab and store data
 
   //check that the user input is stored correctly TEST
-  printf("this is your string in MAIN:\n%s\n", ar);
+  //printf("this is your string in MAIN:\n%s\n", ar);                             //TESTS to make sure our values are passing around correctly
+  //printf("TESTING ARRAY: %s\n", &ar[594]);
 
   //test our array buffer
   int x = sizeof(ar);
@@ -67,5 +71,7 @@ int main(int argc, char* argv[])
   x = sizeof(ar);
   printf("\nTEST\n");
   printf("\n%d\n", x);
+
+  plusplusSign(ar);
   return 0;
 }

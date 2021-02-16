@@ -23,16 +23,29 @@
 void userInput(char *arr, int size)                                             //work cited: https://www.programiz.com/c-programming/c-arrays-functions
 {
   fgets(arr, MAX_SIZE, stdin);                                                  //work cited: https://beginnersbook.com/2014/01/c-passing-array-to-function-example/
-  printf("this is your string in USERINPUT: %s\n", arr);                        //store user input up to 1000 chars in our array
+  printf("this is your string in USERINPUT:\n%s\n", arr);                        //store user input up to 1000 chars in our array
 }
 
 //function called line seperator thread replcaes every line seperator in the input by a space
 void lineSeperator(char *arr)
 {
-  
+  printf("in line seperator function\n");
+  size_t length = strlen(arr);                                                  //now we have hte length of the array
+  printf("\nsize_t: %zu\n", length);
+  if (arr[length-1] == '\n')
+  {
+    arr[--length]= '\0';                                                        //work cited: https://stackoverflow.com/questions/28429625/check-if-string-contains-new-line-character
+  }
 }
 //function called plus sign thread replaces every pair of ++ with ^
-
+void plusplusSign(char *arr)
+{
+  printf("in plusplus sign function\n");
+  for (int i = 0; i < MAX_SIZE; i++)
+  {
+    printf("%s ", arr);
+  }
+}
 //function called output thread that writes processed data to standard output as lines of exactly 80
 
 int main(int argc, char* argv[])
@@ -41,7 +54,7 @@ int main(int argc, char* argv[])
   userInput(ar, MAX_SIZE);                                                      //pass the array into user Input to grab and store data
 
   //check that the user input is stored correctly TEST
-  printf("this is your string in MAIN: %s\n", ar);
+  printf("this is your string in MAIN:\n%s\n", ar);
 
   //test our array buffer
   int x = sizeof(ar);
@@ -49,6 +62,10 @@ int main(int argc, char* argv[])
   printf("\n%d\n", x);
 
   //pass the array into linesepeator functino which will reaplce every line seperator in the input by a space
-  lineSepeator(ar);
+  lineSeperator(ar);
+  printf("this is your string in MAIN2:\n%s\n", ar);
+  x = sizeof(ar);
+  printf("\nTEST\n");
+  printf("\n%d\n", x);
   return 0;
 }

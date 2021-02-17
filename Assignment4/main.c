@@ -15,12 +15,53 @@
 #include <errno.h>                                                              //for processing if its a file to process or user input stdin: work cited: https://stackoverflow.com/questions/3495092/read-from-file-or-stdin
 #include <math.h>
 
+#define SIZE 1000                                                               //define a buffer for our buffer thread
 #define MAX_SIZE 1000
 
+//buffer 1 shared between user input and line seperator thread
+int buffer_1[SIZE];
+//number of items in the buffer
+int count_1 = 0;
+//index where input thread will put the next items
+int prod_id_1 = 0;
+//index where the line seperator thread will pick up the next items
+int con_idx_1 = 0;
+//init the mutex for buffer 1
+pthread_mutex_t mutex_1 = PTHREAD_MUTEX_INITIALIZER;
+//init the condition variable for buffer 1
+pthread_cond_t full_1 = PTHREAD_COND_INITIALIZER;
+
+//buffer 2 shared resource between line seperator and plus sign thread
+int buffer_2[SIZE];
+//number of items in the buffer
+int count_2 = 0;
+//index where the line seperator will put the next item
+int prod_idx_2 = 0;
+//index where the plus sign will pick up the next item
+int con_idx_2 = 0;
+//init the mutex for buffer 2
+pthread_mutex_t mutex_2 = PTHREAD_MUTEX_INITIALIZER;
+//init the conditional var for buffer 2
+pthread_cond_t full_2 = PTHREAD_COND_INITIALIZER;
+
+//buffer 3 shared between the plus sign thread adn the output thread
+int buffer_3[SIZE];
+//number of items in the buffer
+int count_3 = 0;
+//index where the plus sign will put the next item
+int prod_idx_3 = 0;
+//index where the output will pick up the next item
+int con_idx_3 = 0;
+//init the mutex for buffer 3
+pthread_mutex_t mutex_3 = PTHREAD_MUTEX_INITIALIZER;
+//init the conditional var for buffer 3
+pthread_cond_t full_3 = PTHREAD_COND_INITIALIZER;
 
 
-//implement single threaded version 1x
 
+//implement single threaded version 1x COMPLETE 02/16
+
+//THREAD 1 user input thread
 //function to process file/ userinput
 void userInput(char *arr)                                                       //work cited: https://www.programiz.com/c-programming/c-arrays-functions
 {
@@ -51,6 +92,7 @@ void userInput(char *arr)                                                       
   //now the array has user input or user specified input from < when starting program
 }
 
+//THREAD 2 line seperator thread
 //function called line seperator thread replcaes every line seperator in the input by a space
 void lineSeperator(char *arr)
 {
@@ -85,6 +127,8 @@ void lineSeperator(char *arr)
   //  arr[--length]= '\0';                                                      //work cited: https://stackoverflow.com/questions/28429625/check-if-string-contains-new-line-character
   //}
 }
+
+//thread 3 plus sign removal thread
 //function called plus sign thread replaces every pair of ++ with ^
 void plusplusSign(char *arr)
 {
@@ -109,6 +153,7 @@ void plusplusSign(char *arr)
   printf("%s", &arr[0]);
 }
 
+//thread 4 output thread
 //function called output thread that writes processed data to standard output as lines of exactly 80 it also needs to know to stop if there are < 80 when it hits a STOP
 void outPutThread(char *arr)
 {

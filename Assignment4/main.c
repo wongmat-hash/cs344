@@ -23,13 +23,36 @@
 //function to process file/ userinput
 void userInput(char *arr)                                             //work cited: https://www.programiz.com/c-programming/c-arrays-functions
 {
-  int count = 80;
-  do
+
+  for (int i = 0; i < MAX_SIZE; i++)
   {
-    fgets(arr, MAX_SIZE, stdin);
-    count--;
-  }while (count != 0);
+    scanf("%c", &arr[i]);
+  }
+
+
+
+
+  //do
+  //{
+  //  fgets(arr, MAX_SIZE, stdin);
+  //}while (fgets(arr, sizeof(arr), stdin)!= NULL);
+
+
+
+
+
+  //while (fgets(arr, sizeof(arr), stdin) != NULL)
+  //{
+  //  fgets(arr, MAX_SIZE, stdin);
+  //}
+  //int count = 80;
+  //do
+  //{
+  //fgets(arr, MAX_SIZE, stdin);
+  //  count--;
+  //}while (count != 0);
                                                                                 //work cited: https://beginnersbook.com/2014/01/c-passing-array-to-function-example/
+  //scanf("%255s", arr);
   printf("this is your string in USERINPUT:\n%s\n", arr);                       //store user input up to 1000 chars in our array
   //now the array has user input or user specified input from < when starting program
 }

@@ -46,14 +46,27 @@ void userInput(char *arr)                                                       
   //  count--;
   //}while (count != 0);                                                        //work cited: //work cited: https://beginnersbook.com/2014/01/c-passing-array-to-function-example/
   //scanf("%255s", arr);
-  printf("this is your string in USERINPUT:\n%s\n", arr);                       //store user input up to 1000 chars in our array
+  printf("USERINPUT:\n%s\n", arr);                       //store user input up to 1000 chars in our array
   //now the array has user input or user specified input from < when starting program
 }
 
 //function called line seperator thread replcaes every line seperator in the input by a space
-void lineSeperator(char *arr)
+void lineSeperator(char *arr, int *boolean)
 {
-  printf("in line seperator function\n");                                       //test that we are in the function
+  //go through and search for STOP\n
+  for (int i = 0; i < MAX_SIZE; i++)                                            //use a loop to find the STOP since we have to find before \n
+  {
+    if (((arr[i]) == 'S') && ((arr[i+1]) == 'T') && ((arr[i+2]) == 'O') && ((arr[i+3]) == 'P') && ((arr[i+4]) == '\n'))
+    {
+      //everything after the STOP\n can be ignored because its uncessary
+      for (int x = i; x < MAX_SIZE; x++)
+      {
+        arr[x] = ' ';
+      }
+    }
+  }
+
+  printf("LINE SEPERATOR FUNCTION:\n");                                       //test that we are in the function
   for (int i = 0; i < MAX_SIZE; i++)                                            //use a for loop to iterate the through the array, find \n and then delete with space
   {
     if (arr[i] == '\n')                                                         //work cited: https://stackoverflow.com/questions/13106108/strcmp-and-new-line-characters-from-text-file
@@ -74,16 +87,16 @@ void lineSeperator(char *arr)
 //function called plus sign thread replaces every pair of ++ with ^
 void plusplusSign(char *arr)
 {
-  printf("in plusplus sign function\n");
-  for (int i = 0; i < MAX_SIZE; i++)
+  printf("PLUSPLUSSIGN:\n");
+  for (int i = 0; i < MAX_SIZE; i++)                                            //use a for loop and conditionals to find our ++
   {
-    if ((arr[i] == '+') && (arr[i+1] == '+'))
+    if ((arr[i] == '+') && (arr[i+1] == '+'))                                   //check if they are double ++
     {
-      for (int x = i; x < MAX_SIZE; x++)
+      for (int x = i; x < MAX_SIZE; x++)                                        //if they are we need to shift the array elements over by 1 work cited: https://stackoverflow.com/questions/879603/remove-an-array-element-and-shift-the-remaining-ones
       {
-        arr[x] = arr[x+1];
+        arr[x] = arr[x+1];                                                      //shift the remaining elements in the array
       }
-      arr[i] = '^';
+      arr[i] = '^';                                                             //now that its all been shifted we can delete the remaining + and replace with ^
     }
   }
   //OLD STUFF//
@@ -94,10 +107,22 @@ void plusplusSign(char *arr)
   //}
   printf("%s", &arr[0]);
 }
-//function called output thread that writes processed data to standard output as lines of exactly 80
+
+//function called output thread that writes processed data to standard output as lines of exactly 80 it also needs to know to stop if there are < 80 when it hits a STOP
+void outPutThread(char *arr)
+{
+  //first we need to check for STOP followed by a line seperator
+  //first we need to process into lines of 80
+
+
+}
+
+
+
 
 int main(int argc, char* argv[])
 {
+  int bool = 0;                                                                 //use this to find a STOP\n
   char ar[MAX_SIZE];                                                            //char array of 1000 that will store user input or standard argument
   userInput(ar);                                                                //pass the array into user Input to grab and store data
 
@@ -111,18 +136,19 @@ int main(int argc, char* argv[])
   printf("\n%d\n", x);
 
   //pass the array into linesepeator functino which will reaplce every line seperator in the input by a space
-  lineSeperator(ar);
+  lineSeperator(ar, &bool);
+  printf("BOOLEAN: %d\n", bool);                                                //testing to make sure our boolean was triggered correctly
   printf("this is your string in MAIN2:\n%s\n", ar);
-  x = sizeof(ar);
-  printf("\nTEST\n");
-  printf("\n%d\n", x);
+  //x = sizeof(ar);
+  //printf("\nTEST\n");
+  //printf("\n%d\n", x);
 
   //now pass into our plusplusSign function which will remove ++ and replace with ^
   plusplusSign(ar);
   printf("\n\nnow back in main after plusplusSign\n");
   printf("AR array[0] test: %c\n", ar[0]);
   //printf("test:\n");
-  //for (int i = 0; i < 262; i++)
+  //for (int i = 0; i < 500; i++)
   //{
   //  printf("%c\n", ar[i]);
   //}

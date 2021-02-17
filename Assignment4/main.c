@@ -103,6 +103,7 @@ void *get_input(void *args)
     char happy = userInput();                                                   //loop through and store the grabbed char and then put it into the buffer
     put_buff_1(happy);                                                          //store it into the buffer
   }
+  return NULL;
 }
 //get the next item from buffer 1
 char get_buff_1
@@ -124,36 +125,71 @@ char get_buff_1
   }
 }
 
+//we need to now put the char into buffer 2 so that line seperator can use
+void put_buff_2(char char)
+{
+  //lock the mutex before putting items in
+  pthread_mutex_lock(&mutex_2);
+  //put the item in the buffer
+  buffer_2[prod_idx_2] = char;
+  //increment the index where the next item will be put
+  prod_idx_2 = prod_idx_2 + 1;
+  count_2++;
+  //signal to the consumer that the buffer is no longer empty
+  pthread_cond_signal(&full_2);
+  //unlock the mutex
+  pthread_mutex_unlock(&mutex_2);
+}
+
 
 
 
 //THREAD 2 line seperator thread
 //function called line seperator thread replcaes every line seperator in the input by a space
-void lineSeperator(char *arr)
+//......void lineSeperator(char *arr)
+void *lineSeperator(void *args)
 {
-  //go through and search for STOP\n
-  for (int i = 0; i < MAX_SIZE; i++)                                            //use a loop to find the STOP since we have to find before \n
-  { //check for the \n first because if not it would see any STOP\n as STOP
-    if (((arr[i]) == '\n') && ((arr[i+1]) == 'S') && ((arr[i+2]) == 'T') && ((arr[i+3]) == 'O') && ((arr[i+4]) == 'P') && ((arr[i+5]) == '\n'))
+  //just check for newline for now fix later on
+  char newline;
+  for (int i = 0; i < MAX_SIZE; i++)
+  {
+    newline = get_buff_1();
+    if (newline == '\n')
     {
-      //everything after the STOP\n can be ignored because its uncessary
-      for (int x = i; x < MAX_SIZE; x++)                                      //added a +1 becuase we were seeing unexpected symbols: work cited https://stackoverflow.com/questions/51523477/array-showing-random-characters-at-the-end
-      {
-        arr[x] = ' ';
-      }
+      put_buff_2(' ');                                                          //put a space into the buffer
     }
   }
 
+
+
+
+  //OLD STUFF-------------------------------------
+  //go through and search for STOP\n
+//  for (int i = 0; i < MAX_SIZE; i++)                                            //use a loop to find the STOP since we have to find before \n
+//  { //check for the \n first because if not it would see any STOP\n as STOP
+//    if (((arr[i]) == '\n') && ((arr[i+1]) == 'S') && ((arr[i+2]) == 'T') && ((arr[i+3]) == 'O') && ((arr[i+4]) == 'P') && ((arr[i+5]) == '\n'))
+//    {
+//      //everything after the STOP\n can be ignored because its uncessary
+//      for (int x = i; x < MAX_SIZE; x++)                                      //added a +1 becuase we were seeing unexpected symbols: work cited https://stackoverflow.com/questions/51523477/array-showing-random-characters-at-the-end
+//      {
+//        arr[x] = ' ';
+//      }
+//    }
+//  }
+
   //printf("LINE SEPERATOR FUNCTION:\n");                                       //test that we are in the function
-  for (int i = 0; i < MAX_SIZE; i++)                                          //use a for loop to iterate the through the array, find \n and then delete with space
-  {
-    if (arr[i] == '\n')                                                         //work cited: https://stackoverflow.com/questions/13106108/strcmp-and-new-line-characters-from-text-file
-    {
+//  for (int i = 0; i < MAX_SIZE; i++)                                          //use a for loop to iterate the through the array, find \n and then delete with space
+//  {
+//    if (arr[i] == '\n')                                                         //work cited: https://stackoverflow.com/questions/13106108/strcmp-and-new-line-characters-from-text-file
+//    {
       //arr[i] = arr[i+1];                                                      //delete that line seperator
-      arr[i] = ' ';                                                             //error working with spaces above. Now without quotes it functions correctly work cited: https://stackoverflow.com/questions/30033582/what-is-the-symbol-for-whitespace-in-c
-    }
-  }
+//      arr[i] = ' ';                                                             //error working with spaces above. Now without quotes it functions correctly work cited: https://stackoverflow.com/questions/30033582/what-is-the-symbol-for-whitespace-in-c
+//    }
+//  }
 }
+//OLD STUFF-------------------------------------
+
+
 
 //thread 3 plus sign removal thread
 //function called plus sign thread replaces every pair of ++ with ^

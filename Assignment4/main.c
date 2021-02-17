@@ -69,25 +69,6 @@ void userInput(char *arr)                                                       
   {
     scanf("%c", &arr[i]);                                                       //use scanf since we know buffer size 1000 and put it into our arr
   }
-
-//OLD STUFF TO TEST//
-  //do
-  //{
-  //  fgets(arr, MAX_SIZE, stdin);
-  //}while (fgets(arr, sizeof(arr), stdin)!= NULL);
-
-
-  //while (fgets(arr, sizeof(arr), stdin) != NULL)
-  //{
-  //  fgets(arr, MAX_SIZE, stdin);
-  //}
-  //int count = 80;
-  //do
-  //{
-  //fgets(arr, MAX_SIZE, stdin);
-  //  count--;
-  //}while (count != 0);                                                        //work cited: //work cited: https://beginnersbook.com/2014/01/c-passing-array-to-function-example/
-  //scanf("%255s", arr);
   printf("\nUSERINPUT:\n%s\n", arr);                                            //store user input up to 1000 chars in our array
   //now the array has user input or user specified input from < when starting program
 }
@@ -137,14 +118,6 @@ void lineSeperator(char *arr)
       arr[i] = ' ';                                                             //error working with spaces above. Now without quotes it functions correctly work cited: https://stackoverflow.com/questions/30033582/what-is-the-symbol-for-whitespace-in-c
     }
   }
-
-//OLD WORK//
-  //size_t length = strlen(arr);                                                //now we have hte length of the array
-  //printf("\nsize_t: %zu\n", length);
-  //if (arr[length-1] == '\n')
-  //{
-  //  arr[--length]= '\0';                                                      //work cited: https://stackoverflow.com/questions/28429625/check-if-string-contains-new-line-character
-  //}
 }
 
 //thread 3 plus sign removal thread
@@ -163,12 +136,6 @@ void plusplusSign(char *arr)
       arr[i] = '^';                                                             //now that its all been shifted we can delete the remaining + and replace with ^
     }
   }
-  //OLD STUFF//
-  //printf("testing this is MAX_SIZE: %d\n", MAX_SIZE);
-  //for (int i = 0; i < MAX_SIZE; i++)
-  //{
-  //  printf("%s ", &arr[i]);
-  //}
   printf("%s", &arr[0]);
 }
 

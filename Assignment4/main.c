@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>                                                              //for processing if its a file to process or user input stdin: work cited: https://stackoverflow.com/questions/3495092/read-from-file-or-stdin
+#include <math.h>
 
 #define MAX_SIZE 1000
 
@@ -111,10 +112,49 @@ void plusplusSign(char *arr)
 //function called output thread that writes processed data to standard output as lines of exactly 80 it also needs to know to stop if there are < 80 when it hits a STOP
 void outPutThread(char *arr)
 {
-  //first we need to check for STOP followed by a line seperator
   //first we need to process into lines of 80
-
-
+  int len = 0;                                                                  //stores the len of the array to calculate
+  for (int i = 0; i < MAX_SIZE; i++)
+  {
+    if ((arr[i] == ' ') && (arr[i+1] == ' '))
+    {
+      break;
+    }
+    len++;
+  }
+  printf("LEN: %d\n", len);
+  //take the length calculated and divide by 80
+  len = len / 80;
+  printf("NEW LEN: %d\n", len);
+  //store that variable
+  int z = len;                                                                  //this should be 4 in our tests
+  //since len is an int we dont need to worry about decimal points it will automatically cut off
+  //now we need to multiply this by 80 to get the amount to display up to:
+  len = len * 80;                                                               //this should be 320 in our tests
+  printf("NEW 2.0 LEN: %d\n", len);
+  int counter = len;
+  //now display 80 char chunks
+  int eighty = 80;
+  int bub = 0;
+  int zebra = 2;
+  for (int x = 0; x < z; x++)                                              //loop through the number of times possible 4 times in our test
+  {
+    //printf("x value: %d\n", x);
+    for (int yolo = bub; yolo < eighty; yolo++)
+    {
+      printf("%c", arr[yolo]);
+    }
+    //printf("\nbub = %d", bub);
+    //printf("\neighty = %d", eighty);
+    bub = eighty;
+    //printf("\nzebra = %d", zebra);
+    eighty = 80*(zebra);
+    zebra++;
+    //printf("\nzebra = %d", zebra);
+    //printf("\nbub = %d", bub);
+    //printf("\neighty = %d", eighty);
+    printf("\n");
+  }
 }
 
 
@@ -137,7 +177,7 @@ int main(int argc, char* argv[])
 
   //pass the array into linesepeator functino which will reaplce every line seperator in the input by a space
   lineSeperator(ar);
-  //printf("\nBOOLEAN: %d\n", bool);                                              //testing to make sure our boolean was triggered correctly
+  //printf("\nBOOLEAN: %d\n", bool);                                            //testing to make sure our boolean was triggered correctly
   printf("\nSTRING AFTER LINE SEP:\n%s\n", ar);
   //x = sizeof(ar);
   //printf("\nTEST\n");
@@ -152,5 +192,6 @@ int main(int argc, char* argv[])
   //{
   //  printf("%c\n", ar[i]);
   //}
+  outPutThread(ar);
   return 0;
 }

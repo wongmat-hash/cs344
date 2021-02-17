@@ -74,6 +74,11 @@ int main(int argc, char* argv[])
 
   plusplusSign(ar);
   printf("\n\nnow back in main after plusplusSign\n");
-  printf("AR array[0] test: %c\n", ar[0]);
+  //printf("AR array[0] test: %c\n", ar[0]);
+  printf("test:\n");
+  for (int i = 0; i < 262; i++)
+  {
+    printf("%c\n", ar[i]);
+  }
   return 0;
 }

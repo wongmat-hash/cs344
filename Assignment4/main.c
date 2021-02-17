@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>                                                              //for processing if its a file to process or user input stdin: work cited: https://stackoverflow.com/questions/3495092/read-from-file-or-stdin
 
 #define MAX_SIZE 1000
 
@@ -20,9 +21,15 @@
 //implement single threaded version 1x
 
 //function to process file/ userinput
-void userInput(char *arr, int size)                                             //work cited: https://www.programiz.com/c-programming/c-arrays-functions
+void userInput(char *arr)                                             //work cited: https://www.programiz.com/c-programming/c-arrays-functions
 {
-  fgets(arr, MAX_SIZE, stdin);                                                  //work cited: https://beginnersbook.com/2014/01/c-passing-array-to-function-example/
+  int count = 80;
+  do
+  {
+    fgets(arr, MAX_SIZE, stdin);
+    count--;
+  }while (count != 0);
+                                                                                //work cited: https://beginnersbook.com/2014/01/c-passing-array-to-function-example/
   printf("this is your string in USERINPUT:\n%s\n", arr);                       //store user input up to 1000 chars in our array
   //now the array has user input or user specified input from < when starting program
 }
@@ -54,7 +61,7 @@ void plusplusSign(char *arr)
 int main(int argc, char* argv[])
 {
   char ar[MAX_SIZE];                                                            //char array of 1000 that will store user input or standard argument
-  userInput(ar, MAX_SIZE);                                                      //pass the array into user Input to grab and store data
+  userInput(ar);                                                                 //pass the array into user Input to grab and store data
 
   //check that the user input is stored correctly TEST
   //printf("this is your string in MAIN:\n%s\n", ar);                             //TESTS to make sure our values are passing around correctly
@@ -74,11 +81,11 @@ int main(int argc, char* argv[])
 
   plusplusSign(ar);
   printf("\n\nnow back in main after plusplusSign\n");
-  //printf("AR array[0] test: %c\n", ar[0]);
-  printf("test:\n");
-  for (int i = 0; i < 262; i++)
-  {
-    printf("%c\n", ar[i]);
-  }
+  printf("AR array[0] test: %c\n", ar[0]);
+  //printf("test:\n");
+  //for (int i = 0; i < 262; i++)
+  //{
+  //  printf("%c\n", ar[i]);
+  //}
   return 0;
 }

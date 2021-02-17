@@ -22,11 +22,11 @@ void stdInput(char *arr)
 int main(int argc, char* argv[])
 {
   char array[MAX_SIZE];
-  if (argc != 2)
+  if (argc > 1)
   {
     userInput(array);
   }
-  if (argc < 2)
+  if (argc < 1)
   {
     stdInput(array);
   }

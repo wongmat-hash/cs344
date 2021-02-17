@@ -63,13 +63,20 @@ pthread_cond_t full_3 = PTHREAD_COND_INITIALIZER;
 
 //THREAD 1 user input thread
 //function to process file/ userinput
-void userInput(char *arr)                                                       //work cited: https://www.programiz.com/c-programming/c-arrays-functions
+//.......void userInput(char *arr)                                                       //work cited: https://www.programiz.com/c-programming/c-arrays-functions
+char userInput()
 {
-  for (int i = 0; i < MAX_SIZE; i++)                                            //loop through to the size of our array and scanf into our arr work cited: https://www.geeksforgeeks.org/why-to-use-fgets-over-scanf-in-c/
-  {
-    scanf("%c", &arr[i]);                                                       //use scanf since we know buffer size 1000 and put it into our arr
-  }
-  printf("\nUSERINPUT:\n%s\n", arr);                                            //store user input up to 1000 chars in our array
+//------------------WORKING 02/16
+  //for (int i = 0; i < MAX_SIZE; i++)                                            //loop through to the size of our array and scanf into our arr work cited: https://www.geeksforgeeks.org/why-to-use-fgets-over-scanf-in-c/
+  //{
+  //  scanf("%c", &arr[i]);                                                       //use scanf since we know buffer size 1000 and put it into our arr
+  //}
+  //printf("\nUSERINPUT:\n%s\n", arr);                                            //store user input up to 1000 chars in our array
+//---------------------------------------------------
+  char entry;                                                                   //store the char we are processing individually
+  scanf("%c", &entry)
+  return entry;                                                                 //return it so we can use it
+
   //now the array has user input or user specified input from < when starting program
 }
 
@@ -87,6 +94,34 @@ void put_buff_1(char char)
   pthread_cond_signal(&full_1);
   //unlock the mutex
   pthread_mutex_unlock(&mutex_1);
+}
+//this function that the input thread will run get input from the user put it into the buffer shared with the line seperator
+void *get_input(void *args)
+{
+  for (int i = 0; i < MAX_SIZE; i++)
+  {
+    char happy = userInput();                                                   //loop through and store the grabbed char and then put it into the buffer
+    put_buff_1(happy);                                                          //store it into the buffer
+  }
+}
+//get the next item from buffer 1
+char get_buff_1
+{
+  //lock the mutex before checking if the buffer has data
+  pthread_mutex_lock(&mutex_1);
+  while(count_1 == 0)
+  {
+    //buffer is empty wait for the prod to signal that the buffer has data
+    pthread_cond_wait(&full_1, & mutex_1);
+    char item = buffer_1[con_idx_1];
+    //increment the index from which the item will be picked up
+    con_idx_1 = con_idx_1 + 1;
+    count_1--;
+    //unlock the mutex
+    pthread_mutex_unlock(&mutex_1);
+    //return the item
+    return item;
+  }
 }
 
 

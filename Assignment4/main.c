@@ -56,7 +56,7 @@ void lineSeperator(char *arr, int *boolean)
   //go through and search for STOP\n
   for (int i = 0; i < MAX_SIZE; i++)                                            //use a loop to find the STOP since we have to find before \n
   {
-    if (((arr[i]) == 'S') && ((arr[i+1]) == 'T') && ((arr[i+2]) == 'O') && ((arr[i+3]) == 'P') && ((arr[i+4]) == '\n'))
+    if (((arr[i]) == '\n') && ((arr[i+1]) == 'S') && ((arr[i+2]) == 'T') && ((arr[i+3]) == 'O') && ((arr[i+4]) == 'P') && ((arr[i+5]) == '\n'))
     {
       //everything after the STOP\n can be ignored because its uncessary
       for (int x = i; x < MAX_SIZE; x++)

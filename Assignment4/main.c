@@ -19,39 +19,39 @@
 #define MAX_SIZE 1000
 
 //buffer 1 shared between user input and line seperator thread
-int buffer_1[SIZE];
+char buffer_1[SIZE];
 //number of items in the buffer
-int count_1 = 0;
+char count_1 = 0;
 //index where input thread will put the next items
-int prod_id_1 = 0;
+char prod_id_1 = 0;
 //index where the line seperator thread will pick up the next items
-int con_idx_1 = 0;
+char con_idx_1 = 0;
 //init the mutex for buffer 1
 pthread_mutex_t mutex_1 = PTHREAD_MUTEX_INITIALIZER;
 //init the condition variable for buffer 1
 pthread_cond_t full_1 = PTHREAD_COND_INITIALIZER;
 
 //buffer 2 shared resource between line seperator and plus sign thread
-int buffer_2[SIZE];
+char buffer_2[SIZE];
 //number of items in the buffer
-int count_2 = 0;
+char count_2 = 0;
 //index where the line seperator will put the next item
-int prod_idx_2 = 0;
+char prod_idx_2 = 0;
 //index where the plus sign will pick up the next item
-int con_idx_2 = 0;
+char con_idx_2 = 0;
 //init the mutex for buffer 2
 pthread_mutex_t mutex_2 = PTHREAD_MUTEX_INITIALIZER;
 //init the conditional var for buffer 2
 pthread_cond_t full_2 = PTHREAD_COND_INITIALIZER;
 
 //buffer 3 shared between the plus sign thread adn the output thread
-int buffer_3[SIZE];
+char buffer_3[SIZE];
 //number of items in the buffer
-int count_3 = 0;
+char count_3 = 0;
 //index where the plus sign will put the next item
-int prod_idx_3 = 0;
+char prod_idx_3 = 0;
 //index where the output will pick up the next item
-int con_idx_3 = 0;
+char con_idx_3 = 0;
 //init the mutex for buffer 3
 pthread_mutex_t mutex_3 = PTHREAD_MUTEX_INITIALIZER;
 //init the conditional var for buffer 3
@@ -91,6 +91,25 @@ void userInput(char *arr)                                                       
   printf("\nUSERINPUT:\n%s\n", arr);                                            //store user input up to 1000 chars in our array
   //now the array has user input or user specified input from < when starting program
 }
+
+//put item from user input into the first buffer
+void put_buff_1(char char)
+{
+  //lock the mutex before putting the item in the buffer
+  pthread_mutex_lock(&mutex_1);
+  //put item in the buffer
+  buffer_1[prod_idx_1] = char;
+  //increment the index where the next item will be put
+  prod_idx_1 = prod_idx_1 + 1;
+  count_1++;
+  //signal to the consumer that the buffer is no longer empty
+  pthread_cond_signal(&full_1);
+  //unlock the mutex
+  pthread_mutex_unlock(&mutex_1);
+}
+
+
+
 
 //THREAD 2 line seperator thread
 //function called line seperator thread replcaes every line seperator in the input by a space

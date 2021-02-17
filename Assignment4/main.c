@@ -46,28 +46,28 @@ void userInput(char *arr)                                                       
   //  count--;
   //}while (count != 0);                                                        //work cited: //work cited: https://beginnersbook.com/2014/01/c-passing-array-to-function-example/
   //scanf("%255s", arr);
-  printf("USERINPUT:\n%s\n", arr);                                              //store user input up to 1000 chars in our array
+  printf("\nUSERINPUT:\n%s\n", arr);                                            //store user input up to 1000 chars in our array
   //now the array has user input or user specified input from < when starting program
 }
 
 //function called line seperator thread replcaes every line seperator in the input by a space
-void lineSeperator(char *arr, int *boolean)
+void lineSeperator(char *arr)
 {
   //go through and search for STOP\n
-  for (int i = 0; i < MAX_SIZE+1; i++)                                            //use a loop to find the STOP since we have to find before \n
+  for (int i = 0; i < MAX_SIZE; i++)                                            //use a loop to find the STOP since we have to find before \n
   { //check for the \n first because if not it would see any STOP\n as STOP
     if (((arr[i]) == '\n') && ((arr[i+1]) == 'S') && ((arr[i+2]) == 'T') && ((arr[i+3]) == 'O') && ((arr[i+4]) == 'P') && ((arr[i+5]) == '\n'))
     {
       //everything after the STOP\n can be ignored because its uncessary
-      for (int x = i; x < MAX_SIZE+1; x++)                                      //added a +1 becuase we were seeing unexpected symbols: work cited https://stackoverflow.com/questions/51523477/array-showing-random-characters-at-the-end
+      for (int x = i; x < MAX_SIZE; x++)                                      //added a +1 becuase we were seeing unexpected symbols: work cited https://stackoverflow.com/questions/51523477/array-showing-random-characters-at-the-end
       {
         arr[x] = ' ';
       }
     }
   }
 
-  printf("LINE SEPERATOR FUNCTION:\n");                                         //test that we are in the function
-  for (int i = 0; i < MAX_SIZE+1; i++)                                          //use a for loop to iterate the through the array, find \n and then delete with space
+  //printf("LINE SEPERATOR FUNCTION:\n");                                       //test that we are in the function
+  for (int i = 0; i < MAX_SIZE; i++)                                          //use a for loop to iterate the through the array, find \n and then delete with space
   {
     if (arr[i] == '\n')                                                         //work cited: https://stackoverflow.com/questions/13106108/strcmp-and-new-line-characters-from-text-file
     {
@@ -122,7 +122,7 @@ void outPutThread(char *arr)
 
 int main(int argc, char* argv[])
 {
-  int bool = 0;                                                                 //use this to find a STOP\n
+  //int bool = 0;                                                               //use this to find a STOP\n
   char ar[MAX_SIZE];                                                            //char array of 1000 that will store user input or standard argument
   userInput(ar);                                                                //pass the array into user Input to grab and store data
 
@@ -130,23 +130,23 @@ int main(int argc, char* argv[])
   //printf("this is your string in MAIN:\n%s\n", ar);                           //TESTS to make sure our values are passing around correctly
   //printf("TESTING ARRAY: %s\n", &ar[594]);
 
-  //test our array buffer
-  int x = sizeof(ar);
-  printf("\nTEST\n");
-  printf("\n%d\n", x);
+  //test our array buffer                                                       //tests to make sure data is correct
+  //int x = sizeof(ar);
+  //printf("\nTEST\n");
+  //printf("\n%d\n", x);
 
   //pass the array into linesepeator functino which will reaplce every line seperator in the input by a space
-  lineSeperator(ar, &bool);
-  printf("BOOLEAN: %d\n", bool);                                                //testing to make sure our boolean was triggered correctly
-  printf("this is your string in MAIN2:\n%s\n", ar);
+  lineSeperator(ar);
+  //printf("\nBOOLEAN: %d\n", bool);                                              //testing to make sure our boolean was triggered correctly
+  printf("\nSTRING AFTER LINE SEP:\n%s\n", ar);
   //x = sizeof(ar);
   //printf("\nTEST\n");
   //printf("\n%d\n", x);
 
   //now pass into our plusplusSign function which will remove ++ and replace with ^
   plusplusSign(ar);
-  printf("\n\nnow back in main after plusplusSign\n");
-  printf("AR array[0] test: %c\n", ar[0]);
+  printf("\nnow back in main after plusplusSign\n");
+  printf("\nAR array[0] test: %c\n", ar[0]);
   //printf("test:\n");
   //for (int i = 0; i < 500; i++)
   //{

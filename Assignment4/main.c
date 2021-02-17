@@ -24,21 +24,15 @@
 void userInput(char *arr)                                             //work cited: https://www.programiz.com/c-programming/c-arrays-functions
 {
 
-  for (int i = 0; i < MAX_SIZE; i++)
+  for (int i = 0; i < MAX_SIZE; i++)                                            //loop through to the size of our array and scanf into our arr work cited: https://www.geeksforgeeks.org/why-to-use-fgets-over-scanf-in-c/
   {
     scanf("%c", &arr[i]);
   }
-
-
-
 
   //do
   //{
   //  fgets(arr, MAX_SIZE, stdin);
   //}while (fgets(arr, sizeof(arr), stdin)!= NULL);
-
-
-
 
 
   //while (fgets(arr, sizeof(arr), stdin) != NULL)
@@ -61,12 +55,22 @@ void userInput(char *arr)                                             //work cit
 void lineSeperator(char *arr)
 {
   printf("in line seperator function\n");
-  size_t length = strlen(arr);                                                  //now we have hte length of the array
-  printf("\nsize_t: %zu\n", length);
-  if (arr[length-1] == '\n')
+  for (int i = 0; i < MAX_SIZE; i++)
   {
-    arr[--length]= '\0';                                                        //work cited: https://stackoverflow.com/questions/28429625/check-if-string-contains-new-line-character
+    if (arr[i] == '\n')                                             //work cited: https://stackoverflow.com/questions/13106108/strcmp-and-new-line-characters-from-text-file
+    {
+      arr[i] = arr[i+1];                                                         //delete that line seperator
+    }
   }
+
+
+
+  //size_t length = strlen(arr);                                                  //now we have hte length of the array
+  //printf("\nsize_t: %zu\n", length);
+  //if (arr[length-1] == '\n')
+  //{
+  //  arr[--length]= '\0';                                                        //work cited: https://stackoverflow.com/questions/28429625/check-if-string-contains-new-line-character
+  //}
 }
 //function called plus sign thread replaces every pair of ++ with ^
 void plusplusSign(char *arr)

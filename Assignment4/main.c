@@ -53,7 +53,7 @@ void plusplusSign(char *arr)
 
 int main(int argc, char* argv[])
 {
-  char ar[MAX_SIZE];                                                            //char array of 1000 that will store user input or standard argument 
+  char ar[MAX_SIZE];                                                            //char array of 1000 that will store user input or standard argument
   userInput(ar, MAX_SIZE);                                                      //pass the array into user Input to grab and store data
 
   //check that the user input is stored correctly TEST
@@ -73,5 +73,7 @@ int main(int argc, char* argv[])
   printf("\n%d\n", x);
 
   plusplusSign(ar);
+  printf("\n\nnow back in main after plusplusSign\n");
+  printf("AR array[0] test: %c\n", ar[0]);
   return 0;
 }

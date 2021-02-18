@@ -18,44 +18,6 @@
 #define SIZE 1000                                                               //define a buffer for our buffer thread
 #define MAX_SIZE 1000
 
-//buffer 1 shared between user input and line seperator thread
-char buffer_1[SIZE];
-//number of items in the buffer
-char count_1 = 0;
-//index where input thread will put the next items
-char prod_id_1 = 0;
-//index where the line seperator thread will pick up the next items
-char con_idx_1 = 0;
-//init the mutex for buffer 1
-pthread_mutex_t mutex_1 = PTHREAD_MUTEX_INITIALIZER;
-//init the condition variable for buffer 1
-pthread_cond_t full_1 = PTHREAD_COND_INITIALIZER;
-
-//buffer 2 shared resource between line seperator and plus sign thread
-char buffer_2[SIZE];
-//number of items in the buffer
-char count_2 = 0;
-//index where the line seperator will put the next item
-char prod_idx_2 = 0;
-//index where the plus sign will pick up the next item
-char con_idx_2 = 0;
-//init the mutex for buffer 2
-pthread_mutex_t mutex_2 = PTHREAD_MUTEX_INITIALIZER;
-//init the conditional var for buffer 2
-pthread_cond_t full_2 = PTHREAD_COND_INITIALIZER;
-
-//buffer 3 shared between the plus sign thread adn the output thread
-char buffer_3[SIZE];
-//number of items in the buffer
-char count_3 = 0;
-//index where the plus sign will put the next item
-char prod_idx_3 = 0;
-//index where the output will pick up the next item
-char con_idx_3 = 0;
-//init the mutex for buffer 3
-pthread_mutex_t mutex_3 = PTHREAD_MUTEX_INITIALIZER;
-//init the conditional var for buffer 3
-pthread_cond_t full_3 = PTHREAD_COND_INITIALIZER;
 
 
 
@@ -63,183 +25,94 @@ pthread_cond_t full_3 = PTHREAD_COND_INITIALIZER;
 
 //THREAD 1 user input thread
 //function to process file/ userinput
-//.......void userInput(char *arr)                                                       //work cited: https://www.programiz.com/c-programming/c-arrays-functions
-char userInput()
+void userInput(char *arr)                                                       //work cited: https://www.programiz.com/c-programming/c-arrays-functions
 {
-//------------------WORKING 02/16
-  //for (int i = 0; i < MAX_SIZE; i++)                                            //loop through to the size of our array and scanf into our arr work cited: https://www.geeksforgeeks.org/why-to-use-fgets-over-scanf-in-c/
-  //{
-  //  scanf("%c", &arr[i]);                                                       //use scanf since we know buffer size 1000 and put it into our arr
-  //}
-  //printf("\nUSERINPUT:\n%s\n", arr);                                            //store user input up to 1000 chars in our array
-//---------------------------------------------------
-  char entry;                                                                   //store the char we are processing individually
-  scanf("%c", &entry);
-  return entry;                                                                 //return it so we can use it
+  for (int i = 0; i < MAX_SIZE; i++)                                            //loop through to the size of our array and scanf into our arr work cited: https://www.geeksforgeeks.org/why-to-use-fgets-over-scanf-in-c/
+  {
+    scanf("%c", &arr[i]);                                                       //use scanf since we know buffer size 1000 and put it into our arr
+  }
 
+//OLD STUFF TO TEST//
+  //do
+  //{
+  //  fgets(arr, MAX_SIZE, stdin);
+  //}while (fgets(arr, sizeof(arr), stdin)!= NULL);
+
+
+  //while (fgets(arr, sizeof(arr), stdin) != NULL)
+  //{
+  //  fgets(arr, MAX_SIZE, stdin);
+  //}
+  //int count = 80;
+  //do
+  //{
+  //fgets(arr, MAX_SIZE, stdin);
+  //  count--;
+  //}while (count != 0);                                                        //work cited: //work cited: https://beginnersbook.com/2014/01/c-passing-array-to-function-example/
+  //scanf("%255s", arr);
+  printf("\nUSERINPUT:\n%s\n", arr);                                            //store user input up to 1000 chars in our array
   //now the array has user input or user specified input from < when starting program
 }
 
-//put item from user input into the first buffer
-void put_buff_1(char char)
-{
-  //lock the mutex before putting the item in the buffer
-  pthread_mutex_lock(&mutex_1);
-  //put item in the buffer
-  buffer_1[prod_idx_1] = char;
-  //increment the index where the next item will be put
-  prod_idx_1 = prod_idx_1 + 1;
-  count_1++;
-  //signal to the consumer that the buffer is no longer empty
-  pthread_cond_signal(&full_1);
-  //unlock the mutex
-  pthread_mutex_unlock(&mutex_1);
-}
-//this function that the input thread will run get input from the user put it into the buffer shared with the line seperator
-void *get_input(void *args)
-{
-  for (int i = 0; i < MAX_SIZE; i++)
-  {
-    char happy = userInput();                                                   //loop through and store the grabbed char and then put it into the buffer
-    put_buff_1(happy);                                                          //store it into the buffer
-  }
-  return NULL;
-}
-//get the next item from buffer 1
-char get_buff_1
-{
-  //lock the mutex before checking if the buffer has data
-  pthread_mutex_lock(&mutex_1);
-  while(count_1 == 0)
-  {
-    //buffer is empty wait for the prod to signal that the buffer has data
-    pthread_cond_wait(&full_1, & mutex_1);
-    char item = buffer_1[con_idx_1];
-    //increment the index from which the item will be picked up
-    con_idx_1 = con_idx_1 + 1;
-    count_1--;
-    //unlock the mutex
-    pthread_mutex_unlock(&mutex_1);
-    //return the item
-    return item;
-  }
-}
-
-//we need to now put the char into buffer 2 so that line seperator can use
-void put_buff_2(char char)
-{
-  //lock the mutex before putting items in
-  pthread_mutex_lock(&mutex_2);
-  //put the item in the buffer
-  buffer_2[prod_idx_2] = char;
-  //increment the index where the next item will be put
-  prod_idx_2 = prod_idx_2 + 1;
-  count_2++;
-  //signal to the consumer that the buffer is no longer empty
-  pthread_cond_signal(&full_2);
-  //unlock the mutex
-  pthread_mutex_unlock(&mutex_2);
-}
-
-
-
-
 //THREAD 2 line seperator thread
 //function called line seperator thread replcaes every line seperator in the input by a space
-//......void lineSeperator(char *arr)
-void *lineSeperator(void *args)
+void lineSeperator(char *arr)
 {
-  //just check for newline for now fix later on
-  char newline;
-  for (int i = 0; i < MAX_SIZE; i++)
-  {
-    newline = get_buff_1();
-    if (newline == '\n')
+  //go through and search for STOP\n
+  for (int i = 0; i < MAX_SIZE; i++)                                            //use a loop to find the STOP since we have to find before \n
+  { //check for the \n first because if not it would see any STOP\n as STOP
+    if (((arr[i]) == '\n') && ((arr[i+1]) == 'S') && ((arr[i+2]) == 'T') && ((arr[i+3]) == 'O') && ((arr[i+4]) == 'P') && ((arr[i+5]) == '\n'))
     {
-      put_buff_2(' ');                                                          //put a space into the buffer
+      //everything after the STOP\n can be ignored because its uncessary
+      for (int x = i; x < MAX_SIZE; x++)                                      //added a +1 becuase we were seeing unexpected symbols: work cited https://stackoverflow.com/questions/51523477/array-showing-random-characters-at-the-end
+      {
+        arr[x] = ' ';
+      }
     }
   }
-return NULL;
-
-
-
-  //OLD STUFF-------------------------------------
-  //go through and search for STOP\n
-//  for (int i = 0; i < MAX_SIZE; i++)                                            //use a loop to find the STOP since we have to find before \n
-//  { //check for the \n first because if not it would see any STOP\n as STOP
-//    if (((arr[i]) == '\n') && ((arr[i+1]) == 'S') && ((arr[i+2]) == 'T') && ((arr[i+3]) == 'O') && ((arr[i+4]) == 'P') && ((arr[i+5]) == '\n'))
-//    {
-//      //everything after the STOP\n can be ignored because its uncessary
-//      for (int x = i; x < MAX_SIZE; x++)                                      //added a +1 becuase we were seeing unexpected symbols: work cited https://stackoverflow.com/questions/51523477/array-showing-random-characters-at-the-end
-//      {
-//        arr[x] = ' ';
-//      }
-//    }
-//  }
 
   //printf("LINE SEPERATOR FUNCTION:\n");                                       //test that we are in the function
-//  for (int i = 0; i < MAX_SIZE; i++)                                          //use a for loop to iterate the through the array, find \n and then delete with space
-//  {
-//    if (arr[i] == '\n')                                                         //work cited: https://stackoverflow.com/questions/13106108/strcmp-and-new-line-characters-from-text-file
-//    {
-      //arr[i] = arr[i+1];                                                      //delete that line seperator
-//      arr[i] = ' ';                                                             //error working with spaces above. Now without quotes it functions correctly work cited: https://stackoverflow.com/questions/30033582/what-is-the-symbol-for-whitespace-in-c
-//    }
-//  }
-//OLD STUFF-------------------------------------
-}
-
-//grab next item for buffer 2
-char get_buff_2()
-{
-  //lock the mutex before checking if the buffer has data
-  pthread_mutex_lock(&mutex_2);
-  while(count_2==0)
+  for (int i = 0; i < MAX_SIZE; i++)                                          //use a for loop to iterate the through the array, find \n and then delete with space
   {
-    //buffer is empty wait for prod to signal when ready
-    pthread_cond_wait(&full_2, &mutex_2);
+    if (arr[i] == '\n')                                                         //work cited: https://stackoverflow.com/questions/13106108/strcmp-and-new-line-characters-from-text-file
+    {
+      //arr[i] = arr[i+1];                                                      //delete that line seperator
+      arr[i] = ' ';                                                             //error working with spaces above. Now without quotes it functions correctly work cited: https://stackoverflow.com/questions/30033582/what-is-the-symbol-for-whitespace-in-c
+    }
   }
-  char char = buffer_2[con_idx_2];
-  //increment the index from which the item will be picked up
-  con_idx_2 = con_idx_2 + 1;
-  count_2--;
-  //unlock the mutex
-  pthread_mutex_unlock(&mutex_2);
-  //return the item
-  return char;
+
+//OLD WORK//
+  //size_t length = strlen(arr);                                                //now we have hte length of the array
+  //printf("\nsize_t: %zu\n", length);
+  //if (arr[length-1] == '\n')
+  //{
+  //  arr[--length]= '\0';                                                      //work cited: https://stackoverflow.com/questions/28429625/check-if-string-contains-new-line-character
+  //}
 }
-
-
 
 //thread 3 plus sign removal thread
 //function called plus sign thread replaces every pair of ++ with ^
-//......void plusplusSign(char *arr)
-void *plusplusSign(void *args)
+void plusplusSign(char *arr)
 {
-  char char;
-  for (int i = 0; i < MAX_SIZE; i++)
+  printf("PLUSPLUSSIGN:\n");
+  for (int i = 0; i < MAX_SIZE; i++)                                            //use a for loop and conditionals to find our ++
   {
-    if ()
+    if ((arr[i] == '+') && (arr[i+1] == '+'))                                   //check if they are double ++
+    {
+      for (int x = i; x < MAX_SIZE; x++)                                        //if they are we need to shift the array elements over by 1 work cited: https://stackoverflow.com/questions/879603/remove-an-array-element-and-shift-the-remaining-ones
+      {
+        arr[x] = arr[x+1];                                                      //shift the remaining elements in the array
+      }
+      arr[i] = '^';                                                             //now that its all been shifted we can delete the remaining + and replace with ^
+    }
   }
-
-
-
-
-  //old stuf----------
-//  printf("PLUSPLUSSIGN:\n");
-//  for (int i = 0; i < MAX_SIZE; i++)                                            //use a for loop and conditionals to find our ++
-//  {
-//    if ((arr[i] == '+') && (arr[i+1] == '+'))                                   //check if they are double ++
-//    {
-//      for (int x = i; x < MAX_SIZE; x++)                                        //if they are we need to shift the array elements over by 1 work cited: https://stackoverflow.com/questions/879603/remove-an-array-element-and-shift-the-remaining-ones
-//      {
-//        arr[x] = arr[x+1];                                                      //shift the remaining elements in the array
-//      }
-//      arr[i] = '^';                                                             //now that its all been shifted we can delete the remaining + and replace with ^
-//    }
-//  }
-//  printf("%s", &arr[0]);
-  //old stuf----------
+  //OLD STUFF//
+  //printf("testing this is MAX_SIZE: %d\n", MAX_SIZE);
+  //for (int i = 0; i < MAX_SIZE; i++)
+  //{
+  //  printf("%s ", &arr[i]);
+  //}
+  printf("%s", &arr[0]);
 }
 
 //thread 4 output thread

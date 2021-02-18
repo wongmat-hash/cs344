@@ -7,6 +7,7 @@
 //this file is for testing methods
 #define SIZE 130
 #define MAX_SIZE 130
+#define END_MARKER -1
 
 //buffer 1 shared between user input and line seperator thread
 char buffer_1[SIZE];

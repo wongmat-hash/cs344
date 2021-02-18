@@ -5,29 +5,66 @@
 #include <string.h>
 
 //this file is for testing methods
-
+#define SIZE 1000
 #define MAX_SIZE 1000
 
-void userInput(char *arr)
+//buffer 1 shared between user input and line seperator thread
+char buffer_1[SIZE];
+//number of items in the buffer
+char count_1 = 0;
+//index where input thread will put the next items
+char prod_idx_1 = 0;
+//index where the line seperator thread will pick up the next items
+char con_idx_1 = 0;
+//init the mutex for buffer 1
+pthread_mutex_t mutex_1 = PTHREAD_MUTEX_INITIALIZER;
+//init the condition variable for buffer 1
+pthread_cond_t full_1 = PTHREAD_COND_INITIALIZER;
+
+//scan for input function
+char scan_for_input()
 {
-  printf("enter an input:\n");
-  gets(arr);
-  printf("testing that stored correctly: %s\n", arr);
+  char entry;                                                                   //char for the current char it scans
+  scanf("%c", &entry);                                                          //scans for it and stores it in the char
+  return entry;                                                                 //returns it to the calling function
 }
 
-void stdInput(char *arr)
+//function to put the first grabbed char into the buffer
+void put_buff_1(int item)
 {
-  printf("processing input\n");
+  // Lock the mutex before putting the item in the buffer
+  pthread_mutex_lock(&mutex_1);
+  // Put the item in the buffer
+  buffer_1[prod_idx_1] = item;
+  // Increment the index where the next item will be put.
+  prod_idx_1 = prod_idx_1 + 1;
+  count_1++;
+  // Signal to the consumer that the buffer is no longer empty
+  pthread_cond_signal(&full_1);
+  // Unlock the mutex
+  pthread_mutex_unlock(&mutex_1);
 }
+
+void *get_input(void *args)
+{
+  for (int i = 0; i < MAX_SIZE; i++)
+  {
+    //get the input from scan
+    char currentChar = scan_for_input();
+    put_buff_1(currentChar);                                                    //store the current char in the buffer
+  }
+  return NULL;
+}
+
+
+
 int main(int argc, char* argv[])
 {
-  char array[MAX_SIZE];
-  if (argc > 1)
-  {
-    userInput(array);
-  }
-  if (argc < 1)
-  {
-    stdInput(array);
-  }
+  //create the pthread vars
+  pthread_t input_t;                                                            //calls for the input thread
+  //create a single thread
+  pthread_create(&input_t, NULL, get_input, NULL);                               //create the thread for grabbing input
+  //wait for the threads to terminate
+  pthread_join(input_t, NULL);
+  return EXIT_SUCCESS;
 }

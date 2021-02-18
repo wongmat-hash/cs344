@@ -74,7 +74,7 @@ char userInput()
   //printf("\nUSERINPUT:\n%s\n", arr);                                            //store user input up to 1000 chars in our array
 //---------------------------------------------------
   char entry;                                                                   //store the char we are processing individually
-  scanf("%c", &entry)
+  scanf("%c", &entry);
   return entry;                                                                 //return it so we can use it
 
   //now the array has user input or user specified input from < when starting program
@@ -159,7 +159,7 @@ void *lineSeperator(void *args)
       put_buff_2(' ');                                                          //put a space into the buffer
     }
   }
-
+return NULL;
 
 
 
@@ -186,28 +186,60 @@ void *lineSeperator(void *args)
 //      arr[i] = ' ';                                                             //error working with spaces above. Now without quotes it functions correctly work cited: https://stackoverflow.com/questions/30033582/what-is-the-symbol-for-whitespace-in-c
 //    }
 //  }
-}
 //OLD STUFF-------------------------------------
+}
+
+//grab next item for buffer 2
+char get_buff_2()
+{
+  //lock the mutex before checking if the buffer has data
+  pthread_mutex_lock(&mutex_2);
+  while(count_2==0)
+  {
+    //buffer is empty wait for prod to signal when ready
+    pthread_cond_wait(&full_2, &mutex_2);
+  }
+  char char = buffer_2[con_idx_2];
+  //increment the index from which the item will be picked up
+  con_idx_2 = con_idx_2 + 1;
+  count_2--;
+  //unlock the mutex
+  pthread_mutex_unlock(&mutex_2);
+  //return the item
+  return char;
+}
 
 
 
 //thread 3 plus sign removal thread
 //function called plus sign thread replaces every pair of ++ with ^
-void plusplusSign(char *arr)
+//......void plusplusSign(char *arr)
+void *plusplusSign(void *args)
 {
-  printf("PLUSPLUSSIGN:\n");
-  for (int i = 0; i < MAX_SIZE; i++)                                            //use a for loop and conditionals to find our ++
+  char char;
+  for (int i = 0; i < MAX_SIZE; i++)
   {
-    if ((arr[i] == '+') && (arr[i+1] == '+'))                                   //check if they are double ++
-    {
-      for (int x = i; x < MAX_SIZE; x++)                                        //if they are we need to shift the array elements over by 1 work cited: https://stackoverflow.com/questions/879603/remove-an-array-element-and-shift-the-remaining-ones
-      {
-        arr[x] = arr[x+1];                                                      //shift the remaining elements in the array
-      }
-      arr[i] = '^';                                                             //now that its all been shifted we can delete the remaining + and replace with ^
-    }
+    if ()
   }
-  printf("%s", &arr[0]);
+
+
+
+
+  //old stuf----------
+//  printf("PLUSPLUSSIGN:\n");
+//  for (int i = 0; i < MAX_SIZE; i++)                                            //use a for loop and conditionals to find our ++
+//  {
+//    if ((arr[i] == '+') && (arr[i+1] == '+'))                                   //check if they are double ++
+//    {
+//      for (int x = i; x < MAX_SIZE; x++)                                        //if they are we need to shift the array elements over by 1 work cited: https://stackoverflow.com/questions/879603/remove-an-array-element-and-shift-the-remaining-ones
+//      {
+//        arr[x] = arr[x+1];                                                      //shift the remaining elements in the array
+//      }
+//      arr[i] = '^';                                                             //now that its all been shifted we can delete the remaining + and replace with ^
+//    }
+//  }
+//  printf("%s", &arr[0]);
+  //old stuf----------
 }
 
 //thread 4 output thread

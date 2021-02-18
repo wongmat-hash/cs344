@@ -5,8 +5,8 @@
 #include <string.h>
 
 //this file is for testing methods
-#define SIZE 1000
-#define MAX_SIZE 1000
+#define SIZE 130
+#define MAX_SIZE 130
 
 //buffer 1 shared between user input and line seperator thread
 char buffer_1[SIZE];
@@ -26,6 +26,7 @@ char scan_for_input()
 {
   char entry;                                                                   //char for the current char it scans
   scanf("%c", &entry);                                                          //scans for it and stores it in the char
+  //fgets(entry, MAX_SIZE, scanf)
   return entry;                                                                 //returns it to the calling function
 }
 
@@ -56,15 +57,46 @@ void *get_input(void *args)
   return NULL;
 }
 
+//get the next item from the previous buffer [CONSUMER PORTION]
+char get_buff_2()
+{
+  // Lock the mutex before checking if the buffer has data
+  pthread_mutex_lock(&mutex_1);
+  while (count_1 == 0)
+    // Buffer is empty. Wait for the producer to signal that the buffer has data
+    pthread_cond_wait(&full_1, &mutex_1);
+  char currentChar = buffer_1[con_idx_1];
+  // Increment the index from which the item will be picked up
+  con_idx_1 = con_idx_1 + 1;
+  count_1--;
+  // Unlock the mutex
+  pthread_mutex_unlock(&mutex_1);
+  // Return the item
+  return currentChar;
+}
 
 
-int main(int argc, char* argv[])
+void *write_output(void *args) //[CALL TO CONSUMER PORTION BUFFER ]
+{
+  char currentChar;
+  for (int i = 0; i < MAX_SIZE; i++)                                            //loop through our entire stored buffer to max size and write the char
+  {
+    currentChar = get_buff_2();
+    printf("%c", currentChar);
+  }
+  return NULL;
+}
+
+
+int main(void)
 {
   //create the pthread vars
-  pthread_t input_t;                                                            //calls for the input thread
+  pthread_t input_t, output_t;                                                            //calls for the input thread
   //create a single thread
   pthread_create(&input_t, NULL, get_input, NULL);                               //create the thread for grabbing input
+  pthread_create(&output_t, NULL, write_output, NULL);
   //wait for the threads to terminate
   pthread_join(input_t, NULL);
+  pthread_join(output_t, NULL);
   return EXIT_SUCCESS;
 }

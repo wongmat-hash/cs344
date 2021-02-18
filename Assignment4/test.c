@@ -5,8 +5,8 @@
 #include <string.h>
 
 //this file is for testing methods
-#define SIZE 100
-#define MAX_SIZE 100
+#define SIZE 30
+#define MAX_SIZE 30
 #define END_MARKER -1
 
 //buffer 1 shared between user input and line seperator thread
@@ -119,7 +119,7 @@ void *lineSeperator(void *args)
   for (int i = 0; i < MAX_SIZE; i++)
   {
     currentChar = get_buff_1();                                                  //grab the char from the input buffer
-    printf("%c", currentChar);                                                  //simple test to check for the grab
+    //printf("%c", currentChar);                                                  //simple test to check for the grab
     if (currentChar == '\n')                                                    //if we see a new line
     {
       currentChar = ' ';                                                        //make it a space
@@ -156,7 +156,7 @@ void *write_output(void *args) //[CALL TO CONSUMER PORTION BUFFER ]
   for (int i = 0; i < MAX_SIZE; i++)                                            //loop through our entire stored buffer to max size and write the char
   {
     currentChar = get_buff_2();
-    printf("%c", currentChar);
+    printf("OUTPUT: %c", currentChar);
   }
   return NULL;
 }

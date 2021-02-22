@@ -156,12 +156,12 @@ void put_buff_3(char item)
 void *plusplusSign(void *args)
 {
   int counterable = sizeof_stdin;
-  printf("size of stdin in plusplus %d\n", sizeof_stdin);
+  //printf("size of stdin in plusplus %d\n", sizeof_stdin);
   char currentChar1, currentChar2, currentChar3;
   //printf("inside plus plus sign\n");
   for (int i = 0; i < sizeof_stdin; i++)
   {
-    printf("\ncounterable: %d\n", counterable);
+    //printf("\ncounterable: %d\n", counterable);
     if (counterable != 1)
     {
       currentChar1 = get_buff_2();                                                //get the first value to check
@@ -177,7 +177,7 @@ void *plusplusSign(void *args)
     if (currentChar2 == '\n')                                                   //if the 2nd value is new line we are at a\n or end of file
     {
       fflush(stdout);
-      printf("%c", currentChar1);
+      //printf("%c", currentChar1);
       put_buff_3(currentChar1);
       counterable--;
       return NULL;
@@ -190,7 +190,7 @@ void *plusplusSign(void *args)
     {
       char sigma = '^';
       fflush(stdout);
-      printf("%c", sigma);
+      //printf("%c", sigma);
       put_buff_3(sigma);
       counterable--;
       counterable--;
@@ -204,9 +204,9 @@ void *plusplusSign(void *args)
       {
         char sigma = '^';
         fflush(stdout);
-        printf("%c", currentChar1);
+        //printf("%c", currentChar1);
         fflush(stdout);
-        printf("%c", sigma);
+        //printf("%c", sigma);
         put_buff_3(currentChar1);
         counterable--;
         put_buff_3(sigma);                                                      //if the third one is + we evaluate it to ^
@@ -234,16 +234,16 @@ void *plusplusSign(void *args)
     {
       //printf("putting stuff into buffer 3\n");                                //tests to make sure we have the right things to put into buffer 3
       fflush(stdout);
-      printf("%c", currentChar1);
+      //printf("%c", currentChar1);
       fflush(stdout);
-      printf("%c", currentChar2);
+      //printf("%c", currentChar2);
       put_buff_3(currentChar1);
       counterable--;
       put_buff_3(currentChar2);
       counterable--;
     }
   }
-  printf("exited loop\n");                                                    //test to make sure our loop ended
+  //printf("exited loop\n");                                                    //test to make sure our loop ended
   return NULL;
 }
 
@@ -278,6 +278,7 @@ void *write_output(void *args)
     fflush(stdout);
     printf("%c", currentChar);
   }
+  //printf("finished loop\n");
   printf("\n");
   return NULL;
 }
@@ -289,20 +290,20 @@ int main(void)
 
   pthread_create(&input_t, NULL, get_input, NULL);                              //create our thread for get Input
   pthread_join(input_t, NULL);                                                  //join the threads
-  printf("in MAIN this is sizeof: %d\n", sizeof_stdin);
+  //printf("in MAIN this is sizeof: %d\n", sizeof_stdin);
 
   //for (int i = 0; i < sizeof_stdin; i++)
   //{
   pthread_create(&linesep_t, NULL, lineSeperator, NULL);
   //}
   pthread_join(linesep_t, NULL);
-  printf("in MAIN 2.0 this is sizeof: %d\n", sizeof_stdin);
+  //printf("in MAIN 2.0 this is sizeof: %d\n", sizeof_stdin);
   //for (int i = 0; i < sizeof_stdin; i++)
   //{
   pthread_create(&plus_sign_t, NULL, plusplusSign, NULL);
-  printf("back in main from plus plus\n");
+  //printf("back in main from plus plus\n");
   pthread_join(plus_sign_t, NULL);
-  printf("in MAIN 3.0 this is sizeof: %d\n", sizeof_stdin);
+  //printf("in MAIN 3.0 this is sizeof: %d\n", sizeof_stdin);
 
 
   pthread_create(&output_t, NULL, write_output, NULL);                          //create our thread for write output

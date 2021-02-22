@@ -3,11 +3,12 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-
+#define _GNU_SOURCE
 //this file is for testing methods
-#define SIZE 1
-#define MAX_SIZE 1000
-#define END_MARKER -1
+//buffer size will be never more than 1000 chars so we leave it at 1000
+#define SIZE 1000
+//the lines will never be more than 49 so we just loop 49 times
+#define MAX_SIZE 49
 
 //buffer 1 shared between user input and line seperator t
 char buffer_1[SIZE];
@@ -26,9 +27,15 @@ pthread_cond_t full_1 = PTHREAD_COND_INITIALIZER;
 char scan_for_input()
 {
   char entry;                                                                   //char for the current char it scans storage variable
-  scanf("%c", &entry);                                                          //scans for it and stores it in the char
+  //scanf("%c", &entry);                                                          //scans for it and stores it in the char
 
-  //fgets(&entry, MAX_SIZE, stdin);
+  //fgets(&entry, SIZE, stdin);
+  //while ((entry = fgetc(stdin))!=EOF)
+  //{
+  //  scanf("%c", &entry);
+  //}
+  entry = fgetc(stdin);
+  //printf("entry value: %c\n", entry);
   return entry;                                                                 //returns it to the calling function
 }
 
@@ -48,6 +55,7 @@ void put_buff_1(char item)
   pthread_mutex_unlock(&mutex_1);
 }
 
+//we need to change this to getline
 void *get_input(void *args)
 {
   for (int i = 0; i < MAX_SIZE; i++)                                            //starts our program and loops to the size of the stdin which is 1000 char max
@@ -97,6 +105,9 @@ int main(void)
   pthread_t input_t, output_t;                                                            //calls for the input thread
   //create a single thread
   pthread_create(&input_t, NULL, get_input, NULL);                               //create the thread for grabbing input
+
+  //sleep(30);
+  printf("\n");
   pthread_create(&output_t, NULL, write_output, NULL);
   //wait for the threads to terminate
   pthread_join(input_t, NULL);

@@ -47,6 +47,7 @@ void put_buff_1(char item)                                                      
 //calls put buff 1 to store into array needs to +1 index when add 1
 void *get_input(void *args)
 {
+  sizeof_stdin = sizeof_stdin+1;
   //char currentChar;
   //sizeof_stdin = lengthof(stdin);
   //fgets(&currentChar, sizeof(stdin), stdin);
@@ -101,12 +102,13 @@ void *lineSeperator(void *args)                                                 
   //printf("in line seperator\n");
   char currentChar;                                                             //declare our char that will store the currently looked at
   //printf("calling get buff 1\n");
-  for (int i = 0; i < sizeof_stdin; i++)                                        //use a loop to the global var size of the stdin input
+  for (int i = 0; i < sizeof_stdin-1; i++)                                        //use a loop to the global var size of the stdin input
   {
     currentChar = get_buff_1();                                                 //pull from the buffer the char we are looking at
     //printf("%c\n", currentChar);
     if (currentChar == '\n')                                                    //if the char is a new line we delete it
     {
+      //sizeof_stdin = sizeof_stdin+1;
       currentChar = ' ';
       //printf("calling put buff 2\n");
       put_buff_2(currentChar);                                                  //put the char into the next buffer using put buff 2
@@ -153,6 +155,7 @@ void put_buff_3(char item)
 //put buff 3 will be called and it will store into 3rd buffer array
 void *plusplusSign(void *args)
 {
+  printf("size of stdin in plusplus %d\n", sizeof_stdin);
   char currentChar1, currentChar2, currentChar3;
   //printf("inside plus plus sign\n");
   for (int i = 0; i < sizeof_stdin; i++)
@@ -162,7 +165,18 @@ void *plusplusSign(void *args)
     currentChar2 = get_buff_2();                                                //pull again and get the second value
     //printf("currentChar1: %c\n", currentChar1);                               //test to ensure that the char is carrying over
     //printf("currentChar2: %c\n", currentChar2);
-    if ((currentChar1 == '+') && (currentChar2 == '+'))
+    if (currentChar2 == '\n')
+    {
+      fflush(stdout);
+      printf("%c", currentChar1);
+      put_buff_3(currentChar1);
+      return NULL;
+    }
+    else if (currentChar1 == '\n')
+    {
+      return NULL;
+    }
+    else if ((currentChar1 == '+') && (currentChar2 == '+'))
     {
       char sigma = '^';
       fflush(stdout);
@@ -178,6 +192,7 @@ void *plusplusSign(void *args)
         char sigma = '^';
         fflush(stdout);
         printf("%c", currentChar1);
+        fflush(stdout);
         printf("%c", sigma);
         put_buff_3(currentChar1);
         put_buff_3(sigma);
@@ -187,7 +202,9 @@ void *plusplusSign(void *args)
         //otherwise just put the 3 values into
         fflush(stdout);
         printf("%c", currentChar1);
+        fflush(stdout);
         printf("%c", currentChar2);
+        fflush(stdout);
         printf("%c", currentChar3);
         put_buff_3(currentChar1);
         put_buff_3(currentChar2);
@@ -199,12 +216,13 @@ void *plusplusSign(void *args)
       //printf("putting stuff into buffer 3\n");                                //tests to make sure we have the right things to put into buffer 3
       fflush(stdout);
       printf("%c", currentChar1);
+      fflush(stdout);
       printf("%c", currentChar2);
       put_buff_3(currentChar1);
       put_buff_3(currentChar2);
     }
-    //printf("exited loop\n");                                                  //test to make sure our loop ended
   }
+  printf("exited loop\n");                                                    //test to make sure our loop ended
   return NULL;
 }
 
@@ -229,13 +247,14 @@ char get_buff_3()                                                               
 //needs to print and adjust buffer to +1 so it knows to check for next element
 void *write_output(void *args)
 {
-  //printf("in write output\n");
+  printf("in write output\n");
   char currentChar;
   //printf("this is buffer_2[1]: %c\n", buffer_2[1]);
   //printf("size of size: %d\n", sizeof_stdin);
-  for (int i = 0; i < sizeof_stdin; i++)
+  for (int i = 0; i < sizeof_stdin-1; i++)
   {
     currentChar = get_buff_3();
+    fflush(stdout);
     printf("%c", currentChar);
   }
   printf("\n");

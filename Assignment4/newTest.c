@@ -268,6 +268,8 @@ char get_buff_3()                                                               
 //needs to print and adjust buffer to +1 so it knows to check for next element
 void *write_output(void *args)
 {
+  int counterable = sizeof_stdin;
+  int counterable = counterable/80;                                             //this should give you how many lines to write
   printf("in write output\n");
   char currentChar;
   //printf("this is buffer_2[1]: %c\n", buffer_2[1]);

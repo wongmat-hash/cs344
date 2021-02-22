@@ -93,10 +93,10 @@ int main(void)
 
   pthread_create(&input_t, NULL, get_input, NULL);                              //create our thread for get Input
 
-  pthread_create(&output_t, NULL, write_output, NULL);                          //create our thread for write output
 
   pthread_join(input_t, NULL);                                                  //join the threads
-  //printf("in MAIN this is sizeof: %d\n", sizeof_stdin);
+  printf("in MAIN this is sizeof: %d\n", sizeof_stdin);
+  pthread_create(&output_t, NULL, write_output, NULL);                          //create our thread for write output
   pthread_join(output_t, NULL);
   return EXIT_SUCCESS;
 }

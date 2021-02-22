@@ -155,24 +155,34 @@ void put_buff_3(char item)
 //put buff 3 will be called and it will store into 3rd buffer array
 void *plusplusSign(void *args)
 {
+  int counterable = sizeof_stdin;
   printf("size of stdin in plusplus %d\n", sizeof_stdin);
   char currentChar1, currentChar2, currentChar3;
   //printf("inside plus plus sign\n");
   for (int i = 0; i < sizeof_stdin; i++)
   {
+    printf("\ncounterable: %d\n", counterable);
+    if (counterable != 1)
+    {
+      currentChar1 = get_buff_2();                                                //get the first value to check
+      currentChar2 = get_buff_2();                                                //pull again and get the second value
+    }
+    else if (counterable == 1)
+    {
+      return NULL;
+    }
     //printf("in the loop %d\n", i);
-    currentChar1 = get_buff_2();                                                //get the first value to check
-    currentChar2 = get_buff_2();                                                //pull again and get the second value
     //printf("currentChar1: %c\n", currentChar1);                               //test to ensure that the char is carrying over
     //printf("currentChar2: %c\n", currentChar2);
-    if (currentChar2 == '\n')
+    if (currentChar2 == '\n')                                                   //if the 2nd value is new line we are at a\n or end of file
     {
       fflush(stdout);
       printf("%c", currentChar1);
       put_buff_3(currentChar1);
+      counterable--;
       return NULL;
     }
-    else if (currentChar1 == '\n')
+    else if (currentChar1 == '\n')                                              //otherwise if the currentChar1 ==
     {
       return NULL;
     }
@@ -182,12 +192,15 @@ void *plusplusSign(void *args)
       fflush(stdout);
       printf("%c", sigma);
       put_buff_3(sigma);
+      counterable--;
+      counterable--;
     }
-    else if ((currentChar1 == ' ') && (currentChar2 == '+'))                    //check if we have a ++ next to each other
+    //else if ((currentChar1 == ' ') && (currentChar2 == '+'))                  //check if we have a ++ next to each other
+    else if (currentChar2 == '+')                                               //checks for the following: a+a, _+_, a+_, _+a
     {
       //check if the next char is also a +
       currentChar3 = get_buff_2();
-      if ((currentChar2 == '+') && (currentChar3 == '+'))
+      if (currentChar3 == '+')                                                  //we have a double plus
       {
         char sigma = '^';
         fflush(stdout);
@@ -195,20 +208,26 @@ void *plusplusSign(void *args)
         fflush(stdout);
         printf("%c", sigma);
         put_buff_3(currentChar1);
-        put_buff_3(sigma);
+        counterable--;
+        put_buff_3(sigma);                                                      //if the third one is + we evaluate it to ^
+        counterable--;
+        counterable--;
       }
       else
       {
         //otherwise just put the 3 values into
         fflush(stdout);
-        printf("%c", currentChar1);
+        printf("%c", currentChar1);                                             //otherwise we push all 3 in
         fflush(stdout);
         printf("%c", currentChar2);
         fflush(stdout);
         printf("%c", currentChar3);
         put_buff_3(currentChar1);
+        counterable--;
         put_buff_3(currentChar2);
+        counterable--;
         put_buff_3(currentChar3);
+        counterable--;
       }
     }
     else                                                                        //otherwise its not a ++ so we just put in all the chars
@@ -219,7 +238,9 @@ void *plusplusSign(void *args)
       fflush(stdout);
       printf("%c", currentChar2);
       put_buff_3(currentChar1);
+      counterable--;
       put_buff_3(currentChar2);
+      counterable--;
     }
   }
   printf("exited loop\n");                                                    //test to make sure our loop ended
@@ -236,7 +257,7 @@ char get_buff_3()                                                               
     pthread_cond_wait(&full_3, &mutex_3);                                       //buffer is empty so we wait for prod to signal to the consumer that the buffer has data
   }
   char currentChar = buffer_3[con_idx_3];                                       //we store the buffer data into char var
-  printf("currentChar in buff 3: %c\n", currentChar);
+  //printf("currentChar in buff 3: %c\n", currentChar);
   con_idx_3 = con_idx_3 + 1;                                                    //increment our index in our buffer
   count_3--;
   pthread_mutex_unlock(&mutex_3);                                               //unlock the mutex
@@ -279,7 +300,7 @@ int main(void)
   //for (int i = 0; i < sizeof_stdin; i++)
   //{
   pthread_create(&plus_sign_t, NULL, plusplusSign, NULL);
-
+  printf("back in main from plus plus\n");
   pthread_join(plus_sign_t, NULL);
   printf("in MAIN 3.0 this is sizeof: %d\n", sizeof_stdin);
 

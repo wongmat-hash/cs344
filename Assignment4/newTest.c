@@ -138,6 +138,8 @@ char get_buff_2()                                                               
 //put buff 3 for the plus plus sign function to store into 3rd buffer for the output function
 void put_buff_3(char item)
 {
+  //printf("in put buff 3\n");
+  //printf("buffer 3 item: %c\n", item);
   pthread_mutex_lock(&mutex_3);                                                 //lock the mutex before putting item in the buffer
   buffer_3[prod_idx_3] = item;                                                  //put items into the buffer
   prod_idx_3 = prod_idx_3 + 1;                                                  //increment the index where the next item will be put
@@ -151,27 +153,53 @@ void put_buff_3(char item)
 //put buff 3 will be called and it will store into 3rd buffer array
 void *plusplusSign(void *args)
 {
-  printf("inside plus plus sign\n");
+  char currentChar1, currentChar2, currentChar3;
+  //printf("inside plus plus sign\n");
   for (int i = 0; i < sizeof_stdin; i++)
   {
     //printf("in the loop %d\n", i);
-    char currentChar1, currentChar2, currentChar3;
     currentChar1 = get_buff_2();                                                //get the first value to check
     currentChar2 = get_buff_2();                                                //pull again and get the second value
     //printf("currentChar1: %c\n", currentChar1);                               //test to ensure that the char is carrying over
     //printf("currentChar2: %c\n", currentChar2);
-    if ((currentChar1 == '+') && (currentChar2 == '+'))                         //check if we have a ++ next to each other
+    if ((currentChar1 == '+') && (currentChar2 == '+'))
     {
-      //printf("in our if loop\n");
-      //we found a ++ now we want to store once ^
-      currentChar3 = '^';                                                       //if it is a ++ we want to just pass into our buffer ^
-      //put_buff_3(currentChar3);
+      char sigma = '^';
+      fflush(stdout);
+      printf("%c", sigma);
+      put_buff_3(sigma);
+    }
+    else if ((currentChar1 == ' ') && (currentChar2 == '+'))                    //check if we have a ++ next to each other
+    {
+      //check if the next char is also a +
+      currentChar3 = get_buff_2();
+      if ((currentChar2 == '+') && (currentChar3 == '+'))
+      {
+        char sigma = '^';
+        fflush(stdout);
+        printf("%c", currentChar1);
+        printf("%c", sigma);
+        put_buff_3(currentChar1);
+        put_buff_3(sigma);
+      }
+      else
+      {
+        //otherwise just put the 3 values into
+        fflush(stdout);
+        printf("%c", currentChar1);
+        printf("%c", currentChar2);
+        printf("%c", currentChar3);
+        put_buff_3(currentChar1);
+        put_buff_3(currentChar2);
+        put_buff_3(currentChar3);
+      }
     }
     else                                                                        //otherwise its not a ++ so we just put in all the chars
     {
       //printf("putting stuff into buffer 3\n");                                //tests to make sure we have the right things to put into buffer 3
-      //printf("%c\n", currentChar1);
-      //printf("%c\n", currentChar2);
+      fflush(stdout);
+      printf("%c", currentChar1);
+      printf("%c", currentChar2);
       put_buff_3(currentChar1);
       put_buff_3(currentChar2);
     }
@@ -190,6 +218,7 @@ char get_buff_3()                                                               
     pthread_cond_wait(&full_3, &mutex_3);                                       //buffer is empty so we wait for prod to signal to the consumer that the buffer has data
   }
   char currentChar = buffer_3[con_idx_3];                                       //we store the buffer data into char var
+  printf("currentChar in buff 3: %c\n", currentChar);
   con_idx_3 = con_idx_3 + 1;                                                    //increment our index in our buffer
   count_3--;
   pthread_mutex_unlock(&mutex_3);                                               //unlock the mutex
@@ -227,13 +256,13 @@ int main(void)
   pthread_create(&linesep_t, NULL, lineSeperator, NULL);
   //}
   pthread_join(linesep_t, NULL);
-
+  printf("in MAIN 2.0 this is sizeof: %d\n", sizeof_stdin);
   //for (int i = 0; i < sizeof_stdin; i++)
   //{
   pthread_create(&plus_sign_t, NULL, plusplusSign, NULL);
 
   pthread_join(plus_sign_t, NULL);
-
+  printf("in MAIN 3.0 this is sizeof: %d\n", sizeof_stdin);
 
 
   pthread_create(&output_t, NULL, write_output, NULL);                          //create our thread for write output

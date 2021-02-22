@@ -100,11 +100,23 @@ void put_buff_2(char item)                                                      
 void *lineSeperator(void *args)                                                 //line seperator thread function
 {
   //printf("in line seperator\n");
-  char currentChar;                                                             //declare our char that will store the currently looked at
+  char charN, charS, charT, charO, charP, charNew;                              //declare our char that will store the currently looked at
   //printf("calling get buff 1\n");
-  for (int i = 0; i < sizeof_stdin-1; i++)                                        //use a loop to the global var size of the stdin input
+  for (int i = 0; i < sizeof_stdin-1; i++)                                      //use a loop to the global var size of the stdin input
   {
-    currentChar = get_buff_1();                                                 //pull from the buffer the char we are looking at
+    //pull and check batch of 5 chars
+    charN = get_buff_1();                                                       //pull from the buffer the char we are looking at
+    charS = get_buff_1();
+    charT = get_buff_1();
+    charO = get_buff_1();
+    charP = get_buff_1();
+    charNew = get_buff_1();
+    if (((charN == '\n') && (charS == 'S') && (charT == 'T') && (charO == 'O') && (charP == 'P') && (charNew == '\n'))
+    {
+      
+    }
+
+
     //printf("%c\n", currentChar);
     if (currentChar == '\n')                                                    //if the char is a new line we delete it
     {

@@ -8,7 +8,9 @@
 //buffer size will be never more than 1000 chars so we leave it at 1000
 #define SIZE 1000
 //the lines will never be more than 49 so we just loop 49 times
-#define MAX_SIZE 49
+#define MAX_SIZE 1000
+
+//int loopcount = 0;
 
 //buffer 1 shared between user input and line seperator t
 char buffer_1[SIZE];
@@ -63,6 +65,7 @@ void *get_input(void *args)
     //get the input from scan
     char currentChar = scan_for_input();                                        //calls the scan_for_input function
     put_buff_1(currentChar);                                                    //store the current char in the buffer
+    //loopcount = loopcount+1;
   }
   return NULL;
 }
@@ -88,11 +91,15 @@ char get_buff_2()
 
 void *write_output(void *args) //[CALL TO CONSUMER PORTION BUFFER ]
 {
+  //printf("loopcounter: %d\n", loopcount);
   char currentChar;
   for (int i = 0; i < MAX_SIZE; i++)                                            //loop through our entire stored buffer to max size and write the char
   {
     currentChar = get_buff_2();
-    printf("%c", currentChar);
+    if (currentChar != 'F')
+    {
+      printf("%c", currentChar);
+    }
   }
   printf("\n");
   return NULL;
@@ -101,6 +108,14 @@ void *write_output(void *args) //[CALL TO CONSUMER PORTION BUFFER ]
 
 int main(void)
 {
+  for (int i = 0; i < SIZE; i++)
+  {
+    buffer_1[i] = 'F';
+  }
+  for (int i = 0; i < SIZE; i++)
+  {
+    printf("%c", buffer_1[i]);
+  }
   //create the pthread vars
   pthread_t input_t, output_t;                                                            //calls for the input thread
   //create a single thread

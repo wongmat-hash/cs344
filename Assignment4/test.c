@@ -5,7 +5,7 @@
 #include <string.h>
 
 //this file is for testing methods
-#define SIZE 50
+#define SIZE 1
 #define MAX_SIZE 50
 #define END_MARKER -1
 
@@ -83,7 +83,7 @@ char get_buff_1()
   printf("\nIN GET BUFF 1\n");
   // Lock the mutex before checking if the buffer has data
   pthread_mutex_lock(&mutex_1);
-  printf("count_1 value in get buff1: %d\n", count_1);
+  printf("count_1 value in get buff1: %d", count_1);
   while (count_1 == 0)
     // Buffer is empty. Wait for the producer to signal that the buffer has data
     pthread_cond_wait(&full_1, &mutex_1);
@@ -145,7 +145,7 @@ char get_buff_2()
   printf("\nIN GET BUFF 2\n");
   // Lock the mutex before checking if the buffer has data
   pthread_mutex_lock(&mutex_2);
-  sleep(20);
+  //sleep(20);
   while (count_2 == 0)
   printf("buffer 2 is empty\n");
     // Buffer is empty. Wait for the producer to signal that the buffer has data

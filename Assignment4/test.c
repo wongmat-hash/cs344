@@ -100,34 +100,81 @@ void put_buff_2(char item)                                                      
 void *lineSeperator(void *args)                                                 //line seperator thread function
 {
   //printf("in line seperator\n");
-  char charN, charS, charT, charO, charP, charNew;                              //declare our char that will store the currently looked at
+  char charS, charT, charO, charP, charNew;                              //declare our char that will store the currently looked at
   //printf("calling get buff 1\n");
   for (int i = 0; i < sizeof_stdin-1; i++)                                      //use a loop to the global var size of the stdin input
   {
     //pull and check batch of 5 chars
-    charN = get_buff_1();                                                       //pull from the buffer the char we are looking at
-    charS = get_buff_1();
-    charT = get_buff_1();
-    charO = get_buff_1();
-    charP = get_buff_1();
-    charNew = get_buff_1();
-    if (((charN == '\n') && (charS == 'S') && (charT == 'T') && (charO == 'O') && (charP == 'P') && (charNew == '\n'))
+    charS = get_buff_1();                                                       //pull from the buffer the char we are looking at
+    if (charS == 'S')
     {
-      
+      //first char matched look for second which should be a T
+      charT = get_buff_1();
+      if (charT == 'T')
+      {
+        //second char matched with T now we match with O
+        charO = get_buff_1();
+        if (charO == 'O')
+        {
+          //third char matched grab the next to match with P
+          charP = get_buff_1();
+          if (charP == 'P')
+          {
+            //the P matched now we look for the new line
+            charNew = get_buff_1();
+            if (charNew == '\n')
+            {
+              printf("I FOUND THE STOP MASTER\n");
+              return NULL;
+            }
+            else
+            {
+              //we need to push STOP whatever last char was into the next buffer
+              put_buff_2(charS);                                                //push our S in
+              put_buff_2(charT);
+              put_buff_2(charO);
+              put_buff_2(charP);
+              put_buff_2(charNew);
+            }
+          }
+          else //otherwise the P was not the P so we push them all in
+          {
+            //we need to push STOP into the buffer
+            put_buff_2(charS);                                                //push our S in
+            put_buff_2(charT);
+            put_buff_2(charO);
+            put_buff_2(charP);
+          }
+        }
+        else  //otherwise the O was not the O so we push it all in
+        {
+          //we need to push STO into the buffer
+          put_buff_2(charS);                                                //push our S in
+          put_buff_2(charT);
+          put_buff_2(charO);
+        }
+      }
+      else  //otherwise the T was no the T so we push it all in
+      {
+        //we need to push in ST into the buffer
+        put_buff_2(charS);                                                //push our S in
+        put_buff_2(charT);
+      }
     }
-
-
-    //printf("%c\n", currentChar);
-    if (currentChar == '\n')                                                    //if the char is a new line we delete it
+    else //otherwise it was not the S so we check if its a new line
     {
-      //sizeof_stdin = sizeof_stdin+1;
-      currentChar = ' ';
-      //printf("calling put buff 2\n");
-      put_buff_2(currentChar);                                                  //put the char into the next buffer using put buff 2
-    }
-    else if (currentChar != '\n')                                               //else if its not a newline char
-    {
-      put_buff_2(currentChar);                                                  //just pass it to the next buffer right away
+      //printf("%c\n", currentChar);
+      if (charS == '\n')                                                    //if the char is a new line we delete it
+      {
+        //sizeof_stdin = sizeof_stdin+1;
+        charS = ' ';
+        //printf("calling put buff 2\n");
+        put_buff_2(charS);                                                  //put the char into the next buffer using put buff 2
+      }
+      else if (charS != '\n')                                               //else if its not a newline char
+      {
+        put_buff_2(charS);                                                  //just pass it to the next buffer right away
+      }
     }
   }
   return NULL;
@@ -281,7 +328,7 @@ char get_buff_3()                                                               
 void *write_output(void *args)
 {
   int counterable = sizeof_stdin;
-  int counterable = counterable/80;                                             //this should give you how many lines to write
+  counterable = counterable/80;                                                 //this should give you how many lines to write
   printf("in write output\n");
   char currentChar;
   //printf("this is buffer_2[1]: %c\n", buffer_2[1]);

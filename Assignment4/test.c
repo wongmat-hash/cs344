@@ -99,84 +99,97 @@ void put_buff_2(char item)                                                      
 //put buff 2 will be called and it will be stored into 2nd buffer array
 void *lineSeperator(void *args)                                                 //line seperator thread function
 {
-  //printf("in line seperator\n");
-  char charS, charT, charO, charP, charNew;                              //declare our char that will store the currently looked at
-  //printf("calling get buff 1\n");
-  for (int i = 0; i < sizeof_stdin-1; i++)                                      //use a loop to the global var size of the stdin input
+  char charN, charS, charT, charO, charP, charNew;                              //declare our char that will store the currently looked at
+  int storage = sizeof_stdin;
+  //test to make sure we set correctly
+  printf("this is storage: %d\n", storage);
+
+  //now use a while loop to go through entire chars in buffer
+  while (storage != 0)
   {
+    //check for stop
     //pull and check batch of 5 chars
     charS = get_buff_1();                                                       //pull from the buffer the char we are looking at
-    if (charS == 'S')
-    {
-      //first char matched look for second which should be a T
-      charT = get_buff_1();
+    if (charS == 'S' && charS != '\n')
+    { //it matched with s so check for T
+      //printf("found an S looking for T now...\n");
+      storage = storage - 1;
+      charT = get_buff_1();   //pull from buffer again
       if (charT == 'T')
-      {
-        //second char matched with T now we match with O
-        charO = get_buff_1();
+      { //it matched with T so check for O
+        //printf("found an T looking for O now...\n");
+        storage = storage - 1;
+        charO = get_buff_1(); //pull from buffer again
         if (charO == 'O')
-        {
-          //third char matched grab the next to match with P
-          charP = get_buff_1();
+        { //it matched with O so check for P
+          //printf("found an O looking for P now...\n");
+          storage = storage - 1;
+          charP = get_buff_1(); //pull from buffer again
           if (charP == 'P')
-          {
-            //the P matched now we look for the new line
-            charNew = get_buff_1();
+          { //it matched with P so now check for \n
+            //printf("found an P looking for newline now...\n");
+            storage = storage - 1;
+            charNew = get_buff_1(); //pull from buffer again
             if (charNew == '\n')
             {
-              printf("I FOUND THE STOP MASTER\n");
-              return NULL;
+              //we found a match so resize sizeof_stdin;
+              //printf("found an newline ending loop...\n");
+              //sizeof_stdin = storage;
+              //printf("testing sizeof_stdin: %d\n", sizeof_stdin);
+              storage = 0;
             }
-            else
-            {
-              //we need to push STOP whatever last char was into the next buffer
-              put_buff_2(charS);                                                //push our S in
-              put_buff_2(charT);
-              put_buff_2(charO);
+            else if (charNew != '\n') //it didn't match with \n
+            { //push P, O, T, S
+              //printf("didn't find the newline restarting...\n");
               put_buff_2(charP);
-              put_buff_2(charNew);
+              put_buff_2(charO);
+              put_buff_2(charT);
+              put_buff_2(charS);
             }
           }
-          else //otherwise the P was not the P so we push them all in
+          else if (charP != 'P') //it didnt match with P
           {
-            //we need to push STOP into the buffer
-            put_buff_2(charS);                                                //push our S in
-            put_buff_2(charT);
+            //printf("didn't find the P restarting...\n");
             put_buff_2(charO);
-            put_buff_2(charP);
+            put_buff_2(charT);
+            put_buff_2(charS);
           }
         }
-        else  //otherwise the O was not the O so we push it all in
+        else if (charO != 'O')  //it didn't match with O
         {
-          //we need to push STO into the buffer
-          put_buff_2(charS);                                                //push our S in
+          //printf("didn't find the O restarting...\n");
           put_buff_2(charT);
-          put_buff_2(charO);
+          put_buff_2(charS);
         }
       }
-      else  //otherwise the T was no the T so we push it all in
+      else if (charT != 'T')  //it didnt match with T
       {
-        //we need to push in ST into the buffer
-        put_buff_2(charS);                                                //push our S in
-        put_buff_2(charT);
+        //printf("didn't find the T restarting...\n");
+        put_buff_2(charS);
       }
     }
-    else //otherwise it was not the S so we check if its a new line
+    else if (charS != 'S')  //it didnt match with S
     {
-      //printf("%c\n", currentChar);
+      //check for newline and delete if there is new line
+      //printf("didn't find the S restarting...\n");
       if (charS == '\n')                                                    //if the char is a new line we delete it
       {
+        //printf("yep its a newline to delete.\n");
         //sizeof_stdin = sizeof_stdin+1;
         charS = ' ';
         //printf("calling put buff 2\n");
         put_buff_2(charS);                                                  //put the char into the next buffer using put buff 2
+        storage = storage -1;
       }
       else if (charS != '\n')                                               //else if its not a newline char
       {
+        //printf("didn't find a newline to delete..\n");
         put_buff_2(charS);                                                  //just pass it to the next buffer right away
+        storage = storage - 1;
       }
     }
   }
+  printf("testing outside of while loop sizeof_stdin: %d\n", sizeof_stdin);
   return NULL;
 }
 
@@ -335,7 +348,7 @@ void *write_output(void *args)
   //printf("size of size: %d\n", sizeof_stdin);
   for (int i = 0; i < sizeof_stdin-1; i++)
   {
-    currentChar = get_buff_3();
+    currentChar = get_buff_2();
     fflush(stdout);
     printf("%c", currentChar);
   }
@@ -361,9 +374,9 @@ int main(void)
   //printf("in MAIN 2.0 this is sizeof: %d\n", sizeof_stdin);
   //for (int i = 0; i < sizeof_stdin; i++)
   //{
-  pthread_create(&plus_sign_t, NULL, plusplusSign, NULL);
+  //pthread_create(&plus_sign_t, NULL, plusplusSign, NULL);
   //printf("back in main from plus plus\n");
-  pthread_join(plus_sign_t, NULL);
+  //pthread_join(plus_sign_t, NULL);
   //printf("in MAIN 3.0 this is sizeof: %d\n", sizeof_stdin);
 
 

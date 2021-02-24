@@ -141,31 +141,35 @@ void *lineSeperator(void *args)                                                 
             else if (charNew != '\n') //it didn't match with \n
             { //push P, O, T, S
               //printf("didn't find the newline restarting...\n");
-              put_buff_2(charP);
-              put_buff_2(charO);
-              put_buff_2(charT);
               put_buff_2(charS);
+              put_buff_2(charT);
+              put_buff_2(charO);
+              put_buff_2(charP);
+              put_buff_2(charNew);
             }
           }
           else if (charP != 'P') //it didnt match with P
           {
             //printf("didn't find the P restarting...\n");
-            put_buff_2(charO);
-            put_buff_2(charT);
             put_buff_2(charS);
+            put_buff_2(charT);
+            put_buff_2(charO);
+            put_buff_2(charP);
           }
         }
         else if (charO != 'O')  //it didn't match with O
         {
           //printf("didn't find the O restarting...\n");
-          put_buff_2(charT);
           put_buff_2(charS);
+          put_buff_2(charT);
+          put_buff_2(charO);
         }
       }
       else if (charT != 'T')  //it didnt match with T
       {
         //printf("didn't find the T restarting...\n");
         put_buff_2(charS);
+        put_buff_2(charT);
       }
     }
     else if (charS != 'S')  //it didnt match with S

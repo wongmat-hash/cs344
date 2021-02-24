@@ -107,79 +107,10 @@ void *lineSeperator(void *args)                                                 
   //now use a while loop to go through entire chars in buffer
   while (storage != 0)
   {
-    charN = get_buff_1();                                                       //pull from our buffer to check for the \n then the S
-    if (charN == '\n')                                                          //check if its a newline possible for STOP
-    { //check if its the S
-      charS = get_buff_1();
-      if (charS == 'S')
-      { //check if its the T
-        charT = get_buff_1();
-        if (charT == 'T')
-        {
-          charO = get_buff_1();
-          if (charO == 'O')
-          { //check if its the P
-            charP = get_buff_1();
-            if (charP == 'P')
-            { //check to see if its the \n
-              charNew = get_buff_1();
-              if (charNew == '\n')
-              {
-                printf("WE FOUND AN ACTUAL STOP\n");
-                storage = 0;  //break the loop
-              }
-              else if (charNew != '\n')
-              { //its not the new line so push in everything and subtract from storage
-                put_buff_2(charN);
-                put_buff_2(charS);
-                put_buff_2(charT);
-                put_buff_2(charO);
-                put_buff_2(charP);
-                put_buff_2(charNew);
-                storage = storage - 6;
-              }
-            }
-            else if (charP != 'P')  //its not the P
-            { //push all remenants back in and subtract from storage each time
-              put_buff_2(charN);
-              put_buff_2(charS);
-              put_buff_2(charT);
-              put_buff_2(charO);
-              put_buff_2(charP);
-              storage = storage - 5;
-            }
-          }
-          else if (charO != 'O') //its not the O
-          {
-            put_buff_2(charN);
-            put_buff_2(charS);
-            put_buff_2(charT);
-            put_buff_2(charO);
-            storage = storage - 4;
-          }
-        }
-        else if //its not the t
-        {
-          put_buff_2(charN);
-          put_buff_2(charS);
-          put_buff_2(charT);
-          storage = storage - 3;
-        }
-      }
-      else if //its not a S
-      {
-        put_buff_2(charN);
-        put_buff_2(charS);
-        storage = storage - 2;
-      }
-    }
-    else if //its not the \n
-
-
     //check for stop
     //pull and check batch of 5 chars
     charS = get_buff_1();                                                       //pull from the buffer the char we are looking at
-    if (charN == '\n' && charS == 'S')
+    if (charS == 'S' && charS != '\n')
     { //it matched with s so check for T
       //printf("found an S looking for T now...\n");
       storage = storage - 1;
@@ -202,7 +133,7 @@ void *lineSeperator(void *args)                                                 
             if (charNew == '\n')
             {
               //we found a match so resize sizeof_stdin;
-              printf("found a VALID STOP ending loop...\n");
+              //printf("found an newline ending loop...\n");
               //sizeof_stdin = storage;
               //printf("testing sizeof_stdin: %d\n", sizeof_stdin);
               storage = 0;
@@ -210,35 +141,35 @@ void *lineSeperator(void *args)                                                 
             else if (charNew != '\n') //it didn't match with \n
             { //push P, O, T, S
               //printf("didn't find the newline restarting...\n");
-              put_buff_2(charP);
-              put_buff_2(charO);
-              put_buff_2(charT);
               put_buff_2(charS);
-              put_buff_2(charN);
+              put_buff_2(charT);
+              put_buff_2(charO);
+              put_buff_2(charP);
+              put_buff_2(charNew);
             }
           }
           else if (charP != 'P') //it didnt match with P
           {
             //printf("didn't find the P restarting...\n");
-            put_buff_2(charO);
-            put_buff_2(charT);
             put_buff_2(charS);
-            put_buff_2(charN);
+            put_buff_2(charT);
+            put_buff_2(charO);
+            put_buff_2(charP);
           }
         }
         else if (charO != 'O')  //it didn't match with O
         {
           //printf("didn't find the O restarting...\n");
-          put_buff_2(charT);
           put_buff_2(charS);
-          put_buff_2(charN);
+          put_buff_2(charT);
+          put_buff_2(charO);
         }
       }
       else if (charT != 'T')  //it didnt match with T
       {
         //printf("didn't find the T restarting...\n");
         put_buff_2(charS);
-        put_buff_2(charN);
+        put_buff_2(charT);
       }
     }
     else if (charS != 'S')  //it didnt match with S

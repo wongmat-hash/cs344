@@ -101,32 +101,40 @@ void *lineSeperator(void *args)                                                 
 {
   char charN, charS, charT, charO, charP, charNew;                              //storage var to check for /nSTOP/n
   int storage = sizeof_stdin;                                                   //how we break out of our loop
+  storage = storage - 1;
   printf("testing of init storage: %d\n", storage);
 
   while (storage != 0)                                                          //loops as long as theres more char to find until STOP
   {
+    printf("storage val: %d\n", storage);
     charN = get_buff_1();                                                       //check if its a /n followed by S
     charS = get_buff_1();                                                       //but since we need a case with just /n check for S also
+    printf("charN val: %c\n", charN);
+    printf("charS val: %c\n", charS);
     if (charN == '\n' && charS == 'S')
     {
       storage = storage - 1;
       storage = storage - 1;
       //we found the potential start of STOP
       charT = get_buff_1();                                                     //now check for the T
+      printf("charT val: %c\n", charT);
       if (charT == 'T')
       {
         storage = storage - 1;
         //we found the T now look for O
         charO = get_buff_1();
+        printf("charO val: %c\n", charO);
         if (charO == 'O')
         {
           storage = storage - 1;
           //we found the O now look for the P
           charP = get_buff_1();
+          printf("charP val: %c\n", charP);
           if (charP == 'P')
           {
             storage = storage - 1;
             charNew = get_buff_1();
+            printf("charNew val: %c\n", charNew);
             if (charNew == '\n')
             {
               // we found the newline and end of our loop
@@ -135,12 +143,13 @@ void *lineSeperator(void *args)                                                 
             else if (charNew != '\n')
             {
               //failed to find STOP restarting
-              put_buff_1(charN);
-              put_buff_1(charS);
-              put_buff_1(charT);
-              put_buff_1(charO);
-              put_buff_1(charP);
-              put_buff_1(charNew);
+              put_buff_2(charN);
+              put_buff_2(charS);
+              put_buff_2(charT);
+              put_buff_2(charO);
+              put_buff_2(charP);
+              put_buff_2(charNew);
+              printf("pushing the following in order: %c, %c, %c, %c, %c, %c\n", charN, charS, charT, charO, charP, charNew);
               //storage = storage -6;
 
             }
@@ -148,30 +157,33 @@ void *lineSeperator(void *args)                                                 
           else if (charP != 'P')
           {
             //its not a P so push in charP, O, T, S '\n'
-            put_buff_1(charN);
-            put_buff_1(charS);
-            put_buff_1(charT);
-            put_buff_1(charO);
-            put_buff_1(charP);
+            put_buff_2(charN);
+            put_buff_2(charS);
+            put_buff_2(charT);
+            put_buff_2(charO);
+            put_buff_2(charP);
+            printf("pushing the following in order: %c, %c, %c, %c, %c\n", charN, charS, charT, charO, charP);
             //storage = storage -5;
           }
         }
         else if (charO != 'O')
         {
           //its not an O so push in charO, T, S, \n
-          put_buff_1(charN);
-          put_buff_1(charS);
-          put_buff_1(charT);
-          put_buff_1(charO);
+          put_buff_2(charN);
+          put_buff_2(charS);
+          put_buff_2(charT);
+          put_buff_2(charO);
+          printf("pushing the following in order: %c, %c, %c, %c\n", charN, charS, charT, charO);
           //storage = storage -4;
         }
       }
       else if (charT != 'T')
       {
         //its not a T so push in the charT, S, '\n'
-        put_buff_1(charN);
-        put_buff_1(charS);
-        put_buff_1(charT);
+        put_buff_2(charN);
+        put_buff_2(charS);
+        put_buff_2(charT);
+        printf("pushing the following in order: %c, %c, %c\n", charN, charS, charT);
         //storage = storage -3;
       }
     } //ends the char == '\n and chars == s if'
@@ -181,12 +193,23 @@ void *lineSeperator(void *args)                                                 
       charN = ' ';                                                              //set it to new space
       put_buff_2(charN);                                                        //push in the new space
       put_buff_2(charS);                                                        //push in the non S char
+      printf("pushing the following in order: %c, %c\n", charN, charS);
       storage = storage -2;
     }
-    else if (charN != '\n')
+    else if (charN != '\n' && charS == '\n')
     { //otherwise its not a space and just a char so push both in and repeate
+      charS = ' ';
       put_buff_2(charN);                                                        //push in the new space
       put_buff_2(charS);                                                        //push in the non S char
+      printf("pushing the following in order: %c, %c\n", charN, charS);
+      storage = storage -2;
+    }
+    else
+    {
+      //they are both not related just push them both
+      put_buff_2(charN);                                                        //push in the new space
+      put_buff_2(charS);                                                        //push in the non S char
+      printf("pushing the following in order: %c, %c\n", charN, charS);
       storage = storage -2;
     }
   }
@@ -340,13 +363,15 @@ char get_buff_3()                                                               
 //needs to print and adjust buffer to +1 so it knows to check for next element
 void *write_output(void *args)
 {
-  int counterable = sizeof_stdin;
-  counterable = counterable/80;                                                 //this should give you how many lines to write
+  //int counterable = sizeof_stdin;
+  //counterable = counterable/80;                                                 //this should give you how many lines to write
   printf("in write output\n");
   char currentChar;
   //printf("this is buffer_2[1]: %c\n", buffer_2[1]);
   //printf("size of size: %d\n", sizeof_stdin);
-  for (int i = 0; i < sizeof_stdin-1; i++)
+  printf("here is count_2: %d\n", count_2);
+  int x = count_2;
+  for (int i = 0; i < x; i++)
   {
     currentChar = get_buff_2();
     fflush(stdout);

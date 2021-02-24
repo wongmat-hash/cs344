@@ -99,25 +99,204 @@ void put_buff_2(char item)                                                      
 //put buff 2 will be called and it will be stored into 2nd buffer array
 void *lineSeperator(void *args)                                                 //line seperator thread function
 {
-  //printf("in line seperator\n");
-  char currentChar;                                                             //declare our char that will store the currently looked at
-  //printf("calling get buff 1\n");
-  for (int i = 0; i < sizeof_stdin-1; i++)                                        //use a loop to the global var size of the stdin input
+  char charN, charS, charT, charO, charP, charNew;                              //storage var to check for /nSTOP/n
+  int storage = sizeof_stdin;                                                   //how we break out of our loop
+  storage = storage;
+  //printf("testing of init storage: %d\n", storage);
+
+  do
   {
-    currentChar = get_buff_1();                                                 //pull from the buffer the char we are looking at
-    //printf("%c\n", currentChar);
-    if (currentChar == '\n')                                                    //if the char is a new line we delete it
+    //printf("storage val: %d\n", storage);
+    charN = get_buff_1();                                                       //check if its a /n followed by S
+    charS = get_buff_1();                                                       //but since we need a case with just /n check for S also
+    //printf("charN val: %c\n", charN);
+    //printf("charS val: %c\n", charS);
+    if (charN == '\n' && charS == 'S')
     {
-      //sizeof_stdin = sizeof_stdin+1;
-      currentChar = ' ';
-      //printf("calling put buff 2\n");
-      put_buff_2(currentChar);                                                  //put the char into the next buffer using put buff 2
-    }
-    else if (currentChar != '\n')                                               //else if its not a newline char
+      storage = storage - 1;
+      storage = storage - 1;
+      //we found the potential start of STOP
+      charT = get_buff_1();                                                     //now check for the T
+      //printf("charT val: %c\n", charT);
+      if (charT == 'T')
+      {
+        storage = storage - 1;
+        //we found the T now look for O
+        charO = get_buff_1();
+        //printf("charO val: %c\n", charO);
+        if (charO == 'O')
+        {
+          storage = storage - 1;
+          //we found the O now look for the P
+          charP = get_buff_1();
+          //printf("charP val: %c\n", charP);
+          if (charP == 'P')
+          {
+            storage = storage - 1;
+            charNew = get_buff_1();
+            //printf("charNew val: %c\n", charNew);
+            if (charNew == '\n')
+            {
+              // we found the newline and end of our loop
+              storage = 0;
+            }
+            else if (charNew != '\n')
+            {
+              //failed to find STOP restarting
+              put_buff_2(charN);
+              put_buff_2(charS);
+              put_buff_2(charT);
+              put_buff_2(charO);
+              put_buff_2(charP);
+              put_buff_2(charNew);
+              //printf("pushing the following in order: %c, %c, %c, %c, %c, %c\n", charN, charS, charT, charO, charP, charNew);
+              //storage = storage -6;
+            }
+          }
+          else if (charP != 'P')
+          {
+            //its not a P so push in charP, O, T, S '\n'
+            put_buff_2(charN);
+            put_buff_2(charS);
+            put_buff_2(charT);
+            put_buff_2(charO);
+            put_buff_2(charP);
+            //printf("pushing the following in order: %c, %c, %c, %c, %c\n", charN, charS, charT, charO, charP);
+            //storage = storage -5;
+          }
+        }
+        else if (charO != 'O')
+        {
+          //its not an O so push in charO, T, S, \n
+          put_buff_2(charN);
+          put_buff_2(charS);
+          put_buff_2(charT);
+          put_buff_2(charO);
+          //printf("pushing the following in order: %c, %c, %c, %c\n", charN, charS, charT, charO);
+          //storage = storage -4;
+        }
+      }
+      else if (charT != 'T')
+      {
+        //its not a T so push in the charT, S, '\n'
+        put_buff_2(charN);
+        put_buff_2(charS);
+        put_buff_2(charT);
+        //printf("pushing the following in order: %c, %c, %c\n", charN, charS, charT);
+        //storage = storage -3;
+      }
+    } //ends the char == '\n and chars == s if'
+    else if (charN == '\n' && charS != 'S')
     {
-      put_buff_2(currentChar);                                                  //just pass it to the next buffer right away
+      //its a /n we need to delete and keep S char
+      charN = ' ';                                                              //set it to new space
+      put_buff_2(charN);                                                        //push in the new space
+      put_buff_2(charS);                                                        //push in the non S char
+      //printf("pushing the following in order: %c, %c\n", charN, charS);
+      storage = storage -2;
     }
-  }
+    else if (charN != '\n' && charS == '\n')
+    {
+      //printf("found potential STOP new\n");
+      storage = storage - 1;
+      storage = storage - 1;
+      //check if the \n could be start of a new STOP
+      charT = get_buff_1();
+      //printf("charT val: %c\n", charT);
+      if (charT == 'S')
+      {
+        storage = storage - 1;
+        charO = get_buff_1();
+        //printf("charO val: %c\n", charO);
+        if (charO == 'T')
+        {
+          storage = storage - 1;
+          //we found the O now look for the P
+          charP = get_buff_1();
+          //printf("charP val: %c\n", charP);
+          if (charP == 'O')
+          {
+            storage = storage - 1;
+            charNew = get_buff_1();
+            //printf("charNew val: %c\n", charNew);
+            if (charNew == 'P')
+            {
+              storage = storage - 1;
+              char charNewNew = get_buff_1();
+              //printf("charNewNew: %c\n", charNewNew);
+              if (charNewNew == '\n')
+              {
+                // we found the newline and end of our loop
+                storage = 0;
+              }
+              else if (charNewNew!= '\n')
+              {
+                put_buff_2(charN);
+                put_buff_2(charS);
+                put_buff_2(charT);
+                put_buff_2(charO);
+                put_buff_2(charP);
+                put_buff_2(charNew);
+                put_buff_2(charNewNew);
+                //printf("pushing the following in order: %c, %c, %c, %c, %c, %c, %c\n", charN, charS, charT, charO, charP, charNew, charNewNew);
+              }
+            }
+            else if (charNew != 'P')
+            {
+              //failed to find STOP restarting
+              put_buff_2(charN);
+              put_buff_2(charS);
+              put_buff_2(charT);
+              put_buff_2(charO);
+              put_buff_2(charP);
+              put_buff_2(charNew);
+              //printf("pushing the following in order: %c, %c, %c, %c, %c, %c\n", charN, charS, charT, charO, charP, charNew);
+              //storage = storage -6;
+            }
+          }
+          else if (charP != 'O')
+          {
+            //its not a P so push in charP, O, T, S '\n'
+            put_buff_2(charN);
+            put_buff_2(charS);
+            put_buff_2(charT);
+            put_buff_2(charO);
+            put_buff_2(charP);
+            //printf("pushing the following in order: %c, %c, %c, %c, %c\n", charN, charS, charT, charO, charP);
+            //storage = storage -5;
+          }
+        }
+        else if (charO != 'T')
+        {
+          //its not an O so push in charO, T, S, \n
+          put_buff_2(charN);
+          put_buff_2(charS);
+          put_buff_2(charT);
+          put_buff_2(charO);
+          //printf("pushing the following in order: %c, %c, %c, %c\n", charN, charS, charT, charO);
+          //storage = storage -4;
+        }
+      }//ends if
+      else
+      {
+        //its not a STOP so just rewrite to space instead of \n
+        //otherwise its not a space and just a char so push both in and repeate
+        charS = ' ';
+        put_buff_2(charN);                                                        //push in the new space
+        put_buff_2(charS);                                                        //push in the non S char
+        //printf("pushing the following in order: %c, %c\n", charN, charS);
+        storage = storage -2;
+      }
+    }//ends else if
+    else
+    {
+      //they are both not related just push them both
+      put_buff_2(charN);                                                        //push in the new space
+      put_buff_2(charS);                                                        //push in the non S char
+      //printf("pushing the following in order: %c, %c\n", charN, charS);
+      storage = storage -2;
+    }
+  }while(storage != 0);                                                          //loops as long as theres more char to find until STOP
   return NULL;
 }
 
@@ -155,96 +334,7 @@ void put_buff_3(char item)
 //put buff 3 will be called and it will store into 3rd buffer array
 void *plusplusSign(void *args)
 {
-  int counterable = sizeof_stdin;
-  //printf("size of stdin in plusplus %d\n", sizeof_stdin);
-  char currentChar1, currentChar2, currentChar3;
-  //printf("inside plus plus sign\n");
-  for (int i = 0; i < sizeof_stdin; i++)
-  {
-    //printf("\ncounterable: %d\n", counterable);
-    if (counterable != 1)
-    {
-      currentChar1 = get_buff_2();                                                //get the first value to check
-      currentChar2 = get_buff_2();                                                //pull again and get the second value
-    }
-    else if (counterable == 1)
-    {
-      return NULL;
-    }
-    //printf("in the loop %d\n", i);
-    //printf("currentChar1: %c\n", currentChar1);                               //test to ensure that the char is carrying over
-    //printf("currentChar2: %c\n", currentChar2);
-    if (currentChar2 == '\n')                                                   //if the 2nd value is new line we are at a\n or end of file
-    {
-      fflush(stdout);
-      //printf("%c", currentChar1);
-      put_buff_3(currentChar1);
-      counterable--;
-      return NULL;
-    }
-    else if (currentChar1 == '\n')                                              //otherwise if the currentChar1 ==
-    {
-      return NULL;
-    }
-    else if ((currentChar1 == '+') && (currentChar2 == '+'))
-    {
-      char sigma = '^';
-      fflush(stdout);
-      //printf("%c", sigma);
-      put_buff_3(sigma);
-      counterable--;
-      counterable--;
-    }
-    //else if ((currentChar1 == ' ') && (currentChar2 == '+'))                  //check if we have a ++ next to each other
-    else if (currentChar2 == '+')                                               //checks for the following: a+a, _+_, a+_, _+a
-    {
-      //check if the next char is also a +
-      currentChar3 = get_buff_2();
-      if (currentChar3 == '+')                                                  //we have a double plus
-      {
-        char sigma = '^';
-        fflush(stdout);
-        //printf("%c", currentChar1);
-        fflush(stdout);
-        //printf("%c", sigma);
-        put_buff_3(currentChar1);
-        counterable--;
-        put_buff_3(sigma);                                                      //if the third one is + we evaluate it to ^
-        counterable--;
-        counterable--;
-      }
-      else
-      {
-        //otherwise just put the 3 values into
-        fflush(stdout);
-        printf("%c", currentChar1);                                             //otherwise we push all 3 in
-        fflush(stdout);
-        printf("%c", currentChar2);
-        fflush(stdout);
-        printf("%c", currentChar3);
-        put_buff_3(currentChar1);
-        counterable--;
-        put_buff_3(currentChar2);
-        counterable--;
-        put_buff_3(currentChar3);
-        counterable--;
-      }
-    }
-    else                                                                        //otherwise its not a ++ so we just put in all the chars
-    {
-      //printf("putting stuff into buffer 3\n");                                //tests to make sure we have the right things to put into buffer 3
-      fflush(stdout);
-      //printf("%c", currentChar1);
-      fflush(stdout);
-      //printf("%c", currentChar2);
-      put_buff_3(currentChar1);
-      counterable--;
-      put_buff_3(currentChar2);
-      counterable--;
-    }
-  }
-  //printf("exited loop\n");                                                    //test to make sure our loop ended
-  return NULL;
+  
 }
 
 //get buff 3 function for the output function to write with
@@ -268,13 +358,15 @@ char get_buff_3()                                                               
 //needs to print and adjust buffer to +1 so it knows to check for next element
 void *write_output(void *args)
 {
-  int counterable = sizeof_stdin;
-  int counterable = counterable/80;                                             //this should give you how many lines to write
+  //int counterable = sizeof_stdin;
+  //counterable = counterable/80;                                                 //this should give you how many lines to write
   printf("in write output\n");
   char currentChar;
   //printf("this is buffer_2[1]: %c\n", buffer_2[1]);
   //printf("size of size: %d\n", sizeof_stdin);
-  for (int i = 0; i < sizeof_stdin-1; i++)
+  printf("here is count_3: %d\n", count_3);
+  int x = count_2;
+  for (int i = 0; i < x; i++)
   {
     currentChar = get_buff_3();
     fflush(stdout);

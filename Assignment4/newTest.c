@@ -142,6 +142,8 @@ void *lineSeperator(void *args)                                                 
             }
             else if (charNew != '\n')
             {
+              //that means we found a single new line with charN
+              charN = ' ';
               //failed to find STOP restarting
               put_buff_2(charN);
               put_buff_2(charS);
@@ -159,6 +161,7 @@ void *lineSeperator(void *args)                                                 
             {
               //just push everything in
               //its not a P so push in charP, O, T, S '\n'
+              charN = ' ';
               put_buff_2(charN);
               put_buff_2(charS);
               put_buff_2(charT);
@@ -169,6 +172,7 @@ void *lineSeperator(void *args)                                                 
             }
             else if (charP == '\n')
             {
+              charN = ' ';
               charP = ' ';
               //its not a P so push in charP, O, T, S '\n'
               put_buff_2(charN);
@@ -195,6 +199,7 @@ void *lineSeperator(void *args)                                                 
           }
           else if (charO == '\n')
           {
+            charN = ' ';
             charO = ' ';
             //its not an O so push in charO, T, S, \n
             put_buff_2(charN);
@@ -219,6 +224,7 @@ void *lineSeperator(void *args)                                                 
         }
         else if (charT == '\n')
         {
+          charN = ' ';
           charT = ' ';
           //its not a T so push in the charT, S, '\n'
           put_buff_2(charN);
@@ -274,6 +280,7 @@ void *lineSeperator(void *args)                                                 
               }
               else if (charNewNew != '\n')
               {
+                charS = ' ';
                 put_buff_2(charN);
                 put_buff_2(charS);
                 put_buff_2(charT);
@@ -290,6 +297,7 @@ void *lineSeperator(void *args)                                                 
               {
                 //just push everything in
                 //failed to find STOP restarting
+                charS = ' ';
                 put_buff_2(charN);
                 put_buff_2(charS);
                 put_buff_2(charT);
@@ -301,6 +309,7 @@ void *lineSeperator(void *args)                                                 
               }
               else if (charNew == '\n')
               {
+                charS = ' ';
                 charNew = ' ';
                 put_buff_2(charN);
                 put_buff_2(charS);
@@ -317,6 +326,7 @@ void *lineSeperator(void *args)                                                 
             {
               //just push everything in
               //its not a P so push in charP, O, T, S '\n'
+              charS = ' ';
               put_buff_2(charN);
               put_buff_2(charS);
               put_buff_2(charT);
@@ -327,6 +337,7 @@ void *lineSeperator(void *args)                                                 
             }
             else if (charP == '\n')
             {
+              charS = ' ';
               charP = ' ';
               //its not a P so push in charP, O, T, S '\n'
               put_buff_2(charN);
@@ -343,6 +354,7 @@ void *lineSeperator(void *args)                                                 
         {
           if (charO != '\n')
           {
+            charS = ' ';
             //its not an O so push in charO, T, S, \n
             put_buff_2(charN);
             put_buff_2(charS);
@@ -353,6 +365,7 @@ void *lineSeperator(void *args)                                                 
           }
           else if (charO == '\n')
           {
+            charS = ' ';
             charO = ' ';
             //its not an O so push in charO, T, S, \n
             put_buff_2(charN);

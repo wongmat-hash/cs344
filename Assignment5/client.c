@@ -17,7 +17,7 @@
 void error(const char *msg) {
   perror(msg);
   exit(0);
-} 
+}
 
 // Set up the address struct
 void setupAddressStruct(struct sockaddr_in* address,

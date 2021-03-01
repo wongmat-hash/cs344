@@ -78,18 +78,47 @@ void char_Boundscheck(char *inputString, int inputLength)
   }
 }
 
+//error function used for reporting issues from oregonstate client.c code
+void error(const char *msg)
+{
+  perror(msg);
+  exit(0);
+}
+
+// Set up the address struct from oregon state client.c code
+void setupAddressStruct(struct sockaddr_in* address, int portNumber, char* hostname)
+{
+  memset((char*) address, '\0', sizeof(*address));                              // Clear out the address struct
+  address->sin_family = AF_INET;                                                //the address should be network ready
+  address->sin_port = htons(portNumber);                                        // Store the port number
+  struct hostent* hostInfo = gethostbyname(hostname);                           // Get the DNS entry for this host name
+  if (hostInfo == NULL)
+  {
+    fprintf(stderr, "CLIENT: ERROR, no such host\n");
+    exit(0);
+  }
+  // Copy the first IP address from the DNS entry to sin_addr.s_addr
+  memcpy((char*) &address->sin_addr.s_addr, hostInfo->h_addr_list[0], hostInfo->h_length);
+}
+
 void send_Server(char *port_string, char *c_txt, char *key_txt)                 //work cited from oregon state provided server side c code https://repl.it/@cs344/83clientc?lite=true#client.c
 {
   int sockfd, port_Num;
   struct sockaddr_in remote_addr;
   port_Num = atoi(port_String);
-  char response_to_server[2];
-  bzero(response_to_server);
-  if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+  char response_to_server[2], buffer[256];
+  bzero(response_to_server, 2);
+  //if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+  //{
+  //  printf("Error: failed to obtain socket descriptor\n");
+  //  exit(2);
+  //}
+  sockfd = socket(AF_INET, SOCK_STREAM, 0);                                     //from client.c 
+  if (socketFD < 0)
   {
-    printf("Error: failed to obtain socket descriptor\n");
-    exit(2);
+    error("CLIENT: ERROR opening socket");
   }
+
   remote_addr.sin_family = AF_INET;
   remote_addr.sin_port =htons(port_Num);
   inet_pton(AF_INET,)

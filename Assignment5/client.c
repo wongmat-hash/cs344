@@ -20,9 +20,8 @@ void error(const char *msg) {
 }
 
 // Set up the address struct
-void setupAddressStruct(struct sockaddr_in* address,
-                        int portNumber,
-                        char* hostname){
+void setupAddressStruct(struct sockaddr_in* address, int portNumber, char* hostname)
+{
 
   // Clear out the address struct
   memset((char*) address, '\0', sizeof(*address));

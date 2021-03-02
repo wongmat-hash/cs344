@@ -88,17 +88,17 @@ void error(const char *msg)
 // Set up the address struct from oregon state client.c code
 void setupAddressStruct(struct sockaddr_in* address, int portNumber, char* hostname)
 {
-  memset((char*) address, '\0', sizeof(*address));                              // Clear out the address struct
+  memset((char*)address, '\0', sizeof(*address));                              // Clear out the address struct
   address->sin_family = AF_INET;                                                //the address should be network ready
   address->sin_port = htons(portNumber);                                        // Store the port number
-  struct hostent* hostInfo = gethostbyname(hostname);                           // Get the DNS entry for this host name
+  struct hostent* hostInfo = gethostbyname(hostname);                           // Get the DNS entry for this host name by converting machine name to special for of address
   if (hostInfo == NULL)
   {
     fprintf(stderr, "CLIENT: ERROR, no such host\n");
     exit(0);
   }
   // Copy the first IP address from the DNS entry to sin_addr.s_addr
-  memcpy((char*) &address->sin_addr.s_addr, hostInfo->h_addr_list[0], hostInfo->h_length);
+  memcpy((char*)&address->sin_addr.s_addr, hostInfo->h_addr_list[0], hostInfo->h_length);
 }
 
 void send_Server(char *port_string, char *c_txt, char *key_txt)                 //work cited from oregon state provided server side c code https://repl.it/@cs344/83clientc?lite=true#client.c
@@ -113,23 +113,27 @@ void send_Server(char *port_string, char *c_txt, char *key_txt)                 
   //  printf("Error: failed to obtain socket descriptor\n");
   //  exit(2);
   //}
-  sockfd = socket(AF_INET, SOCK_STREAM, 0);                                     //from client.c 
+  sockfd = socket(AF_INET, SOCK_STREAM, 0);                                     //from client.c settting up the socket for server
   if (socketFD < 0)
   {
-    error("CLIENT: ERROR opening socket");
+    error("CLIENT: ERROR opening socket", 1);
   }
 
-  remote_addr.sin_family = AF_INET;
-  remote_addr.sin_port =htons(port_Num);
-  inet_pton(AF_INET,)
+  //remote_addr.sin_family = AF_INET;
+  //remote_addr.sin_port =htons(port_Num);
+  //inet_pton(AF_INET,)
+
+  setupAddressStruct(&remote_addr, port_Num, argv[1]
+
+
 }
 
 int main(int argc, char *argv[])
 {
-  if (argc!= 4)
+  if (argc < 4)                                                                 //check user arguments
   {
-    printf("usage: pt_enc plaintext key port\n");                               //error handling if the user did not specify enough arguments
-    exit(1);
+    fprintf(stderr, "Usage: %s plaintext key port\n", argv[0]);                 //error handling if the user did not specify enough arguments
+    exit(0);
   }
 
   FILE *fp = fopen(argv[1], "rb");                                              //our file pointer for opening user text

@@ -17,8 +17,11 @@
 int main(int argc, char *argv[])                                                //to allow user input arguments
 {
   static const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ ";                 //library bank of all legal characters allowed to use including space
-  srandom(time(NULL));                                                          //to start our random number generator for our random key
+  //srandom(time(NULL));                                                          //to start our random number generator for our random key
+  srand(time(0));                                                               //use this to start our random number generator
   char *rando;                                                                  //this is char to store randomzed key string generated
+  int input_length;                                                             //input storage var holder for length
+  input_length = atoi(argv[1]);                                                 //pass the argument to atoi to get the int 
   if (argc != 2)                                                                //need to make sure our argument is long enough
   {
     printf("please enter a longer string\n");
@@ -26,8 +29,8 @@ int main(int argc, char *argv[])                                                
   }
   if (argc == 2)                                                                //if the arguments are legal and enough
   {
-    int input_length;                                                           //stores the length of the string calculated out
-    input_length = atoi(argv[1]);                                               //convert the string to int using atoi() see https://www.tutorialspoint.com/c_standard_library/c_function_atoi.htm
+    //int input_length;                                                           //stores the length of the string calculated out
+    //input_length = atoi(argv[1]);                                               //convert the string to int using atoi() see https://www.tutorialspoint.com/c_standard_library/c_function_atoi.htm
     rando = (char*)malloc(sizeof(char)*(input_length+1));                       //allocate the memory needed for our randomized string
     //static const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ ";                 //library bank of all legal characters allowed to use including space
     for (int i = 0; i < input_length; i++)                                      //loop from the beginning to the end of input length

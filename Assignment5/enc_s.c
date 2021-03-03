@@ -1,9 +1,20 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
 
 static const char library[27] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ ";                  //our library of in bounds allowed chars
 
-
+//function to display error messages
+void error(const char *msg)
+{
+  perror(msg);                                                                  //displays error message
+  exit(1);
+}
 
 //this function converts char to int
 void convertChar_Int(char in[], int out[], int size)
@@ -70,6 +81,120 @@ void decode(char key[], char in[], char out[], int size)
   //convert the output to chars now
   convertInt_Char(outputInt, out, size);                                        //pass the output chars, out that was passed in and size
   output[size] = '\0';
+}
+
+//function to perform all the encoding decoding
+void otp(char* pt, char* key, char* port, char* enc)
+{
+  int socketFD, portNumber, charsWritten, charsRead;
+  struct sockaddr_in serverAddress;
+  struct hostent* serverHostInfo;
+  char buffer[512];
+  int port = atoi(port_arg);
+
+  FILE *fp = fopen(plaintext, "r");
+  char text_plaintext[80000];
+  fgets(text_plaintext, 80000, textFile);
+  fclose(textFile);
+  text_plaintext[strcspn(text_plaintext, "\n")] = '\0';
+
+  FILE *kp = fopen(key, "r");
+  char text_key[80000];
+  fgets(text_key, 80000, keyFile);
+  fclose(keyFile);
+  text_key[strcspn(text_key, "\n")] = '\0';
+
+  int textLength = strlen(text_plaintext);
+  int keyLength = strlen(text_key);
+
+  if (keyLength < textLength)
+  {
+    fprintf(stderr, "ERROR the key is shorter than the plaintext.\n");
+    exit(1);
+  }
+
+  //plaintext checker
+  for (int i = 0; i < textLength; i++)
+  {
+    for (int j = 0; i < 28; j++)
+    {
+      if (j == 27)
+      {
+        fprintf(stderr, "Error Plaintext contains invalid chars.\n");
+        exit(1);
+      }
+      if (text_plaintext[i] == code[j])
+      {
+        break;
+      }
+    }
+  }
+  //key checker
+  for (int i = 0; i < keyLength; i++)
+  {
+    for (int j = 0; j < 28; j++)
+    {
+      if (j == 27)
+      {
+        fprintf(stderr, "Key contains invalid chars.\n");
+      }
+      if (text_key[i] == code[j])
+      {
+        break;
+      }
+    }
+  }
+
+  //server setup
+  memset((char*)&serverAddress, '\0', sizeof(serverAddress));
+  portNumber = port;
+  serverAddress.sin_family = AF_INET;
+  serverAddress.sin_port = htons(portNumber);
+  serverHostInfo = gethostbyname("localhost");
+  if (serverHostInfo == NULL)
+  {
+    fprintf(stderr, "CLIENT: ERROR, no such host exist\n");
+    exit(0);
+  }
+  memcpy((char*)&serverAddress.sin_addr.s_addr, (char*)serverHostInfo->h_addr, serverHostInfo->h_length);
+
+  socketFD = socket(AF_INET, SOCK_STREAM, 0);
+  if (socketFD < 0)
+  {
+    error("CLIENT: ERROR opening socket", 1);
+  }
+  if (connect(socketFD, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0)
+  {
+    error("CLIENT: Error connecting", 1);
+  }
+
+  memset(buffer, '\0', sizeof(buffer));
+  sprintf(buffer, "%s\n%s\n%s", plaintext, key, enc_dec);
+
+  charsWritten = send(socketFD, buffer, strlen(buffer), 0);
+  if (charsWritten < 0)
+  {
+    error("CLIENT: Error writing to socket", 1);
+  }
+  if (charsWritten < strlen(buffer))
+  {
+    printf("CLIENT: WARNING: Not all data written to socket!\n");
+  }
+  memset(buffer, '\0', sizeof(buffer));
+
+  charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0);
+  if (charsRead < 0)
+  {
+    error("CLIENT: ERROR reading from socket", 1);
+  }
+
+  FILE* recvFile = fopen(buffer, "r");
+  char output[80000];
+  fgets(output, 80000, recvFile);
+  fclose(recvFile);
+  remote(buffer);
+  printf("%s\n", output);
+  close(socketFD);
 }
 
 int main(int argc, *argv[])

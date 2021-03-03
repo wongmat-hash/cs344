@@ -74,12 +74,12 @@ void decode(char key[], char in[], char out[], int size)
 
 int main(int argc, *argv[])
 {
-  if (argc < 4)
+  if (argc < 2)
   {
     fprintf(stderr, "Usage: %s plaintext keyport\n", argv[0]);
-    exit(0);
+    exit(1);
   }
 
-  otp(argv[1], argv[2], argv[3], "otp_enc")
+  otp_d(argv[1], "otp_enc");
   return 0;
 }

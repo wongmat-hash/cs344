@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
+//this includes opt_d_h
 static const char library[27] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ ";                  //our library of in bounds allowed chars
 
 //function to display error messages
@@ -23,7 +24,7 @@ void convertChar_Int(char in[], int out[], int size)
   {
     for (int y = 0; y < 27; y++)                                                //loop to the 27 possible chars that are legal
     {
-      if (in[i] == library[j])                                                  //if one of the chars matches up with in our bounds
+      if (in[i] == library[y])                                                  //if one of the chars matches up with in our bounds
       {
         out[i] = y;                                                             //the output is assigned a number as an int
         break;                                                                  //break
@@ -37,7 +38,7 @@ void convertInt_Char(int in[], char out[], int size)
 {
   for (int i = 0; i < size; i++)                                                //loop through the entire array
   {
-    out[i] = code[in[i]];                                                       //the out array index is set to library based on input index
+    out[i] = library[in[i]];                                                    //the out array index is set to library based on input index
   }
 }
 
@@ -49,7 +50,7 @@ void encode(char key[], char in[], char out[], int size)
   //convert what is passed in to ints using function above
   convertChar_Int(in, string_size, size);                                       //pass the string to encode, array size of string, and size
   //convert what is passed in as key to int
-  convertInt_Char(key, key_size, size);                                         //pass the key, array for key, and size of index
+  convertChar_Int(key, key_size, size);                                         //pass the key, array for key, and size of index
   //create the output as an int
   for (int i = 0; i < size; i++)
   {
@@ -57,7 +58,7 @@ void encode(char key[], char in[], char out[], int size)
   }
   //change the output to chars now
   convertInt_Char(outputInt, out, size);                                        //pass the output chars, out that was passed in and size
-  output[size] = '\0';
+  out[size] = '\0';
 }
 
 //this function is a decoder for strings that are passed in
@@ -68,19 +69,19 @@ void decode(char key[], char in[], char out[], int size)
   //convert what is passed in to ints using function above
   convertChar_Int(in, string_size, size);                                       //pass the string to decode, array size of string, and size
   //convert what is passed in as a key to int
-  convertInt_Char(key, key_size, size);                                         //pass the key, array for key, and size of index
+  convertChar_Int(key, key_size, size);                                         //pass the key, array for key, and size of index
   //create the output as int
   for (int i = 0; i < size; i++)
   {
     outputInt[i] = string_size[i] - key_size[i];
     if (outputInt[i] < 0)
     {
-      outputInt[i] = outputInt[i] + 27;                                         //reverse our modulo from above encode to decode properly
+      outputInt[i] += 27;                                                       //reverse our modulo from above encode to decode properly
     }
   }
   //convert the output to chars now
   convertInt_Char(outputInt, out, size);                                        //pass the output chars, out that was passed in and size
-  output[size] = '\0';
+  out[size] = '\0';
 }
 
 //function to perform all the encoding decoding
@@ -125,7 +126,7 @@ void otp_d(char* port_arg, char* enc_dec)
         exit(0);
         break;
       case 0: ;
-        memset(bufferm '\0', sizeof(buffer));
+        memset(buffer, '\0', sizeof(buffer));
         charsRead = recv(establishedConnectionFD, buffer, sizeof(buffer)-1, 0);
         if (charsRead < 0)
         {
@@ -151,7 +152,7 @@ void otp_d(char* port_arg, char* enc_dec)
           FILE *inFP = fopen(inputFileName, "r");
           fgets(inputText, 80000, inFP);
           fclose(inFP);
-          inputText[strcspn(inFP, "\n")] = '\0';
+          inputText[strcspn(inputText, "\n")] = '\0';
 
           FILE *kFP = fopen(keyFileName, "r");
           fgets(key, 80000, kFP);
@@ -195,7 +196,7 @@ void otp_d(char* port_arg, char* enc_dec)
   close(listenSocketFD);
 }
 
-int main(int argc, *argv[])
+int main(int argc, char *argv[])
 {
   if (argc < 2)
   {

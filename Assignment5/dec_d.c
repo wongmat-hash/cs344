@@ -206,6 +206,6 @@ int main(int argc, char *argv[])
     exit(0);
   }
 
-  otp(argv[1], argv[2], argv[3], "otp_enc");
+  otp(argv[1], argv[2], argv[3], "otp_dec");
   return 0;
 }

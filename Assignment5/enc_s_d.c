@@ -84,117 +84,115 @@ void decode(char key[], char in[], char out[], int size)
 }
 
 //function to perform all the encoding decoding
-void otp(char* pt, char* key, char* port, char* enc)
+void otp_d(char* port_arg, char* enc_dec)
 {
-  int socketFD, portNumber, charsWritten, charsRead;
-  struct sockaddr_in serverAddress;
-  struct hostent* serverHostInfo;
-  char buffer[512];
-  int port = atoi(port_arg);
+  int wrongFile = 0;
+  int listenSocketFD, establishedConnectionFD, portNumber, charsRead, status;
+  socklen_t sizeOfClientInfo;
+  char buffer[512], inputFileName[256], keyFileName[256], inputText[80000], key[80000], outputText[80000];
+  struct sockaddr_in serverAddress, clientAddress;
+  pid_t pid, sid;
 
-  FILE *fp = fopen(plaintext, "r");
-  char text_plaintext[80000];
-  fgets(text_plaintext, 80000, textFile);
-  fclose(textFile);
-  text_plaintext[strcspn(text_plaintext, "\n")] = '\0';
-
-  FILE *kp = fopen(key, "r");
-  char text_key[80000];
-  fgets(text_key, 80000, keyFile);
-  fclose(keyFile);
-  text_key[strcspn(text_key, "\n")] = '\0';
-
-  int textLength = strlen(text_plaintext);
-  int keyLength = strlen(text_key);
-
-  if (keyLength < textLength)
-  {
-    fprintf(stderr, "ERROR the key is shorter than the plaintext.\n");
-    exit(1);
-  }
-
-  //plaintext checker
-  for (int i = 0; i < textLength; i++)
-  {
-    for (int j = 0; i < 28; j++)
-    {
-      if (j == 27)
-      {
-        fprintf(stderr, "Error Plaintext contains invalid chars.\n");
-        exit(1);
-      }
-      if (text_plaintext[i] == code[j])
-      {
-        break;
-      }
-    }
-  }
-  //key checker
-  for (int i = 0; i < keyLength; i++)
-  {
-    for (int j = 0; j < 28; j++)
-    {
-      if (j == 27)
-      {
-        fprintf(stderr, "Key contains invalid chars.\n");
-      }
-      if (text_key[i] == code[j])
-      {
-        break;
-      }
-    }
-  }
-
-  //server setup
-  memset((char*)&serverAddress, '\0', sizeof(serverAddress));
-  portNumber = port;
+  memset((char *)&serverAddress, '\0', sizeof(serverAddress));
+  portNumber = atoi(port_arg);
   serverAddress.sin_family = AF_INET;
   serverAddress.sin_port = htons(portNumber);
-  serverHostInfo = gethostbyname("localhost");
-  if (serverHostInfo == NULL)
-  {
-    fprintf(stderr, "CLIENT: ERROR, no such host exist\n");
-    exit(0);
-  }
-  memcpy((char*)&serverAddress.sin_addr.s_addr, (char*)serverHostInfo->h_addr, serverHostInfo->h_length);
+  serverAddress.sin_addr.s_addr = INADDR_ANY;
 
-  socketFD = socket(AF_INET, SOCK_STREAM, 0);
-  if (socketFD < 0)
+  listenSocketFD = socket(AF_INET, SOCK_STREAM, 0);
+  if (listenSocketFD < 0)
   {
-    error("CLIENT: ERROR opening socket", 1);
+    error("ERROR opening socket");
   }
-  if (connect(socketFD, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0)
+  if (bind(listenSocketFD, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) < 0)
   {
-    error("CLIENT: Error connecting", 1);
+    error("ERROR on binding");
   }
+  listen(listenSocketFD, 5);
+  while(1)
+  {
+    sizeOfClientInfo = sizeof(clientAddress);
+    establishedConnectionFD = accept(listenSocketFD, (struct sockaddr *)&clientAddress, &sizeOfClientInfo);
+    if (establishedConnectionFD < 0)
+    {
+      error("ERROR on accept");
+    }
+    pid = fork();
+    switch(pid)
+    {
+      case -1: ;
+        error("Error creating fork");
+        exit(0);
+        break;
+      case 0: ;
+        memset(bufferm '\0', sizeof(buffer));
+        charsRead = recv(establishedConnectionFD, buffer, sizeof(buffer)-1, 0);
+        if (charsRead < 0)
+        {
+          error("ERROR reading from socket");
+        }
+        const char newline[2] = {'\n', '\0'};
 
-  memset(buffer, '\0', sizeof(buffer));
-  sprintf(buffer, "%s\n%s\n%s", plaintext, key, enc_dec);
+        char *token = strtok(buffer, newline);
+        strcpy(inputFileName, token);
 
-  charsWritten = send(socketFD, buffer, strlen(buffer), 0);
-  if (charsWritten < 0)
-  {
-    error("CLIENT: Error writing to socket", 1);
-  }
-  if (charsWritten < strlen(buffer))
-  {
-    printf("CLIENT: WARNING: Not all data written to socket!\n");
-  }
-  memset(buffer, '\0', sizeof(buffer));
+        token = strtok(NULL, newline);
+        strcpy(keyFileName, token);
 
-  charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0);
-  if (charsRead < 0)
-  {
-    error("CLIENT: ERROR reading from socket", 1);
-  }
+        token = strtok(NULL, newline);
+        if (strcmp(enc_dec, token))
+        {
+          fprintf(stderr, "ERROR %s cannot use %s_d.\n", token, enc_dec);
+          wrongFile = 1;
+        }
 
-  FILE* recvFile = fopen(buffer, "r");
-  char output[80000];
-  fgets(output, 80000, recvFile);
-  fclose(recvFile);
-  remote(buffer);
-  printf("%s\n", output);
-  close(socketFD);
+        if (!wrongFile)
+        {
+          FILE *inFP = fopen(inputFileName, "r");
+          fgets(inputText, 80000, inFP);
+          fclose(inFP);
+          inputText[strcspn(inFP, "\n")] = '\0';
+
+          FILE *kFP = fopen(keyFileName, "r");
+          fgets(key, 80000, kFP);
+          fclose(kFP);
+          key[strcspn(key, "\n")] = '\0';
+
+          if (!strcmp(enc_dec, "otp_enc"))
+          {
+            encode(key, inputText, outputText, strlen(inputText));
+          }
+        }
+        int uniquePid = getpid();
+        char uniqueFile[32];
+        sprintf(uniqueFile, "%s_f.%d", enc_dec, uniquePid);
+
+        FILE *uniqueFD = fopen(uniqueFile, "w+");
+        if (wrongFile)
+        {
+          fprintf(uniqueFD, "");
+        }
+        else
+        {
+          fprintf(uniqueFD, "%s", outputText);
+        }
+        fclose(uniqueFD);
+        charsRead = send(establishedConnectionFD, uniqueFile, strlen(uniqueFile), 0);
+        if (charsRead < 0)
+        {
+          error("Error writing to socket");
+        }
+        close(establishedConnectionFD);
+        establishedConnectionFD = -1;
+        exit(0);
+        break;
+      default: ;
+    }
+    close(establishedConnectionFD);
+    establishedConnectionFD = -1;
+    wait(NULL);
+  }
+  close(listenSocketFD);
 }
 
 int main(int argc, *argv[])

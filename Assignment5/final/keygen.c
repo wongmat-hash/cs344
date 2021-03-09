@@ -14,16 +14,6 @@ static const char library[27] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ ";                  
 void encode(char*, char*, char*, int);                                          //function declarations for below
 void decode(char*, char*, char*, int);
 
-int otp(char*, char*, char*, char*);
-int otp_d(char*, char*);
-
-//function to display error messages
-void error(const char *msg)
-{
-  perror(msg);                                                                  //displays error message
-  exit(1);
-}
-
 //this function converts char to int
 void convertChar_Int(char in[], int out[], int size)
 {
@@ -55,13 +45,13 @@ int main(int argc, char* argv[])
   char key[length+1];
   srand(time(0));
 
-  for (int i = 0; i< length; i++)
+  for (int i = 0; i< length; i++)                                               //loop through and use our srand to assign random values to our string
   {
   int letter = rand() % 27;
   key[i] = library[letter];
   }
 
-  key[length] = '\0';
+  key[length] = '\0';                                                           //cutoff the ending to the \0 of our key 
   printf("%s\n", key);
 
   return 0;

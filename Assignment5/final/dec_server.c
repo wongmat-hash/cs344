@@ -105,38 +105,38 @@ void decode(char key[], char in[], char out[], int size)
 //function to perform all the encoding decoding
 int otp_d(char* port_arg, char* enc_dec)
 {
-  int wrongFile = 0;
-  int listenSocketFD, establishedConnectionFD, portNumber, charsRead, status;
-  socklen_t sizeOfClientInfo;
+  int var = 0;
+  int listenSocketFD, establishedConnectionFD, port_num, charL, status;
+  socklen_t clientInfo;
   char buffer[512], inputFileName[256], keyFileName[256], inputText[80000], key[80000], outputText[80000];
-  struct sockaddr_in serverAddress, clientAddress;
+  struct sockaddr_in serverA, clientA;
   pid_t pid, sid;
 
-  memset((char *)&serverAddress, '\0', sizeof(serverAddress));                  //set up and clear out the struct for our address
-  portNumber = atoi(port_arg);                                                  //use atoi to convert from string to int for our port num from user input
-  serverAddress.sin_family = AF_INET;                                           //set up network protocols
-  serverAddress.sin_port = htons(portNumber);                                   //save the port number we passed in
-  serverAddress.sin_addr.s_addr = INADDR_ANY;                                   //allow address's to connect to here
+  memset((char *)&serverA, '\0', sizeof(serverA));                              //set up and clear out the struct for our address
+  port_num = atoi(port_arg);                                                    //use atoi to convert from string to int for our port num from user input
+  serverA.sin_family = AF_INET;                                                 //set up network protocols
+  serverA.sin_port = htons(port_num);                                           //save the port number we passed in
+  serverA.sin_addr.s_addr = INADDR_ANY;                                         //allow address's to connect to here
 
   listenSocketFD = socket(AF_INET, SOCK_STREAM, 0);                             //prepare our socket
   if (listenSocketFD < 0)                                                       //create and set up socket procedures
   {
     error("ERROR opening socket");
   }
-  if (bind(listenSocketFD, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) < 0) //set the socket using the port
+  if (bind(listenSocketFD, (struct sockaddr *)&serverA, sizeof(serverA)) < 0)   //set the socket using the port
   {
     error("ERROR on binding");
   }
-  listen(listenSocketFD, 5);
+  listen(listenSocketFD, 5);                                                    //turn on the socket to accept connections
   while(1)                                                                      //set the size of address to the client
   {
-    sizeOfClientInfo = sizeof(clientAddress);                                   //accept the connection to address
-    establishedConnectionFD = accept(listenSocketFD, (struct sockaddr *)&clientAddress, &sizeOfClientInfo);
+    clientInfo = sizeof(clientA);                                               //accept the connection to address
+    establishedConnectionFD = accept(listenSocketFD, (struct sockaddr *)&clientA, &clientInfo);
     if (establishedConnectionFD < 0)
     {
       error("ERROR on accept");
     }
-    pid = fork();
+    pid = fork();                                                               //fork here
     switch(pid)
     {
       case -1: ;                                                                //if we have issues with our fork display error
@@ -144,28 +144,28 @@ int otp_d(char* port_arg, char* enc_dec)
         exit(0);
         break;
       case 0: ;                                                                 //if we have no errors in our fork
-        memset(buffer, '\0', sizeof(buffer));
-        charsRead = recv(establishedConnectionFD, buffer, sizeof(buffer)-1, 0); //process the message passed from the socket
-        if (charsRead < 0)
+        memset(buffer, '\0', sizeof(buffer));                                   //process client message recieved from socket
+        charL = recv(establishedConnectionFD, buffer, sizeof(buffer)-1, 0);     //process the message passed from the socket
+        if (charL < 0)
         {
           error("ERROR reading from socket");
         }
         const char newline[2] = {'\n', '\0'};
 
-        char *token = strtok(buffer, newline);                                  //this is our plaintext data
-        strcpy(inputFileName, token);
+        char *tkn = strtok(buffer, newline);                                    //this is our plaintext data
+        strcpy(inputFileName, tkn);
 
-        token = strtok(NULL, newline);                                          //use this to store our key data
-        strcpy(keyFileName, token);
+        tkn = strtok(NULL, newline);                                            //use this to store our key data
+        strcpy(keyFileName, tkn);
 
-        token = strtok(NULL, newline);                                          //checker for file check
-        if (strcmp(enc_dec, token))
+        tkn = strtok(NULL, newline);                                             //checker for file check
+        if (strcmp(enc_dec, tkn))
         {
-          fprintf(stderr, "ERROR %s cannot use %s_d.\n", token, enc_dec);
-          wrongFile = 1;
+          fprintf(stderr, "ERROR %s cannot use %s_d.\n", tkn, enc_dec);
+          var = 1;
         }
 
-        if (!wrongFile)                                                         //process our file and conver them into processable strings
+        if (!var)                                                               //process our file and conver them into processable strings
         {
           FILE *inFP = fopen(inputFileName, "r");
           fgets(inputText, 80000, inFP);
@@ -191,7 +191,7 @@ int otp_d(char* port_arg, char* enc_dec)
         sprintf(uniqueFile, "%s_f.%d", enc_dec, uniquePid);
 
         FILE *uniqueFD = fopen(uniqueFile, "w+");                               //pass our processed data into fopen to write to a new file
-        if (wrongFile)
+        if (var)
         {
           fprintf(uniqueFD, "");
         }
@@ -200,8 +200,8 @@ int otp_d(char* port_arg, char* enc_dec)
           fprintf(uniqueFD, "%s", outputText);
         }
         fclose(uniqueFD);
-        charsRead = send(establishedConnectionFD, uniqueFile, strlen(uniqueFile), 0);
-        if (charsRead < 0)                                                      //write the data to the scoket to pass it forward
+        charL = send(establishedConnectionFD, uniqueFile, strlen(uniqueFile), 0);
+        if (charL < 0)                                                          //write the data to the scoket to pass it forward
         {
           error("Error writing to socket");
         }

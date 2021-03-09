@@ -183,7 +183,7 @@ int otp_d(char* port_arg, char* enc_dec)
           }
           else if (!strcmp(enc_dec, "otp_dec"))
           {
-            encode(key, inputText, outputText, strlen(inputText));               //pass to the decoder function for decoding
+            decode(key, inputText, outputText, strlen(inputText));               //pass to the decoder function for decoding
           }
         }
         int uniquePid = getpid();

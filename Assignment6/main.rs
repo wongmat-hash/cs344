@@ -146,8 +146,25 @@ fn main()
 
     // Change the following code to create 2 threads that run concurrently and each of which uses map_data() function to process one of the two partitions
     //returns sum of all the numbers in that partition
-    intermediate_sums.push(map_data(&xs[0]));
-    intermediate_sums.push(map_data(&xs[1]));
+
+    //intermediate_sums.push(map_data(&xs[0]));
+    //intermediate_sums.push(map_data(&xs[1]));
+
+    //clone xs to use with the threads
+    let xs2 = xs.clone();
+
+    //start 2 threads and pass xs data
+    let t1 = thread::spawn(move || map_data(&xs[0]));
+    let t2 = thread::spawn(move || map_data(&xs2[1]));
+
+    //join threads
+    let _r1 = t1.join().unwrap();
+    let _r2 = t2.join().unwrap();
+
+    //push results
+    intermediate_sums.push(_r1);
+    intermediate_sums.push(_r2);
+
 
     // CHANGE CODE END: Don't change any code below this line until the next CHANGE CODE comment
 
@@ -161,12 +178,34 @@ fn main()
 
     // CHANGE CODE: Add code that does the following:
     // 1. Calls partition_data to partition the data into equal partitions
+    let ns = partition_data(num_partitions. &v);
     // 2. Calls print_partition_info to print info on the partitions that have been created
+    print_partition_info(&ns);
     // 3. Creates one thread per partition and uses each thread to concurrently process one partition
+    //vector for each of the sums created by the threads
+    let mut intermediate_sums_2 : Vec<usize> = Vec::new();
     // 4. Collects the intermediate sums from all the threads
+
+        //run map_data function for partitions
+        for t in 0..num_partitions()
+        {
+            //use a clone for each vector
+            let n_clone = ns.clone();
+
+            //make a new thread and pass the clone in
+            let n_thread = thread::spawn(move || map_data(&n_clone[t]));
+            let r_thread = n_thread.join().unwrap();
+
+            //push to the vector
+            intermediate_sums_2.push(r_thread);
+        }
     // 5. Prints information about the intermediate sums
+    println!("intermediate sums = {:?}",intermediate_sums_2);
     // 5. Calls reduce_data to process the intermediate sums
+    //process our info with reduce
+    let sum_2 = reduce_data(&intermediate_sums_2);
     // 6. Prints the final sum computed by reduce_data
+    println!("Sum = ()", sum_2);
 
 }
 

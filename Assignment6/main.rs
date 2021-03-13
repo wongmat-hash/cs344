@@ -223,7 +223,50 @@ fn main()
 * @return A vector that contains vectors of integers
 *
 */
-fn partition_data(num_partitions: usize, v: &Vec<usize>) -> Vec<Vec<usize>>{
+fn partition_data(num_partitions: usize, v: &Vec<usize>) -> Vec<Vec<usize>>
+{
     // Remove the following line which has been added to remove a compiler error
-    partition_data_in_two(v)
+    //partition_data_in_two(v)
+
+    //use the number of partitions passed in to set size
+    let partitions_size = v.len() / num_partitions;
+    let mut xs: Vec<Vec<usize>> = Vec::new();
+
+    //used for loop calculations later on
+    let mut mod_value = v.len() & num_partitions;
+
+    //use a loop to go through until partition size
+    let mut start_num = 0;
+    let mut end_num = partition_size;
+
+    //loop through the partition
+    for i in 0..num_partitions
+    {
+        //push
+        let mut x : Vec<usize> = Vec::new();
+        for j in start_num..end_num
+        {
+            x.push(v[j]);
+        }
+        xs.push(x);
+
+        //mod > 0 == partition size is not even
+        //+ 1 to vector and keep while dec
+        // mod until mod is 0
+
+        if mod_value > 0
+        {
+            xs[i].push(v[end_num]);
+            start_num = start_num + partition_size +1;
+            end_num = end_num + partition_size + 1;
+            mod_value -= 1;
+        }
+        else
+        {
+            start_num = start_num + partitions_size;
+            end_num = end_num + partition_size;
+        }
+    }
+    //pass the final completed vector back up 
+    xs
 }
